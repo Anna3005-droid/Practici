@@ -268,6 +268,21 @@ details[open] > summary .chev { transform: rotate(-135deg); }
     <p>Шкала эмоций Метода Седоны. Девять кластеров идут от низкого тона к высокому, начинать нужно с Апатии. Отмеченное состояние можно вычеркнуть и больше к нему не возвращаться.</p>
   </header>
 
+  <section class="read-once">
+    <details class="instr">
+      <summary>Инструкция для подсознания<span class="chev" aria-hidden="true"></span></summary>
+      <div class="instr-body">
+        <p class="instr-hint">Прочитайте один раз, медленно, вслух или про себя. Потом отметьте ниже, что прочитали.</p>
+        <div class="instr-text" id="instrText"></div>
+      </div>
+    </details>
+    <label class="row" id="introRow" data-intro="1">
+      <input type="checkbox" id="introBox">
+      <span class="box" aria-hidden="true"></span>
+      <span class="txt">Инструкцию прочитала один раз</span>
+    </label>
+  </section>
+
   <section class="batch" aria-labelledby="bt">
     <div class="batch-head">
       <h2 id="bt">Следующие <span id="bsize">10</span></h2>
@@ -307,21 +322,6 @@ details[open] > summary .chev { transform: rotate(-135deg); }
       <label class="switch"><input type="checkbox" id="hideDone"> Скрыть отмеченные</label>
     </div>
     <div class="cls" id="clusters"></div>
-  </section>
-
-  <section class="read-once">
-    <details class="instr">
-      <summary>Инструкция для подсознания<span class="chev" aria-hidden="true"></span></summary>
-      <div class="instr-body">
-        <p class="instr-hint">Прочитайте один раз, медленно, вслух или про себя. Потом отметьте ниже, что прочитали.</p>
-        <div class="instr-text" id="instrText"></div>
-      </div>
-    </details>
-    <label class="row" id="introRow" data-intro="1">
-      <input type="checkbox" id="introBox">
-      <span class="box" aria-hidden="true"></span>
-      <span class="txt">Инструкцию прочитала один раз</span>
-    </label>
   </section>
 
   <section class="reset">
