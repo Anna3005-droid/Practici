@@ -1,10 +1,10 @@
 {
-  "id": "vygody.html",
+  "id": "./",
   "name": "Проработка вторичных выгод",
   "short_name": "Выгоды",
   "description": "Три вопроса и проговоры для проработки вторичных выгод.",
   "lang": "ru",
-  "start_url": "vygody.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
