@@ -257,8 +257,76 @@ details[open] > summary .chev { transform: rotate(-135deg); }
 .reset .btn { color: var(--muted); }
 .reset .btn.danger { border-color: var(--danger); color: var(--danger); }
 
+/* ---------- Motion (same feel as the program's site) ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes zoomin { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-8%); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 130, 254, .6); } 70% { box-shadow: 0 0 0 16px rgba(0, 130, 254, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 130, 254, 0); } }
+@keyframes tick { 0% { transform: scale(.6); box-shadow: 0 0 0 0 rgba(0, 130, 254, .7); } 55% { transform: scale(1.2); } 100% { transform: scale(1); box-shadow: 0 0 0 14px rgba(0, 130, 254, 0); } }
+@keyframes check { from { opacity: 0; transform: rotate(45deg) translate(-1px, -1px) scale(.2); } to { opacity: 1; transform: rotate(45deg) translate(-1px, -1px) scale(1); } }
+@keyframes chip { 0% { transform: scale(.9); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes flip { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+@keyframes open { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+/* Banner entrance, floating circle, drifting outline words */
+.banner h1, .banner .sign { animation: rise .8s cubic-bezier(.2, .8, .2, 1) both; }
+.banner .sign { animation-delay: .25s; }
+.banner .circle { animation: zoomin 1s cubic-bezier(.2, .8, .2, 1) .1s both, float 7s ease-in-out 1.2s infinite; }
+.banner .words { animation: drift 18s ease-in-out infinite alternate; }
+
+/* Buttons: lift, light sweep, press */
+.btn { position: relative; overflow: hidden; isolation: isolate; transition: background .25s, border-color .25s, color .25s, transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s; }
+.btn::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s ease; }
+.btn:active { transform: scale(.96); transition-duration: .08s; }
+.btn.pulse { animation: pulse 2.4s ease-out infinite; }
+.chips button { transition: background .25s, border-color .25s, color .25s, transform .2s cubic-bezier(.2, .8, .2, 1); }
+.chips button:active { transform: scale(.9); }
+.chips button[aria-pressed="true"] { animation: chip .4s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* Ticking a state: the circle pops with a ring, the check draws in, the word gets struck through */
+.row { transition: background .2s; }
+.row:active .box { transform: scale(.85); }
+.box { transition: background .2s, border-color .2s, transform .2s cubic-bezier(.3, 1.6, .5, 1); }
+.row.pop .box { animation: tick .5s cubic-bezier(.3, 1.6, .5, 1); }
+.row.pop .box::after { animation: check .3s ease-out .06s both; }
+.row.done .txt { text-decoration: none; }
+.txt > span {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat; background-position: 0 58%; background-size: 0% 1.5px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-size .4s cubic-bezier(.2, .8, .2, 1);
+}
+.row.done .txt > span { background-size: 100% 1.5px; }
+.txt { transition: color .3s; }
+
+/* New batch slides in one by one */
+.batch-list .row { animation: rise .45s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--n, 0) * 40ms); }
+
+/* Counters flip when they change, bars fill smoothly */
+.bar .big span { display: inline-block; }
+.bump { animation: flip .4s cubic-bezier(.2, .8, .2, 1); }
+.meter i { transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+
+/* Opening sections */
+details[open] > .how-body, details[open] > .instr-body, .cl[open] > .grid { animation: open .35s cubic-bezier(.2, .8, .2, 1); }
+details > summary .chev, .cl > summary::after { transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.rung > span:first-child, .cl .cn, details.how > summary, details.instr > summary { transition: transform .25s cubic-bezier(.2, .8, .2, 1), color .25s; }
+
+/* Hover only where there is a mouse, so taps on a phone do not leave things lifted */
+@media (hover: hover) {
+  .btn:hover { transform: translateY(-2px); }
+  .btn:hover::after { transform: translateX(120%); }
+  .btn:not(.primary):hover { background: rgba(255, 255, 255, .06); }
+  .btn.primary:hover { box-shadow: 0 10px 28px -8px rgba(0, 130, 254, .75); }
+  .btn.pulse:hover { animation: none; }
+  .chips button:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .rung:hover > span:first-child { transform: translateX(4px); color: var(--blue-hi); }
+  .cl > summary:hover .cn, details.how > summary:hover, details.instr > summary:hover { color: var(--blue-hi); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 </style>
 
@@ -300,7 +368,7 @@ details[open] > summary .chev { transform: rotate(-135deg); }
     <label class="row" id="introRow" data-intro="1">
       <input type="checkbox" id="introBox">
       <span class="box" aria-hidden="true"></span>
-      <span class="txt">Инструкцию прочитала один раз</span>
+      <span class="txt"><span>Инструкцию прочитала один раз</span></span>
     </label>
   </section>
 
@@ -423,15 +491,15 @@ details[open] > summary .chev { transform: rotate(-135deg); }
   }
 
   /* ---------- build ---------- */
-  function rowHTML(k, ci) {
+  function rowHTML(k, ci, n) {
     var m = meta[k], tag = '';
     if (ci < 0) {
       tag = m.cl.map(function (i) { return clusters[i].name; }).join(' · ');
     } else if (m.cl.length > 1) {
       tag = 'ещё: ' + m.cl.filter(function (i) { return i !== ci; }).map(function (i) { return clusters[i].name; }).join(', ');
     }
-    return '<label class="row" data-k="' + esc(k) + '"><input type="checkbox"><span class="box" aria-hidden="true"></span>' +
-      '<span class="txt">' + esc(m.word) + '</span>' + (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + '</label>';
+    return '<label class="row" data-k="' + esc(k) + '"' + (n >= 0 ? ' style="--n:' + n + '"' : '') + '><input type="checkbox"><span class="box" aria-hidden="true"></span>' +
+      '<span class="txt"><span>' + esc(m.word) + '</span></span>' + (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + '</label>';
   }
 
   function buildClusters() {
@@ -457,7 +525,7 @@ details[open] > summary .chev { transform: rotate(-135deg); }
     batch = order.filter(function (k) { return !S.done[k]; }).slice(0, S.size);
     $('bsize').textContent = S.size;
     var h = '';
-    batch.forEach(function (k) { h += rowHTML(k, -1); });
+    batch.forEach(function (k, i) { h += rowHTML(k, -1, i); });
     $('batchList').innerHTML = h || '<p class="note" style="padding:12px">Все состояния отмечены.</p>';
     Array.prototype.forEach.call(document.querySelectorAll('.chips button'), function (b) {
       b.setAttribute('aria-pressed', String(+b.dataset.size === S.size));
@@ -467,6 +535,14 @@ details[open] > summary .chev { transform: rotate(-135deg); }
   }
 
   /* ---------- update ---------- */
+  function replay(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function popKey(k) {
+    Array.prototype.forEach.call(document.querySelectorAll('.row[data-k="' + k.replace(/"/g, '\\"') + '"]'), function (r) { replay(r, 'pop'); });
+  }
+  function setNum(id, v) {
+    var el = $(id), s = String(v);
+    if (el.textContent !== s) { el.textContent = s; replay(el, 'bump'); }
+  }
   function syncKey(k) {
     var on = !!S.done[k];
     Array.prototype.forEach.call(document.querySelectorAll('.row[data-k="' + k.replace(/"/g, '\\"') + '"]'), function (r) {
@@ -481,19 +557,19 @@ details[open] > summary .chev { transform: rotate(-135deg); }
     btn.hidden = false;
     if (left === 0) {
       btn.textContent = 'Следующие ' + S.size;
-      btn.classList.add('primary');
+      btn.classList.add('primary', 'pulse');
       note.textContent = 'Все отмечены.';
     } else {
       btn.textContent = 'Обновить список';
-      btn.classList.remove('primary');
+      btn.classList.remove('primary', 'pulse');
       note.textContent = 'Осталось ' + left + ' из ' + batch.length + '. В начале рекомендуется 10–15 состояний за раз.';
     }
   }
   function updateCounts() {
     var tot = 0, td = 0, t = today();
     order.forEach(function (k) { var v = S.done[k]; if (v) { tot++; if (v === t) td++; } });
-    $('today').textContent = td;
-    $('total').textContent = tot;
+    setNum('today', td);
+    setNum('total', tot);
     $('all').textContent = order.length;
     $('totalBar').style.width = (order.length ? tot / order.length * 100 : 0) + '%';
     clusters.forEach(function (c) {
@@ -527,12 +603,14 @@ details[open] > summary .chev { transform: rotate(-135deg); }
     if (row.dataset.intro) {
       S.intro = inp.checked;
       row.classList.toggle('done', S.intro);
+      if (S.intro) replay(row, 'pop');
       scheduleSave();
       return;
     }
     var k = row.dataset.k;
     if (inp.checked) S.done[k] = today(); else delete S.done[k];
     syncKey(k);
+    if (inp.checked) popKey(k);
     updateCounts();
     scheduleSave();
   });
