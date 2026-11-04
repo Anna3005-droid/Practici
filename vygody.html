@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#051629">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Эмоции">
-<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Выгоды">
+<link rel="manifest" href="vygody.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Проработка вторичных выгод</title>
@@ -101,9 +101,6 @@ a { color: inherit; }
 /* Banner, as on the program's cover */
 .intro { display: flex; flex-direction: column; gap: 18px; padding-top: 8px; }
 .intro > p { color: var(--muted); max-width: 60ch; }
-.back { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 40px; text-decoration: none; }
-.back::before { content: ""; width: 8px; height: 8px; border: solid var(--blue-hi); border-width: 0 0 2px 2px; transform: rotate(45deg); transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
-.back:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; border-radius: 4px; }
 .banner {
   position: relative;
   isolation: isolate;
@@ -274,16 +271,6 @@ a { color: inherit; }
 .btn:active { transform: scale(.96); transition-duration: .08s; }
 .btn:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
 .btn.primary { background: var(--blue); border-color: var(--blue); color: #FFFFFF; }
-.next {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 18px; min-height: 72px;
-  background: var(--bg2); border: 1px solid var(--line); border-radius: 16px;
-  text-decoration: none;
-  transition: border-color .25s;
-}
-.next b { display: block; font: 600 1.15rem/1.15 var(--display); text-transform: uppercase; letter-spacing: .02em; margin-top: 4px; transition: color .25s; }
-.next::after { content: ""; flex: none; width: 10px; height: 10px; border: solid var(--blue-hi); border-width: 2px 2px 0 0; transform: rotate(45deg); margin-right: 6px; transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
-.next:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
 
 /* ---------- Motion (same feel as the program's site) ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
@@ -315,11 +302,6 @@ a { color: inherit; }
   .chips button:hover { border-color: var(--ink); transform: translateY(-1px); }
   .pip:hover { border-color: var(--ink); transform: translateY(-1px); }
   .pip.on:hover { border-color: var(--blue-hi); background: var(--blue-hi); }
-  .back:hover::before { transform: translateX(-4px) rotate(45deg); }
-  .back:hover { color: var(--blue-hi); }
-  .next:hover { border-color: var(--blue); }
-  .next:hover b { color: var(--blue-hi); }
-  .next:hover::after { transform: translateX(4px) rotate(45deg); }
 }
 
 @media (max-width: 420px) {
@@ -350,7 +332,6 @@ a { color: inherit; }
   </div>
 
   <header class="intro">
-    <a class="back lbl" href="./">Проработка эмоций</a>
     <div class="banner">
       <div class="words" aria-hidden="true"><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span></div>
       <div class="circle" aria-hidden="true"></div>
@@ -445,7 +426,6 @@ a { color: inherit; }
 
   <section class="foot">
     <button type="button" class="btn" id="again">Пройти заново</button>
-    <a class="next" href="./"><span><span class="lbl">Ещё практика</span><b>Проработка эмоций</b></span></a>
   </section>
 </div>
 

@@ -251,18 +251,6 @@ details[open] > summary .chev { transform: rotate(-135deg); }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2px 8px; padding: 0 8px 12px; }
 .hide-done .cl .row.done { display: none; }
 
-/* Link to the next practice */
-.next {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 18px; min-height: 72px;
-  background: var(--bg2); border: 1px solid var(--line); border-radius: 16px;
-  color: inherit; text-decoration: none;
-  transition: border-color .25s;
-}
-.next b { display: block; font: 600 1.15rem/1.15 var(--display); text-transform: uppercase; letter-spacing: .02em; margin-top: 4px; transition: color .25s; }
-.next::after { content: ""; flex: none; width: 10px; height: 10px; border: solid var(--blue-hi); border-width: 2px 2px 0 0; transform: rotate(45deg); margin-right: 6px; transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
-.next:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
-
 /* Footer */
 .read-once { display: flex; flex-direction: column; gap: 4px; }
 .reset { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -335,9 +323,6 @@ details > summary .chev, .cl > summary::after { transition: transform .3s cubic-
   .chips button:hover { border-color: var(--ink); transform: translateY(-1px); }
   .rung:hover > span:first-child { transform: translateX(4px); color: var(--blue-hi); }
   .cl > summary:hover .cn, details.how > summary:hover, details.instr > summary:hover { color: var(--blue-hi); }
-  .next:hover { border-color: var(--blue); }
-  .next:hover b { color: var(--blue-hi); }
-  .next:hover::after { transform: translateX(4px) rotate(45deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -428,7 +413,6 @@ details > summary .chev, .cl > summary::after { transition: transform .3s cubic-
     <div class="cls" id="clusters"></div>
   </section>
 
-  <a class="next" href="vygody.html"><span><span class="lbl">Ещё практика</span><b>Проработка вторичных выгод</b></span></a>
   <section class="reset">
     <button type="button" class="btn" id="resetAsk">Сбросить весь прогресс</button>
     <button type="button" class="btn danger" id="resetYes" hidden>Да, сбросить всё</button>

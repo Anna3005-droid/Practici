@@ -1,0 +1,18 @@
+{
+  "id": "vygody.html",
+  "name": "Проработка вторичных выгод",
+  "short_name": "Выгоды",
+  "description": "Три вопроса и проговоры для проработки вторичных выгод.",
+  "lang": "ru",
+  "start_url": "vygody.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#051629",
+  "theme_color": "#051629",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
