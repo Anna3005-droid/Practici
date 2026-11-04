@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E7A74">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Эмоции">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Проработка эмоций</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600&family=Onest:wght@400;500;600&display=swap">
+<style>
+:root {
+  /* Layout: one column. A sticky tally on top, the next batch of states first, then the nine clusters from low tone to high tone. */
+  color-scheme: light;
+  --bg: #F3F6F7;
+  --surface: #FFFFFF;
+  --ink: #142129;
+  --muted: #55656F;
+  --line: #DCE3E7;
+  --line-strong: #AEBBC3;
+  --accent: #0E7A74;
+  --accent-soft: #E0F2F0;
+  --on-accent: #FFFFFF;
+  --done: #66747E;
+  --low: #4A5670;
+  --high: #0E8B82;
+  --font-display: 'Geologica', 'Onest', system-ui, sans-serif;
+  --font-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E171C;
+    --surface: #16222A;
+    --ink: #E5EDF1;
+    --muted: #93A3AE;
+    --line: #25343D;
+    --line-strong: #4B5E6A;
+    --accent: #5CC8BE;
+    --accent-soft: #163A3B;
+    --on-accent: #06211F;
+    --done: #8294A0;
+    --low: #8393B4;
+    --high: #52CFC3;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E171C;
+  --surface: #16222A;
+  --ink: #E5EDF1;
+  --muted: #93A3AE;
+  --line: #25343D;
+  --line-strong: #4B5E6A;
+  --accent: #5CC8BE;
+  --accent-soft: #163A3B;
+  --on-accent: #06211F;
+  --done: #8294A0;
+  --low: #8393B4;
+  --high: #52CFC3;
+  color-scheme: dark;
+}
+
+[hidden] { display: none !important; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+}
+.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-weight: 300; font-size: 2rem; line-height: 1.15; letter-spacing: -0.01em; }
+h2 { font-weight: 500; font-size: 1.2rem; line-height: 1.25; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+
+/* Sticky tally */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: var(--bg);
+  padding: 10px 0 12px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 16px;
+  align-items: end;
+}
+.bar .lbl { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.bar .big { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.bar .big small { font-size: 0.95rem; color: var(--muted); font-family: var(--font-body); }
+.bar .right { text-align: right; }
+.bar .meter { grid-column: 1 / -1; margin-top: 8px; }
+.bar .save { grid-column: 1 / -1; font-size: 0.75rem; color: var(--muted); min-height: 1.1em; }
+.meter { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 3px; transition: width .25s ease; }
+
+/* Intro */
+.intro { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.intro p { color: var(--muted); max-width: 60ch; }
+
+/* Rows */
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.row:hover { background: var(--accent-soft); }
+.row input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.row:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
+.box {
+  flex: none;
+  width: 22px; height: 22px;
+  border: 1.6px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  display: grid; place-items: center;
+  transition: background .15s, border-color .15s;
+}
+.box::after {
+  content: "";
+  width: 5px; height: 10px;
+  border: solid var(--on-accent);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+  opacity: 0;
+}
+.row.done .box { background: var(--accent); border-color: var(--accent); }
+.row.done .box::after { opacity: 1; }
+.txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.row.done .txt { text-decoration: line-through; text-decoration-thickness: 1px; color: var(--done); }
+.tag { flex: none; max-width: 45%; font-size: 0.74rem; line-height: 1.25; color: var(--muted); text-align: right; }
+
+/* Next batch */
+.batch {
+  background: var(--surface);
+  border: 1.5px solid var(--accent);
+  border-radius: 16px;
+  padding: 16px 8px 12px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.batch-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 0 8px; }
+.chips { display: flex; gap: 6px; align-items: center; font-size: 0.85rem; color: var(--muted); }
+.chips button {
+  min-width: 44px; min-height: 36px; padding: 0 12px;
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  background: transparent; cursor: pointer; font-weight: 500;
+}
+.chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.batch-list { display: flex; flex-direction: column; }
+.batch-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 4px 8px 0; }
+.btn {
+  min-height: 44px; padding: 0 18px;
+  border: 1px solid var(--accent); border-radius: 10px;
+  background: transparent; color: var(--accent);
+  font-weight: 600; cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: var(--on-accent); }
+.btn:focus-visible, .chips button:focus-visible, .rung:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.note { font-size: 0.9rem; color: var(--muted); }
+
+/* How-to */
+details.how, details.instr { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+details.how > summary, details.instr > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; min-height: 52px; font-weight: 600; }
+details > summary .chev, .cl > summary::after {
+  content: ""; flex: none; width: 8px; height: 8px;
+  border: solid var(--muted); border-width: 0 2px 2px 0;
+  transform: rotate(45deg); transition: transform .15s;
+}
+details[open] > summary .chev { transform: rotate(-135deg); }
+.cl[open] > summary::after { transform: rotate(-135deg); }
+.how-body, .instr-body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.how-body ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+.instr-body p { font-size: 0.95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Ladder */
+.ladder { display: flex; flex-direction: column; gap: 2px; margin-top: 12px; }
+.ladder-end { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 4px 12px; }
+.rung {
+  --rung: var(--accent);
+  --rung: color-mix(in oklab, var(--low), var(--high) calc(var(--i) * 12.5%));
+  display: grid; grid-template-columns: 6.5rem 1fr auto; align-items: center; gap: 12px;
+  width: 100%; min-height: 48px; padding: 6px 12px;
+  background: transparent; border: 0; border-radius: 10px; text-align: left; cursor: pointer;
+}
+.rung:hover { background: var(--accent-soft); }
+.rung .meter i { background: var(--rung); }
+.rung .cnt { font-variant-numeric: tabular-nums; font-size: 0.9rem; color: var(--muted); min-width: 4.5em; text-align: right; }
+.rung.full .cnt { color: var(--accent); font-weight: 600; }
+.sep { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 12px 12px 4px; }
+
+/* Clusters */
+.cl-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 12px; }
+.switch { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; font-size: 0.92rem; color: var(--muted); }
+.switch input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; }
+.cls { display: flex; flex-direction: column; gap: 10px; }
+.cl { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 110px); }
+.cl > summary { display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-height: 56px; }
+.cl .cn { font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; flex: 1; min-width: 0; }
+.cl .cc { font-size: 0.9rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cl .cc.full { color: var(--accent); font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2px 8px; padding: 0 8px 12px; }
+.hide-done .cl .row.done { display: none; }
+
+/* Footer */
+.read-once { display: flex; flex-direction: column; gap: 4px; }
+.reset { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.reset .btn { border-color: var(--line-strong); color: var(--muted); }
+.reset .btn.danger { border-color: var(--accent); color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <div class="bar" role="status">
+    <div>
+      <div class="lbl">Сегодня отмечено</div>
+      <div class="big" id="today">0</div>
+    </div>
+    <div class="right">
+      <div class="lbl">Всего</div>
+      <div class="big"><span id="total">0</span> <small>из <span id="all">0</span></small></div>
+    </div>
+    <div class="meter" aria-hidden="true"><i id="totalBar"></i></div>
+    <div class="save" id="save" aria-live="polite"></div>
+  </div>
+
+  <header class="intro">
+    <h1>Проработка эмоций</h1>
+    <p>Шкала эмоций Метода Седоны. Девять кластеров идут от низкого тона к высокому, начинать нужно с Апатии. Отмеченное состояние можно вычеркнуть и больше к нему не возвращаться.</p>
+  </header>
+
+  <section class="batch" aria-labelledby="bt">
+    <div class="batch-head">
+      <h2 id="bt">Следующие <span id="bsize">10</span></h2>
+      <div class="chips" role="group" aria-label="Сколько состояний показывать">
+        <span>За раз:</span>
+        <button type="button" data-size="10" aria-pressed="true">10</button>
+        <button type="button" data-size="15" aria-pressed="false">15</button>
+      </div>
+    </div>
+    <div class="batch-list" id="batchList"></div>
+    <div class="batch-foot">
+      <button type="button" class="btn" id="batchNext">Обновить список</button>
+      <span class="note" id="batchNote">В начале рекомендуется 10–15 состояний за раз.</span>
+    </div>
+  </section>
+
+  <details class="how">
+    <summary>Как проработать одно состояние<span class="chev" aria-hidden="true"></span></summary>
+    <div class="how-body">
+      <ol>
+        <li>Назовите состояние вслух или про себя и постарайтесь хоть немного его почувствовать.</li>
+        <li>Скажите «Обработай это».</li>
+        <li>Повторяйте пару до зевания. Если после 10 повторений зевания нет, идите дальше.</li>
+        <li>Отметьте состояние здесь и больше к нему не возвращайтесь. Повторный запуск процесс не ускоряет.</li>
+      </ol>
+    </div>
+  </details>
+
+  <section aria-labelledby="sc">
+    <h2 id="sc">Шкала тонов</h2>
+    <div class="ladder" id="rungs"></div>
+  </section>
+
+  <section aria-labelledby="cl">
+    <div class="cl-head">
+      <h2 id="cl">Все состояния</h2>
+      <label class="switch"><input type="checkbox" id="hideDone"> Скрыть отмеченные</label>
+    </div>
+    <div class="cls" id="clusters"></div>
+  </section>
+
+  <section class="read-once">
+    <details class="instr">
+      <summary>Инструкция для подсознания<span class="chev" aria-hidden="true"></span></summary>
+      <div class="instr-body">
+        <p id="instrText"></p>
+      </div>
+    </details>
+    <label class="row" id="introRow" data-intro="1">
+      <input type="checkbox" id="introBox">
+      <span class="box" aria-hidden="true"></span>
+      <span class="txt">Инструкцию прочитала один раз</span>
+    </label>
+  </section>
+
+  <section class="reset">
+    <button type="button" class="btn" id="resetAsk">Сбросить весь прогресс</button>
+    <button type="button" class="btn danger" id="resetYes" hidden>Да, сбросить всё</button>
+    <button type="button" class="btn" id="resetNo" hidden>Отмена</button>
+  </section>
+
+</div>
+
+<script type="application/json" id="data">{"clusters": [{"name": "Апатия", "items": ["отчужденность", "побежденный", "неактивный", "неприметность", "застрявший", "неудачник", "зачем пытаться?", "скука", "отсутствие чувства юмора", "беспомощность", "истощенность", "подавленность", "от меня ничего не зависит", "опускающий руки", "смирившийся", "безнадежность", "одиночество", "мне все равно", "потерянность", "несобранность", "выдохшийся", "деморализованный", "шок", "бессилие", "ожесточенность", "ничего не получается", "лень", "без результатов", "удрученный", "оглушенный", "плохое настроение", "какой в этом смысл?", "отчаявшийся", "ненужность", "неудача", "отрезанный", "холодность", "отсутствие заботы о себе", "слишком поздно", "нерешительность", "никчемность", "безропотность", "неумение сосредоточиться", "не могу одержать победу", "разочарование", "отрицание", "ничего не жду от жизни", "бессмысленность усилий", "рассеянность", "я не могу", "бесполезность", "забытый", "вялый", "безрадостность", "потерявший надежду", "депрессия", "душевный холод", "обескураженность", "дезориентация", "невнимательность", "низкая самооценка", "безразличие", "смертельно уставший", "оцепенение", "усталость", "утрата", "покорность", "подозрительность", "бесчувственность", "равнодушие", "забывчивость"]}, {"name": "Горе", "items": ["непонятый", "слезливость", "преданный", "душевная мука", "стыд", "покинутость", "игнорируемый", "обманутость", "несчастливый", "ну почему я?", "печаль", "мучения", "нелюбимый", "беспомощность", "не находящий себе места", "душевная боль", "с разбитым сердцем", "потерянность", "обижающийся", "грусть", "ни на что не годный", "страдающий", "уныние", "жалость", "уязвимый", "утрата", "меланхолия", "обиженный", "смущенный", "одинокий", "это несправедливо", "нежеланный", "испытывающий угрызения совести", "горесть", "раскаяние", "отброшенность", "ранимый", "забытый", "тоскующий", "неадекватный", "страстно жаждущий", "безутешность", "скованность", "в отчаянии", "позабытый", "обвиненный", "отверженность", "ностальгирующий", "никому нет дела до меня", "сожалеющий", "пожалейте меня", "меня никто не любит", "вина", "разочарованный", "павший духом", "я несчастный"]}, {"name": "Страх", "items": ["скептичность", "параноидальность", "напуганный", "шаткость", "в ужасе", "шокированный", "угроза", "напряжение", "подозрительность", "страх сцены", "тревожность", "нерешительность", "загнанность", "уязвимость", "тревога", "боязнь сцены", "робкий", "тошнота", "сомнения", "закомплексованность", "боязливость", "уход от реальности", "дрожь в коленках", "малодушие", "сбитый с толку", "осторожность", "предусмотрительность", "озабоченность", "суеверный", "застенчивость", "трусость", "это плохая примета", "медлительность", "неуверенность", "испуг", "уклончивость", "защищающийся", "предчувствия", "паника", "замкнутость", "парализованный", "недоверчивость", "нервозный", "истеричный", "колеблющийся", "замешательство", "беспокойство"]}, {"name": "Страсть", "items": ["безжалостность", "нечестность", "никогда не достаточно", "ожидание", "бесцеремонность", "скаредность", "неистовый", "блуждание", "нетерпеливость", "излишества", "жажда накопления", "навязчивая идея", "я должен это иметь", "забывчивость", "импульсивность", "распутность", "хищнический", "манипулятивность", "не может ждать", "желание", "злоба", "собственнический", "давление", "бессердечность", "зависть", "голод", "безрассудство", "потребность", "управляемость", "предвкушение", "я хочу", "эксплуатирующий", "навязчивое влечение", "жажда", "ненасытность", "одержимость", "сладострастность", "жадность", "эгоизм", "нужда", "не может насытиться", "никогда не удовлетворен", "разочарование", "страстное желание"]}, {"name": "Гнев", "items": ["резкость", "отвращение", "свирепость", "ругающийся", "непокорный", "желчный", "ехидство", "сопротивление", "ярость", "язвительность", "разочарование", "мрачный", "разгневанный", "ревность", "своенравность", "угрюмость", "раздражение", "злорадство", "ненависть", "досада", "возбужденность", "безрассудство", "воинственность", "проклинающий", "взрывной", "мстительность", "возмущенный", "нетерпимость", "обидчивость", "жесткость", "злобный", "тщетность", "безжалостность", "требовательность", "бунтарство", "грубый", "злой", "деструктивный", "желание спорить", "агрессивность", "значимость", "жестокость", "всем недовольный", "замкнутость", "взбешенный", "помешательство", "оскорбленность", "злость", "озлобление", "кипящий от злости", "упорство", "враждебный", "жесткий", "строгость", "вызов", "негодование", "вздорный", "упрямство"]}, {"name": "Гордыня", "items": ["равнодушие", "узко мыслящий", "снобизм", "одаренность", "бесчувственность", "властность", "эгоцентричность", "пренебрежительный", "предвзятость", "исключительность", "высокомерие", "суровость", "лицемерный", "я выше упреков", "я особенный", "поверхностный", "покровительственный", "самоуверенность", "ханжество", "дистанцированный", "нетерпимый", "ограниченность", "презрение", "всезнайка", "ложное достоинство", "замкнутость", "злорадство", "удача", "превосходство", "ложная скромность", "тщеславие", "дерзость", "заносчивость", "самолюбие", "ложная добродетельность", "хвастливость", "надменность", "непростительность", "задавала", "бескомпромиссность", "стоик", "самонадеянность", "категоричный", "непреклонность", "скучающий", "самодовольство", "никогда не ошибается", "осуждение", "критичность", "праведность", "самый умный", "испорченный", "упрямство", "разборчивость"]}, {"name": "Храбрость", "items": ["сила", "компетентность", "оптимистичность", "авантюрность", "проницательность", "предприимчивость", "оказывающий поддержку", "любящий", "внимательный", "самостоятельность", "отвага", "мотивированность", "устойчивость", "сострадание", "честность", "чувство юмора", "решительность", "самодостаточность", "инициативность", "чувствительность", "спокойствие", "живость", "творчество", "не боящийся сопротивляться", "активность", "любознательность", "изобретательный", "целенаправленность", "непобедимый", "динамичный", "щедрость", "рассудительность", "дерзость", "уверенность", "здравомыслящий", "независимость", "энергичность", "отзывчивость", "верный", "полный энтузиазма", "благородство", "ясность", "основательный", "открытость", "счастье", "деятельный", "не боящийся мечтать", "смелость", "осведомленность", "гибкость", "я могу", "старательность", "позитивизм", "неутомимый", "находчивость", "целеустремленность", "проворность", "жизнерадостность", "оживление"]}, {"name": "Принятие", "items": ["эмпатия", "понимание", "внимательность к другим", "нечего менять", "благоденствие", "непринужденный", "восприимчивость", "я имею", "удовольствие", "сострадание", "восхищение", "прекрасное", "баланс", "нежность", "милосердие", "дружелюбие", "мягкий", "принадлежность", "светлый", "изобилие", "веселый", "кроткий", "уравновешенность", "удивление", "великодушие", "чувствительный", "искренность", "открытость", "все хорошо", "воодушевление", "гармония", "теплый", "гармоничный", "тонко чувствующий", "страстный", "безопасность", "чудо", "непосредственность", "умиротворение", "красивый", "восторг", "целостный", "наслаждение", "любящий", "уверенный", "радость"]}, {"name": "Мир", "items": ["свет", "свободный", "вечный", "реализовавшийся", "душевный покой", "восприимчивый", "сосредоточенность", "пространство", "равновесие", "я есть", "существование", "завершенность", "совершенство", "безграничный", "совершенный", "непорочность", "чистота", "выполнимость", "порядок", "неограниченный временем", "умиротворенность", "нестареющий", "единство", "безмятежность", "целостность", "спокойствие"]}], "instr": "Инструкция для подсознания Начало инструкции. Эта инструкция для тебя, НАШЕ подсознание. Эта инструкция инсталлирует протокол обработки материала «Обработай это». Начиная с этого момента, все ранее выданные инструкции, касающиеся протокола «Обработай это», в его более ранних модификациях, прошу считать недействительными, и всю работу по протоколу «Обработай это» вести только по этой версии инструкции. Если какой-либо материал в настоящее время находится в обработке по более старой версии данного протокола, прошу перевести его на обработку по новой версии протокола, начиная с этого момента. Как только мы заметим материал, который мы захотим обработать при помощи этого протокола, мы произнесем или подумаем специальное ключевое слово («Обработай это»), и ты будешь проводить полностью автономную и автоматическую обработку в фоновом режиме этого материала при помощи процедуры «Обработай это» авторства Дмитрия Лёушкина. При необходимости ты свяжешься с подсознанием Дмитрия Лёушкина и получишь от него самую последнюю версию этой процедуры. Один раз в две недели в случайно выбранное время ты будешь связываться с подсознанием Дмитрия Лёушкина и проверять, не появилась ли более новая версия данной инструкции. В случае, если она появилась, ты автоматически обновишь имеющуюся у тебя версию на более новую, получив ее у подсознания Дмитрия Лёушкина. Запуск механизма обработки, после произнесения соответствующего определенного выше ключевого слова, ты будешь сигнализировать при помощи зевания НАШЕГО организма. НАШЕ подсознание, ты всегда будешь делать все то, что МЫ описали в этой инструкции, начиная с этого момента, вне зависимости от того, в каком состоянии, в каких обстоятельствах, в какой ситуации или в каком ментальном или эмоциональном состоянии МЫ находимся. И МЫ благодарим тебя и глубоко признательны тебе и уважаем тебя за то, что ты всегда остаешься НАШИМ верным слугой. Конец инструкции"}</script>
+<script>
+(function () {
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var NEG = 6;
+  var LS = 'emo-progress-v1', LSUI = 'emo-ui-v1';
+
+  var clusters = D.clusters.map(function (c, i) {
+    return { name: c.name, idx: i, grp: i < NEG ? 'n' : 'p', words: c.items, keys: [] };
+  });
+  var meta = {}, order = [];
+  clusters.forEach(function (c) {
+    c.words.forEach(function (w) {
+      var k = c.grp + ':' + w.toLowerCase();
+      if (!meta[k]) { meta[k] = { word: w, cl: [c.idx] }; order.push(k); }
+      else meta[k].cl.push(c.idx);
+      c.keys.push(k);
+    });
+  });
+
+  var S = { done: {}, size: 10, intro: false, hide: false };
+  var dirty = false, batch = [];
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
+  function $(id) { return document.getElementById(id); }
+  function today() {
+    var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  /* ---------- storage ---------- */
+  function snapshot() { return { v: 1, done: S.done, size: S.size, intro: S.intro, updated: Date.now() }; }
+  function applyData(d) {
+    if (!d) return;
+    if (d.done && typeof d.done === 'object') S.done = Object.assign({}, d.done);
+    if (d.size === 10 || d.size === 15) S.size = d.size;
+    if (typeof d.intro === 'boolean') S.intro = d.intro;
+  }
+  try { applyData(JSON.parse(localStorage.getItem(LS) || 'null')); } catch (e) {}
+  try { var ui = JSON.parse(localStorage.getItem(LSUI) || 'null'); if (ui && ui.hide) S.hide = true; } catch (e) {}
+
+  var dbDoc = null, saving = false, pending = false, timer = null;
+  function setStatus(s) {
+    var t = {
+      saved: 'Сохранено в вашем аккаунте',
+      saving: 'Сохраняю…',
+      local: 'Прогресс сохраняется на этом устройстве',
+      error: 'Не удалось сохранить в аккаунт, прогресс остался в этом браузере'
+    }[s] || '';
+    $('save').textContent = t;
+  }
+  function persistLocal() { try { localStorage.setItem(LS, JSON.stringify(snapshot())); } catch (e) {} }
+  function scheduleSave() {
+    dirty = true;
+    persistLocal();
+    if (!dbDoc) { setStatus('local'); return; }
+    setStatus('saving');
+    clearTimeout(timer);
+    timer = setTimeout(flush, 500);
+  }
+  function flush() {
+    if (saving) { pending = true; return; }
+    saving = true;
+    dbDoc.set(snapshot()).then(function () { setStatus('saved'); }, function () { setStatus('error'); }).then(function () {
+      saving = false;
+      if (pending) { pending = false; flush(); }
+    });
+  }
+
+  /* ---------- build ---------- */
+  function rowHTML(k, ci) {
+    var m = meta[k], tag = '';
+    if (ci < 0) {
+      tag = m.cl.map(function (i) { return clusters[i].name; }).join(' · ');
+    } else if (m.cl.length > 1) {
+      tag = 'ещё: ' + m.cl.filter(function (i) { return i !== ci; }).map(function (i) { return clusters[i].name; }).join(', ');
+    }
+    return '<label class="row" data-k="' + esc(k) + '"><input type="checkbox"><span class="box" aria-hidden="true"></span>' +
+      '<span class="txt">' + esc(m.word) + '</span>' + (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + '</label>';
+  }
+
+  function buildClusters() {
+    var h = '';
+    clusters.forEach(function (c) {
+      h += '<details class="cl" id="c' + c.idx + '"><summary><span class="cn">' + esc(c.name) + '</span><span class="cc" data-cc="' + c.idx + '"></span></summary><div class="grid">';
+      c.keys.forEach(function (k) { h += rowHTML(k, c.idx); });
+      h += '</div></details>';
+    });
+    $('clusters').innerHTML = h;
+  }
+  function buildRungs() {
+    var h = '<div class="ladder-end">Низкий тон</div>';
+    clusters.forEach(function (c) {
+      if (c.idx === NEG) h += '<div class="sep">Позитивные состояния</div>';
+      h += '<button type="button" class="rung" data-c="' + c.idx + '" style="--i:' + c.idx + '"><span>' + esc(c.name) + '</span>' +
+        '<span class="meter" aria-hidden="true"><i data-rb="' + c.idx + '"></i></span><span class="cnt" data-rc="' + c.idx + '"></span></button>';
+    });
+    h += '<div class="ladder-end">Высокий тон</div>';
+    $('rungs').innerHTML = h;
+  }
+  function renderBatch() {
+    batch = order.filter(function (k) { return !S.done[k]; }).slice(0, S.size);
+    $('bsize').textContent = S.size;
+    var h = '';
+    batch.forEach(function (k) { h += rowHTML(k, -1); });
+    $('batchList').innerHTML = h || '<p class="note" style="padding:12px">Все состояния отмечены.</p>';
+    Array.prototype.forEach.call(document.querySelectorAll('.chips button'), function (b) {
+      b.setAttribute('aria-pressed', String(+b.dataset.size === S.size));
+    });
+    batch.forEach(syncKey);
+    updateBatchUI();
+  }
+
+  /* ---------- update ---------- */
+  function syncKey(k) {
+    var on = !!S.done[k];
+    Array.prototype.forEach.call(document.querySelectorAll('.row[data-k="' + k.replace(/"/g, '\\"') + '"]'), function (r) {
+      r.classList.toggle('done', on);
+      r.firstElementChild.checked = on;
+    });
+  }
+  function updateBatchUI() {
+    var left = batch.filter(function (k) { return !S.done[k]; }).length;
+    var btn = $('batchNext'), note = $('batchNote');
+    if (!batch.length) { btn.hidden = true; note.textContent = ''; return; }
+    btn.hidden = false;
+    if (left === 0) {
+      btn.textContent = 'Следующие ' + S.size;
+      btn.classList.add('primary');
+      note.textContent = 'Все отмечены.';
+    } else {
+      btn.textContent = 'Обновить список';
+      btn.classList.remove('primary');
+      note.textContent = 'Осталось ' + left + ' из ' + batch.length + '. В начале рекомендуется 10–15 состояний за раз.';
+    }
+  }
+  function updateCounts() {
+    var tot = 0, td = 0, t = today();
+    order.forEach(function (k) { var v = S.done[k]; if (v) { tot++; if (v === t) td++; } });
+    $('today').textContent = td;
+    $('total').textContent = tot;
+    $('all').textContent = order.length;
+    $('totalBar').style.width = (order.length ? tot / order.length * 100 : 0) + '%';
+    clusters.forEach(function (c) {
+      var n = c.keys.filter(function (k) { return S.done[k]; }).length, full = n === c.keys.length;
+      var cc = document.querySelector('[data-cc="' + c.idx + '"]'), rc = document.querySelector('[data-rc="' + c.idx + '"]');
+      var txt = full ? 'Готово' : n + ' / ' + c.keys.length;
+      cc.textContent = txt; cc.classList.toggle('full', full);
+      rc.textContent = txt; rc.parentNode.classList.toggle('full', full);
+      document.querySelector('[data-rb="' + c.idx + '"]').style.width = (n / c.keys.length * 100) + '%';
+    });
+    updateBatchUI();
+  }
+  function updateAll() {
+    order.forEach(syncKey);
+    $('introBox').checked = S.intro;
+    $('introRow').classList.toggle('done', S.intro);
+    $('hideDone').checked = S.hide;
+    $('clusters').classList.toggle('hide-done', S.hide);
+    updateCounts();
+  }
+  function openFirst() {
+    for (var i = 0; i < clusters.length; i++) {
+      if (clusters[i].keys.some(function (k) { return !S.done[k]; })) { $('c' + i).open = true; return; }
+    }
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('change', function (e) {
+    var inp = e.target, row = inp.closest && inp.closest('.row');
+    if (!row) return;
+    if (row.dataset.intro) {
+      S.intro = inp.checked;
+      row.classList.toggle('done', S.intro);
+      scheduleSave();
+      return;
+    }
+    var k = row.dataset.k;
+    if (inp.checked) S.done[k] = today(); else delete S.done[k];
+    syncKey(k);
+    updateCounts();
+    scheduleSave();
+  });
+  $('rungs').addEventListener('click', function (e) {
+    var b = e.target.closest('.rung'); if (!b) return;
+    var d = $('c' + b.dataset.c); d.open = true;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    d.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.chips button'), function (b) {
+    b.addEventListener('click', function () {
+      var n = +b.dataset.size; if (n === S.size) return;
+      S.size = n; renderBatch(); scheduleSave();
+    });
+  });
+  $('batchNext').addEventListener('click', renderBatch);
+  $('hideDone').addEventListener('change', function (e) {
+    S.hide = e.target.checked;
+    $('clusters').classList.toggle('hide-done', S.hide);
+    try { localStorage.setItem(LSUI, JSON.stringify({ hide: S.hide })); } catch (x) {}
+  });
+  $('resetAsk').addEventListener('click', function () { $('resetAsk').hidden = true; $('resetYes').hidden = false; $('resetNo').hidden = false; });
+  $('resetNo').addEventListener('click', function () { $('resetAsk').hidden = false; $('resetYes').hidden = true; $('resetNo').hidden = true; });
+  $('resetYes').addEventListener('click', function () {
+    S.done = {}; S.intro = false;
+    updateAll(); renderBatch(); scheduleSave();
+    $('resetNo').click();
+  });
+
+  /* ---------- start ---------- */
+  $('instrText').textContent = D.instr;
+  buildClusters();
+  buildRungs();
+  updateAll();
+  renderBatch();
+  openFirst();
+  setStatus('local');
+
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
