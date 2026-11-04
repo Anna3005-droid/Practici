@@ -1,13 +1,7 @@
 // Offline support: keeps the app files on the phone so it opens without internet.
 // Bump VERSION after changing any app file so phones pick up the new version.
-var VERSION = 'emo-v7';
-var APP = [
-  './', 'index.html', 'style.css',
-  // Emotions
-  'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png',
-  // Polarities (its own link and its own app on the phone)
-  'polarities.html', 'manifest-polarities.webmanifest', 'icon-pol-192.png', 'icon-pol-512.png', 'apple-touch-icon-pol.png'
-];
+var VERSION = 'emo-v8';
+var APP = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(APP); }).then(function () { return self.skipWaiting(); }));
@@ -25,7 +19,7 @@ self.addEventListener('fetch', function (e) {
   var url = new URL(req.url);
   var sameOrigin = url.origin === self.location.origin;
 
-  // Practice pages and the shared stylesheet: try the network first so updates arrive,
+  // Pages and stylesheets: try the network first so updates arrive,
   // fall back to the saved copy offline. Each page is saved under its own address.
   if (req.mode === 'navigate' || (sameOrigin && /\.css$/.test(url.pathname))) {
     var key = url.origin + url.pathname;
