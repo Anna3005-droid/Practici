@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#051629">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Эмоции">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Обработка полярностей</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <nav class="tabs" aria-label="Практики">
+    <a href="./">Эмоции</a>
+    <a href="polarities.html" aria-current="page">Полярности</a>
+  </nav>
+
+  <div class="bar" role="status">
+    <div>
+      <div class="lbl">Сегодня отмечено</div>
+      <div class="big" id="today">0</div>
+    </div>
+    <div class="right">
+      <div class="lbl">Всего</div>
+      <div class="big"><span id="total">0</span> <small>из <span id="all">0</span></small></div>
+    </div>
+    <div class="meter" aria-hidden="true"><i id="totalBar"></i></div>
+    <div class="save" id="save" aria-live="polite"></div>
+  </div>
+
+  <header class="intro">
+    <div class="banner corner">
+      <div class="words" aria-hidden="true"><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span></div>
+      <div class="circle" aria-hidden="true"></div>
+      <h1>Обработка<br><span class="b">полярностей</span></h1>
+      <p class="sign">Татьяна Хавро</p>
+    </div>
+    <p>Нейтрализация полярностей по протоколу «Слив». Полярности разделены только у нас в уме, и держит их порознь ментальный «заряд». Когда он уходит, восприятие постепенно становится безоценочным. Пары идут по алфавиту, весь список можно пройти примерно за месяц.</p>
+  </header>
+
+  <section class="read-once">
+    <details class="instr">
+      <summary>Инструкция для подсознания<span class="chev" aria-hidden="true"></span></summary>
+      <div class="instr-body">
+        <p class="instr-hint">Прочитайте один раз, вслух или про себя, от слов «Начало инструкции» до слов «Конец инструкции» включительно. Перечитывать не нужно: подсознание запоминает её сразу. Потом отметьте ниже, что прочитали.</p>
+        <div class="instr-text" id="instrText"></div>
+        <p class="note">«НАШЕ» и «МЫ» вместо «я» и «моё» написаны намеренно, это не опечатка: так подсознание обрабатывает все части личности сразу.</p>
+      </div>
+    </details>
+    <label class="row" id="introRow" data-intro="1">
+      <input type="checkbox" id="introBox">
+      <span class="box" aria-hidden="true"></span>
+      <span class="txt"><span>Инструкцию прочитала один раз</span></span>
+    </label>
+  </section>
+
+  <section class="batch" aria-labelledby="bt">
+    <div class="batch-head">
+      <h2 id="bt">Следующие <span id="bsize">10</span></h2>
+      <div class="chips" role="group" aria-label="Сколько пар показывать">
+        <span>За раз:</span>
+        <button type="button" data-size="10" aria-pressed="true">10</button>
+        <button type="button" data-size="15" aria-pressed="false">15</button>
+      </div>
+    </div>
+    <div class="batch-list" id="batchList"></div>
+    <div class="batch-foot">
+      <div class="foot-btns">
+        <button type="button" class="btn" id="batchNext">Обновить список</button>
+        <button type="button" class="btn" id="unskip" hidden>Вернуть пропущенные</button>
+      </div>
+      <span class="note" id="batchNote"></span>
+    </div>
+  </section>
+
+  <details class="how">
+    <summary>Как нейтрализовать одну пару<span class="chev" aria-hidden="true"></span></summary>
+    <div class="how-body">
+      <ol>
+        <li>Произнесите вслух или про себя первую полярность, потом вторую, потом слово «Слив». Например: «Любовь — ненависть — слив».</li>
+        <li>В первый раз постарайтесь почувствовать каждую полярность: что она для вас, какие эмоции, мысли или ощущения в теле вызывает. Это не обязательно, но ускоряет обработку.</li>
+        <li>Повторяйте до зевания. Если после 10 повторений зевания нет, переходите к следующей паре: подсознание всё равно её нейтрализует.</li>
+        <li>Отметьте пару здесь и больше к ней не возвращайтесь. Повторный запуск процесс не ускоряет.</li>
+      </ol>
+      <p class="note">Если пара для вас полная бессмыслица, нажмите «Пропустить». В начале берите не больше 10–15 пар в день, дальше смотрите по реакции организма. Если он говорит «хватит», значит, на сегодня хватит.</p>
+    </div>
+  </details>
+
+  <section class="mine" aria-labelledby="mt">
+    <h2 id="mt">Мои полярности</h2>
+    <p class="note">Кроме общего списка, нейтрализуйте и свои личные полярности. Пары вида «я и кто-то» или «я и что-то» прорабатываются так же: «Я и моя мама — слив».</p>
+    <form class="add" id="addForm">
+      <input class="field" id="addText" type="text" maxlength="120" autocomplete="off" enterkeyhint="done" placeholder="Например: я и моя мама" aria-label="Своя пара полярностей">
+      <button type="submit" class="btn primary">Добавить</button>
+    </form>
+    <p class="msg" id="addMsg" aria-live="polite" hidden></p>
+    <div class="mine-list" id="mineList"></div>
+  </section>
+
+  <section aria-labelledby="cl">
+    <div class="cl-head">
+      <h2 id="cl">Все полярности</h2>
+      <label class="switch"><input type="checkbox" id="hideDone"> Скрыть отмеченные</label>
+    </div>
+    <div class="find">
+      <input class="field" id="search" type="search" autocomplete="off" enterkeyhint="search" placeholder="Найти пару" aria-label="Найти пару">
+      <p class="note" id="searchNote" aria-live="polite" hidden></p>
+    </div>
+    <div class="cls" id="groups"></div>
+  </section>
+
+  <section class="reset">
+    <button type="button" class="btn" id="resetAsk">Сбросить прогресс по полярностям</button>
+    <button type="button" class="btn danger" id="resetYes" hidden>Да, сбросить</button>
+    <button type="button" class="btn" id="resetNo" hidden>Отмена</button>
+  </section>
+
+</div>
+
+<script type="application/json" id="data">{"pairs": ["абсолютный — относительный", "абстрактный — конкретный", "авангард — арьергард", "ад — рай", "адекватное — неадекватное", "аккуратный — неряшливый", "активность — пассивность", "активный — пассивный", "актуальный — неактуальный", "альтруизм — эгоизм", "анализ — синтез", "аномальный — нормальный", "ароматный — зловонный", "атака — контратака", "бедность — богатство", "безнадежность — надежда", "безопасность — небезопасность", "безразличие — вовлеченность", "белое — черное", "бережливый — расточительный", "бесконечно малое — бесконечно большое", "беспокойство — покой", "беспокойство — спокойствие", "благодарность — неблагодарность", "благоразумный — неблагоразумный", "благородный — неблагородный", "благородство — низость", "благословлять — проклинать", "бледнеть — краснеть", "блестящий — тусклый", "близкий — далекий", "близость — одиночество", "блуд — целомудрие", "бог — дьявол", "богатство — нищета", "бодрый — усталый", "божественное — материальное", "большое — маленькое", "брать — давать", "брать на себя ответственность — увиливать от ответственности", "бросать — поднимать", "будни — праздник", "будущее — прошлое", "быстро — медленно", "быть — не быть", "быть гибким — быть зацикленным", "быть единым со своими корнями — быть разделенным с ними", "великодушный — непорядочный", "величие — ничтожество", "вера — знание", "вера — неверие", "верить, что все получится — не верить, что все получится", "верх — низ", "веселый — злой", "весомость — невесомость", "вечность — момент", "взлет — падение", "видеть — понимать", "видимость — невидимость", "виртуальный мир — реальный мир", "владеть всем — ничем не владеть", "внутренний мир — внешний мир", "внутри — снаружи", "возвышенный — низкий", "возможно — невозможно", "война — мир", "вперед — назад", "все — ничего", "все зависит от меня — ничего не зависит от меня", "всегда — никогда", "всегда осознавать себя — никогда не осознавать себя", "вхождение в опыт — избегание опыта", "вывод — следствие", "выдержать — сдаться", "выживать — умирать", "выжить — сдаться", "высокий — низкий", "высоко — низко", "гениальность — безумство", "глубина — поверхность", "глупый — просвещенный", "голод — сытость", "горизонтальный — вертикальный", "город — деревня", "грамотность — неграмотность", "давать — получать", "далеко — близко", "дарить — принимать", "движение — неподвижность", "движение — остановка", "движение — покой", "движение — стояние на месте", "день — ночь", "динамика — статика", "длинный — короткий", "добро — зло", "доброжелательность — враждебность", "должен — не должен", "должен — не хочется делать", "должен сохранять лицо — не должен сохранять лицо", "доминирование — подчинение", "доступность — недосягаемость", "другие правы — я прав", "единство — двойственность", "единство — разделенность", "единство с остальными — изоляция", "есть время — нет времени", "жарко — холодно", "желание быть любимым — желание любить", "желание быть одиноким — желание быть со всеми", "желание быть одобренным — желание одобрять", "желание быть с людьми — нежелание быть с людьми", "желание двигаться — нежелание двигаться", "желание двигаться — страх двигаться", "желание жить — желание умереть", "желание контролировать — желание отпустить контроль", "желание контролировать других — желание быть контролируемым другими", "желание любви — желание давать любовь", "желание одобрения — желание давать одобрение", "желание работать — нежелание работать", "желание спорить — нежелание спорить", "жесткость — мягкость", "жизнерадостность — мрачность", "жизнерадостный — утомленный", "жизнь — смерть", "забывать — вспоминать", "зависимость — независимость", "здесь — сейчас", "здесь — там", "здравомыслящий — необдуманный", "земное — неземное", "знание — действие", "знание — невежество", "знать — не знать", "знать все — не знать ничего", "знать свое предназначение — не знать своего предназначения", "изменение — усилие", "иллюзия — реальность", "иметь возможность выбирать — не иметь возможности выбора", "иметь высшую цель — жить совершенно без цели", "иметь результаты — не иметь результатов", "иметь результаты проработок — не иметь результаты проработок", "инициативный — бездеятельный", "интерес — безразличие", "интерес — скука", "интуиция — сознание", "истина — галлюцинации", "истинная память — иллюзорная память", "каждый — никто", "коммуникация — отсутствие коммуникации", "конденсация — растворение", "контроль — свобода", "красота — уродство", "крик — тишина", "лево — право", "левое полушарие — правое полушарие", "легкость — тяжесть", "лень — желание действовать", "логика — творчество", "логика — эмоции", "логическое мышление — образное мышление", "локализация — нелокализация", "лох — не лох", "лучше — хуже", "любовь — агрессивность", "любовь — боль", "любовь — ненависть", "любовь — одиночество", "любовь — отказ", "любовь — свобода", "любовь — сила/власть", "любовь — страх", "любовь к людям — ненависть к людям", "люди — животные", "маленькое — большое", "материальное — духовное", "материальное — нематериальное", "материальное — пустота", "материальный мир — духовный мир", "материальный мир — тонкий мир", "материя — пустота", "материя — энергия", "милосердный — безжалостный", "минус — плюс", "мир — агрессия", "мир — беспорядки", "мир — власть", "мир несправедлив — мир справедлив", "мир опасен — мир безопасен", "мир плохой — мир хороший", "мистицизм — мещанство", "множество — единственность", "мое — чужое", "мои желания — чужие желания", "мой отец — моя мать", "мощь — беспомощность", "мудрец — чмо тупое", "мужское — женское", "мужчина и женщина", "наблюдатель — наблюдаемое", "навсегда — временно", "надо что-то делать — не надо ничего делать", "наличие мыслей — отсутствие мыслей", "настоящее — будущее", "настоящее — прошлое", "настоящий момент — вечность", "начало — конец", "начинать — останавливать", "небо — земля", "невежественные люди — мудрые люди", "недоверие к людям — доверие к людям", "недолговечность — вечность", "нежелание жить — жажда жизни", "нежелание жить — наслаждение жизнью", "нежелание изменений — желание изменений", "неимущий — зажиточный", "необходимо прорабатывать — да забить на всю эту проработку болт", "неприятно — приятно", "неуверенность — уверенность", "неуверенность в будущем — уверенность в будущем", "неуверенность в себе — уверенность в себе", "неудача — удача", "неудовлетворение — удовлетворение", "нищий — состоятельный", "обучение — знание", "обычные люди — просветленные люди", "огонь — вода", "ограниченное сознание — безграничное сознание", "ограниченность — безграничность", "опасность — безопасность", "определенность — неопределенность", "оптимизм — пессимизм", "осознавать суть — видеть поверхность", "оставаться — уходить", "остроумный человек — тупой человек", "ответственность — безответственность", "отрицательные эмоции — положительные эмоции", "отрицательный — положительный", "отсутствие сочувствия — сочувствие", "очевидный мир — неочевидный мир", "паника — спокойствие", "печаль — радость", "плохой я — хороший я", "победа — поражение", "победа — проигрыш", "побеждать — проигрывать", "повторение — разнообразие", "подтверждение — опровержение", "позитивная полярность — негативная полярность", "позитивное — негативное", "позитивный элемент — негативный элемент", "покой — страх", "полнота — пустота", "полный — пустой", "пологий — крутой", "получать результаты от проработки — не получать от проработки ни фига", "помнить — не помнить", "понимание — непонимание", "постоянный — быстротечный", "постоянство — мимолетность", "постоянство — перемены", "пофигизм — энтузиазм", "появление — исчезновение", "прав — неправ", "правда — ложь", "правильно — неправильно", "презрение — уважение", "приближение к цели — отдаление от цели", "приемлемое — неприемлемое", "приличное — неприличное", "принятие — отвержение", "принятие — отторжение", "принятие чужих точек зрения — непринятие чужих точек зрения", "природа — цивилизация", "притяжение — отталкивание", "притяжение к людям — отторжение от людей", "приход — уход", "причина — следствие", "прогресс — деградация", "продвижение — отступление", "продвинутый эзотерик — последний лох", "просветленность — приземленность", "прошлое — будущее", "прямо — по кривой", "пустота — весь мир", "путь — цель", "равновесие — принуждение", "радость — печаль", "раздражение — принятие", "различие — идентичность", "различие — отождествление", "разрешение — запрет", "разум — инстинкты", "разум — эмоция", "разумный — безумный", "расслабление — напряжение", "рассудительный — необдуманный", "расширение — сжатие", "решительность что-то делать — откладывание на потом", "ритмичный — неритмичный", "свежий — вялый", "свет — тьма", "свобода — несвобода", "свобода — ответственность", "свобода — подчинение", "свобода — рабство", "свобода — рок/судьба/карма", "свобода — угнетенность", "сворачивание — разворачивание", "святой — грешник", "сейчас — потом", "серьезность — легкомысленность", "сила — бессилие", "сила — слабость", "сила ночи — сила дня", "симметричный — асимметричный", "симпатия — антипатия", "скука — интерес", "сладкое — несладкое", "совершенство — несовершенство", "соглашаться — не соглашаться", "созидание — разрушение", "сознание — инстинкты", "сознание — материальность", "сознание — тело", "сознательность — бессознательность", "соленое — несоленое", "солнце — луна", "сон — реальность", "сочувствие — умилостивление", "спереди — сзади", "способность (к чему-либо) — неспособность", "стабильность — потрясения", "становление — исчезновение", "старый — молодой", "стойкость — хрупкость", "стоя — лежа", "страсть — духовность", "страх — покой", "страх — смелость", "структурированный — неструктурированный", "стыд провала — восторг победы", "субъект — объект", "существование — несуществование", "существование — созидание", "счастье — горе", "счастье — печаль", "талантливость — бездарность", "тащусь от проработок — достали проработки", "тело — дух", "тело — разум", "темно — светло", "теория — практика", "терпимость — нетерпимость", "тихо — громко", "тонкий юмор — пошлый юмор", "тот, кто знает — то, что знает", "точка — пространство", "точка — трехмерный объект", "трагедия — комедия", "тревога — спокойствие", "тяжелое — легкое", "у меня ничего не получается — у меня все получается", "уверенность — неуверенность", "уверенность в изобилии вселенной — страх, что не достанется", "удача — неудача", "удачный — неудачный", "удовлетворение — недовольство", "удовлетворенность — неудовлетворенность", "усилие — апатия", "усилие — отдых", "успех — поражение", "успех — разочарование", "успешный — неуспешный", "утверждение — отрицание", "учитель — ученик", "уязвимость — неуязвимость", "форма — бесформенность", "фундаментальность — расшатанность", "хаос — порядок", "харизма — серость", "хороший и плохой", "хочу общаться с людьми — не хочу общаться с людьми", "частичность — целостность", "часть — целое", "человеческое воплощение — потусторонняя жизнь", "честный человек — мошенник", "чистый — грязный", "что-то — ничто", "чувственность — бесчувствие", "шум/звуки — тишина", "щедрый — скупой", "экстраверт — интроверт", "эмоции — пустота", "эмоции — разум", "эмоции — рассудительность", "эмоция — отсутствие эмоции", "энергичный — инертный", "энтузиазм — апатия", "этот мир — другой мир", "я — бесконечность", "я — будда", "я — весь мир", "я — внеземной разум", "я — все", "я — вселенная", "я — галактика", "я — движение", "я — другие", "я — другой", "я — единство", "я — жизнь", "я — изначальность", "я — изобилие вселенной", "я — интуиция", "я — люди", "я — мир", "я — не я", "я — ничто", "я — полное просветление", "я — пустота", "я — тонкий мир", "я должен — я хочу", "я должен быть прав — я не прав", "я есть — меня нет", "я источник — я не источник", "я уникален — я как все", "я хочу сознавать — я не хочу сознавать"], "instr": ["Начало инструкции.", "Эта инструкция для тебя, НАШЕ подсознание. Эта инструкция инсталлирует протокол обработки полярностей «Слив».", "Начиная с этого момента, все ранее выданные инструкции, касающиеся протокола «Слив» в его более ранних модификациях прошу считать недействительными, и всю работу по протоколу «Слив» вести только по этой версии инструкции.", "Если какие-либо полярности в настоящее время находятся в обработке по более старой версии протокола, прошу перевести их на обработку по новой версии протокола, начиная с этого момента.", "Как только мы обратим внимание на полярности, которые мы захотим нейтрализовать при помощи этого протокола, мы произнесем вслух или подумаем специальное ключевое слово («Слив»), и ты будешь проводить полностью автономную и автоматическую обработку в фоновом режиме этой пары полярностей до их полной нейтрализации при помощи процедуры «Слив» авторства Дмитрия Лёушкина.", "При необходимости ты свяжешься с подсознанием Дмитрия Лёушкина и получишь от него самую последнюю версию этой процедуры.", "Один раз в месяц в случайно выбранное время ты будешь связываться с подсознанием Дмитрия Лёушкина, и проверять, не появилась ли более новая версия данной инструкции. В случае, если она появилась, ты автоматически обновишь имеющуюся у тебя версию на более новую, получив ее у подсознания Дмитрия Лёушкина.", "Запуск механизма обработки, после произнесения соответствующего определенного выше ключевого слова, ты будешь сигнализировать при помощи зевания НАШЕГО организма.", "НАШЕ подсознание, ты всегда будешь делать все то, что МЫ описали в этой инструкции, начиная с этого момента, вне зависимости от того, в каком состоянии, в каких обстоятельствах, в какой ситуации или в каком ментальном или эмоциональном состоянии МЫ находимся, или какие полярности с помощью этого протокола МЫ хотим нейтрализовать.", "И МЫ благодарим тебя и глубоко признательны тебе и уважаем тебя за то, что ты всегда остаешься НАШИМ верным слугой.", "Конец инструкции."]}</script>
+<script>
+(function () {
+  var D = JSON.parse(document.getElementById('data').textContent);
+  var LS = 'pol-progress-v1', LSUI = 'pol-ui-v1';
+  var PACE = 15;
+
+  /* The list: one key per pair, grouped by first letter */
+  var meta = {}, order = [], groups = [], gIdx = {};
+  function norm(s) { return String(s).toLowerCase().replace(/ё/g, 'е'); }
+  D.pairs.forEach(function (t) {
+    var k = 'p:' + t.toLowerCase();
+    if (meta[k]) return;
+    var L = t.charAt(0).toUpperCase();
+    if (!(L in gIdx)) { gIdx[L] = groups.length; groups.push({ letter: L, idx: groups.length, keys: [] }); }
+    meta[k] = { text: t, q: norm(t) };
+    order.push(k);
+    groups[gIdx[L]].keys.push(k);
+  });
+
+  var S = { done: {}, skip: {}, mine: [], size: 10, intro: false, hide: false };
+  var batch = [], query = '', openBefore = null;
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
+  function $(id) { return document.getElementById(id); }
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+  function sel(k) { return '[data-k="' + k.replace(/["\\]/g, '\\$&') + '"]'; }
+  function today() {
+    var d = new Date(), p = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+  function plural(n, one, few, many) {
+    var a = n % 10, b = n % 100;
+    return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many;
+  }
+  function mineKey(m) { return 'm:' + m.id; }
+  function allKeys() { return order.concat(S.mine.map(mineKey)); }
+
+  /* ---------- storage (this device) ---------- */
+  function snapshot() { return { v: 1, done: S.done, skip: S.skip, mine: S.mine, size: S.size, intro: S.intro, updated: Date.now() }; }
+  function applyData(d) {
+    if (!d) return;
+    if (d.done && typeof d.done === 'object') S.done = Object.assign({}, d.done);
+    if (d.skip && typeof d.skip === 'object') S.skip = Object.assign({}, d.skip);
+    if (Array.isArray(d.mine)) S.mine = d.mine.filter(function (m) { return m && typeof m.id === 'string' && typeof m.text === 'string' && m.text; });
+    if (d.size === 10 || d.size === 15) S.size = d.size;
+    if (typeof d.intro === 'boolean') S.intro = d.intro;
+  }
+  try { applyData(JSON.parse(localStorage.getItem(LS) || 'null')); } catch (e) {}
+  try { var ui = JSON.parse(localStorage.getItem(LSUI) || 'null'); if (ui && ui.hide) S.hide = true; } catch (e) {}
+
+  function save() {
+    try {
+      localStorage.setItem(LS, JSON.stringify(snapshot()));
+      $('save').textContent = 'Прогресс сохраняется на этом устройстве';
+    } catch (e) {
+      $('save').textContent = 'Браузер не даёт сохранить прогресс, после закрытия он пропадёт';
+    }
+  }
+
+  /* ---------- build ---------- */
+  function rowHTML(k, text) {
+    return '<label class="row" data-k="' + esc(k) + '"><input type="checkbox"><span class="box" aria-hidden="true"></span>' +
+      '<span class="txt"><span>' + esc(text) + '</span></span><span class="tag skipped">пропущено</span></label>';
+  }
+  function buildGroups() {
+    var h = '';
+    groups.forEach(function (g) {
+      h += '<details class="cl" id="g' + g.idx + '"><summary><span class="cn">' + esc(g.letter) + '</span><span class="cc" data-cc="' + g.idx + '"></span></summary><div class="grid pairs">';
+      g.keys.forEach(function (k) { h += rowHTML(k, meta[k].text); });
+      h += '</div></details>';
+    });
+    $('groups').innerHTML = h;
+  }
+  function renderBatch() {
+    batch = order.filter(function (k) { return !S.done[k] && !S.skip[k]; }).slice(0, S.size);
+    $('bsize').textContent = S.size;
+    var h = '';
+    batch.forEach(function (k, i) {
+      h += '<div class="brow" style="--n:' + i + '">' + rowHTML(k, meta[k].text) +
+        '<button type="button" class="skip" data-skip="' + esc(k) + '" aria-label="Пропустить «' + esc(meta[k].text) + '»">Пропустить</button></div>';
+    });
+    $('batchList').innerHTML = h || '<p class="note" style="padding:12px">' +
+      (skippedLeft() ? 'Остались только пропущенные пары.' : 'Все полярности из списка отмечены.') + '</p>';
+    each('.chips button', function (b) { b.setAttribute('aria-pressed', String(+b.dataset.size === S.size)); });
+    batch.forEach(syncKey);
+    updateBatchUI();
+  }
+  function renderMine() {
+    var h = '';
+    S.mine.forEach(function (m) {
+      h += '<div class="brow">' + rowHTML(mineKey(m), m.text) +
+        '<button type="button" class="del" data-del="' + esc(m.id) + '" aria-label="Удалить «' + esc(m.text) + '»"></button></div>';
+    });
+    $('mineList').innerHTML = h;
+    S.mine.forEach(function (m) { syncKey(mineKey(m)); });
+  }
+
+  /* ---------- update ---------- */
+  function replay(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function setNum(id, v) {
+    var el = $(id), s = String(v);
+    if (el.textContent !== s) { el.textContent = s; replay(el, 'bump'); }
+  }
+  function syncKey(k) {
+    var on = !!S.done[k], sk = !!S.skip[k];
+    each('.row' + sel(k), function (r) {
+      r.classList.toggle('done', on);
+      r.classList.toggle('skipped', sk);
+      r.firstElementChild.checked = on;
+      if (r.parentNode.classList.contains('brow')) r.parentNode.classList.toggle('is-done', on);
+    });
+  }
+  function skippedLeft() { return order.filter(function (k) { return S.skip[k] && !S.done[k]; }).length; }
+  function todayCount() {
+    var t = today();
+    return allKeys().filter(function (k) { return S.done[k] === t; }).length;
+  }
+  function updateBatchUI() {
+    var left = batch.filter(function (k) { return !S.done[k]; }).length;
+    var nskip = skippedLeft(), td = todayCount();
+    var btn = $('batchNext'), note = $('batchNote'), un = $('unskip');
+    un.hidden = !nskip;
+    un.textContent = 'Вернуть пропущенные (' + nskip + ')';
+    var pace = td >= PACE
+      ? 'Сегодня уже ' + td + ' ' + plural(td, 'пара', 'пары', 'пар') + '. Если организм говорит «хватит», значит, хватит.'
+      : 'В начале рекомендуется 10–15 пар в день.';
+    if (!batch.length) { btn.hidden = true; note.textContent = ''; return; }
+    btn.hidden = false;
+    if (left === 0) {
+      btn.textContent = 'Следующие ' + S.size;
+      btn.classList.add('primary', 'pulse');
+      note.textContent = 'Все отмечены. ' + (td >= PACE ? pace : '');
+    } else {
+      btn.textContent = 'Обновить список';
+      btn.classList.remove('primary', 'pulse');
+      note.textContent = 'Осталось ' + left + ' из ' + batch.length + '. ' + pace;
+    }
+  }
+  function updateCounts() {
+    var keys = allKeys(), t = today(), tot = 0, td = 0;
+    keys.forEach(function (k) { var v = S.done[k]; if (v) { tot++; if (v === t) td++; } });
+    setNum('today', td);
+    setNum('total', tot);
+    $('all').textContent = keys.length;
+    $('totalBar').style.width = (keys.length ? tot / keys.length * 100 : 0) + '%';
+    groups.forEach(function (g) {
+      var n = g.keys.filter(function (k) { return S.done[k]; }).length, full = n === g.keys.length;
+      var cc = document.querySelector('[data-cc="' + g.idx + '"]');
+      cc.textContent = full ? 'Готово' : n + ' / ' + g.keys.length;
+      cc.classList.toggle('full', full);
+    });
+    updateBatchUI();
+  }
+  function updateAll() {
+    allKeys().forEach(syncKey);
+    $('introBox').checked = S.intro;
+    $('introRow').classList.toggle('done', S.intro);
+    $('hideDone').checked = S.hide;
+    $('groups').classList.toggle('hide-done', S.hide);
+    updateCounts();
+  }
+  function openFirst() {
+    for (var i = 0; i < groups.length; i++) {
+      if (groups[i].keys.some(function (k) { return !S.done[k]; })) { $('g' + i).open = true; return; }
+    }
+  }
+
+  /* ---------- search ---------- */
+  function applySearch() {
+    var q = norm(query.trim()), found = 0;
+    if (!q) {
+      each('#groups .row', function (r) { r.hidden = false; });
+      groups.forEach(function (g, i) { var d = $('g' + i); d.hidden = false; if (openBefore) d.open = openBefore[i]; });
+      openBefore = null;
+      $('searchNote').hidden = true;
+      return;
+    }
+    if (!openBefore) openBefore = groups.map(function (g, i) { return $('g' + i).open; });
+    groups.forEach(function (g, i) {
+      var n = 0;
+      g.keys.forEach(function (k) {
+        var hit = meta[k].q.indexOf(q) !== -1;
+        document.querySelector('#groups .row' + sel(k)).hidden = !hit;
+        if (hit && !(S.hide && S.done[k])) n++;
+      });
+      var d = $('g' + i);
+      d.hidden = n === 0;
+      d.open = n > 0;
+      found += n;
+    });
+    $('searchNote').hidden = false;
+    $('searchNote').textContent = found ? 'Найдено: ' + found : 'Ничего не найдено';
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener('change', function (e) {
+    var inp = e.target, row = inp.closest && inp.closest('.row');
+    if (!row) return;
+    if (row.dataset.intro) {
+      S.intro = inp.checked;
+      row.classList.toggle('done', S.intro);
+      if (S.intro) replay(row, 'pop');
+      save();
+      return;
+    }
+    var k = row.dataset.k;
+    if (inp.checked) { S.done[k] = today(); delete S.skip[k]; } else delete S.done[k];
+    syncKey(k);
+    if (inp.checked) each('.row' + sel(k), function (r) { replay(r, 'pop'); });
+    updateCounts();
+    if (query) applySearch();
+    save();
+  });
+
+  $('batchList').addEventListener('click', function (e) {
+    var b = e.target.closest('.skip'); if (!b) return;
+    var k = b.dataset.skip, wrap = b.parentNode;
+    S.skip[k] = today();
+    batch = batch.filter(function (x) { return x !== k; });
+    wrap.classList.add('gone');
+    setTimeout(function () {
+      wrap.remove();
+      if (!batch.length) renderBatch();
+    }, 230);
+    syncKey(k);
+    updateBatchUI();
+    save();
+  });
+  $('unskip').addEventListener('click', function () {
+    var was = Object.keys(S.skip);
+    S.skip = {};
+    was.forEach(syncKey);
+    renderBatch();
+    save();
+  });
+  each('.chips button', function (b) {
+    b.addEventListener('click', function () {
+      var n = +b.dataset.size; if (n === S.size) return;
+      S.size = n; renderBatch(); save();
+    });
+  });
+  $('batchNext').addEventListener('click', renderBatch);
+
+  function say(t) { var m = $('addMsg'); m.textContent = t; m.hidden = !t; }
+  $('addForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var inp = $('addText'), text = inp.value.replace(/\s+/g, ' ').trim();
+    if (!text) { say('Впишите пару, например: я и моя мама.'); inp.focus(); return; }
+    var q = norm(text);
+    if (S.mine.some(function (m) { return norm(m.text) === q; })) { say('Такая пара уже есть в вашем списке.'); return; }
+    S.mine.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), text: text });
+    inp.value = '';
+    say(order.some(function (k) { return meta[k].q === q; }) ? 'Добавлено. Такая пара есть и в общем списке.' : '');
+    renderMine();
+    updateCounts();
+    save();
+  });
+  $('addText').addEventListener('input', function () { if (!$('addMsg').hidden) say(''); });
+  $('mineList').addEventListener('click', function (e) {
+    var b = e.target.closest('.del'); if (!b) return;
+    var id = b.dataset.del;
+    delete S.done['m:' + id];
+    S.mine = S.mine.filter(function (m) { return m.id !== id; });
+    renderMine();
+    updateCounts();
+    save();
+  });
+
+  $('search').addEventListener('input', function (e) { query = e.target.value; applySearch(); });
+  $('hideDone').addEventListener('change', function (e) {
+    S.hide = e.target.checked;
+    $('groups').classList.toggle('hide-done', S.hide);
+    if (query) applySearch();
+    try { localStorage.setItem(LSUI, JSON.stringify({ hide: S.hide })); } catch (x) {}
+  });
+  $('resetAsk').addEventListener('click', function () { $('resetAsk').hidden = true; $('resetYes').hidden = false; $('resetNo').hidden = false; });
+  $('resetNo').addEventListener('click', function () { $('resetAsk').hidden = false; $('resetYes').hidden = true; $('resetNo').hidden = true; });
+  $('resetYes').addEventListener('click', function () {
+    S.done = {}; S.skip = {}; S.intro = false;
+    updateAll(); renderBatch(); save();
+    $('resetNo').click();
+  });
+
+  /* ---------- start ---------- */
+  $('instrText').innerHTML = [].concat(D.instr).map(function (p, i, all) {
+    var edge = i === 0 || i === all.length - 1;
+    var html = esc(p).replace(/«Слив»/g, '<span class="key">«Слив»</span>');
+    return '<p' + (edge ? ' class="mark"' : '') + '>' + html + '</p>';
+  }).join('');
+  buildGroups();
+  renderMine();
+  updateAll();
+  renderBatch();
+  openFirst();
+  save();
+
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
