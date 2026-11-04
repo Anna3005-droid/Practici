@@ -1,6 +1,6 @@
 // Offline support: keeps the app files on the phone so it opens without internet.
 // Bump VERSION after changing any app file so phones pick up the new version.
-var VERSION = 'emo-v3';
+var VERSION = 'emo-v4';
 var APP = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
