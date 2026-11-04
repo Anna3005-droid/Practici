@@ -1,7 +1,7 @@
 // Offline support: keeps the app files on the phone so it opens without internet.
 // Bump VERSION after changing any app file so phones pick up the new version.
-var VERSION = 'emo-v5';
-var APP = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+var VERSION = 'emo-v6';
+var APP = ['./', 'index.html', 'vygody.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(APP); }).then(function () { return self.skipWaiting(); }));
@@ -18,13 +18,17 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
 
-  // The page itself: try the network first so updates arrive, fall back to the saved copy offline.
+  // Pages: try the network first so updates arrive, fall back to the saved copy of that same page offline.
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(function (res) {
-      var copy = res.clone();
-      caches.open(VERSION).then(function (c) { c.put('index.html', copy); });
+      if (res.ok) {
+        var copy = res.clone();
+        caches.open(VERSION).then(function (c) { c.put(req, copy); });
+      }
       return res;
-    }).catch(function () { return caches.match('index.html'); }));
+    }).catch(function () {
+      return caches.match(req, { ignoreSearch: true }).then(function (hit) { return hit || caches.match('index.html'); });
+    }));
     return;
   }
 

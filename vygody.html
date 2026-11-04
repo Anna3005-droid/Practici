@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#051629">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Эмоции">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Проработка вторичных выгод</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  /* Same look as the emotions app (deep navy, heavy condensed caps, electric blue).
+     One column: sticky progress, banner, how-to-read card, three question cards, footer.
+     Single dark look on purpose, same as the program's site. */
+  color-scheme: dark;
+  --bg: #051629;
+  --bg2: #03101F;
+  --surface: #0A2142;
+  --ink: #FFFFFF;
+  --text: #D9E4F2;
+  --muted: #9DB0CC;
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.35);
+  --blue: #0082FE;
+  --blue-hi: #2A96FF;
+  --blue-soft: rgba(0, 130, 254, 0.14);
+  --done: #7F93B0;
+  --display: "Oswald", "Arial Narrow", Impact, sans-serif;
+  --body: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+[hidden] { display: none !important; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--bg); scroll-behavior: smooth; }
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: clip;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+}
+.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+h1, h2 { font-family: var(--display); font-weight: 700; text-transform: uppercase; margin: 0; text-wrap: balance; letter-spacing: .005em; }
+h1 { font-size: clamp(38px, 10.5vw, 72px); line-height: 1.08; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+.b { color: var(--blue); }
+.lbl { font-size: 0.68rem; line-height: 1.4; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+/* Sticky progress: count on the left, three step dots on the right */
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: var(--bg);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 16px;
+  align-items: end;
+}
+.bar .big { font-family: var(--display); font-weight: 700; font-size: 2rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.bar .big small { font-family: var(--body); font-size: 0.9rem; font-weight: 500; color: var(--muted); }
+.bar .big span { display: inline-block; }
+.pips { display: flex; gap: 8px; }
+.pip {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1.6px solid var(--line-strong);
+  font: 700 0.95rem var(--display); text-decoration: none;
+  transition: background .25s, border-color .25s, transform .2s cubic-bezier(.2, .8, .2, 1);
+}
+.pip.on { background: var(--blue); border-color: var(--blue); }
+.pip:active { transform: scale(.9); }
+.pip:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
+.meter { grid-column: 1 / -1; margin-top: 10px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--blue), var(--blue-hi)); border-radius: 3px; transition: width .6s cubic-bezier(.2, .8, .2, 1); }
+
+/* Banner, as on the program's cover */
+.intro { display: flex; flex-direction: column; gap: 18px; padding-top: 8px; }
+.intro > p { color: var(--muted); max-width: 60ch; }
+.back { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 40px; text-decoration: none; }
+.back::before { content: ""; width: 8px; height: 8px; border: solid var(--blue-hi); border-width: 0 0 2px 2px; transform: rotate(45deg); transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
+.back:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; border-radius: 4px; }
+.banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  min-height: 230px;
+  padding: 34px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+.banner .words {
+  position: absolute; z-index: -2;
+  left: 52%; top: 50%; translate: 0 -50%;
+  display: flex; flex-direction: column;
+  font-family: var(--display); font-weight: 700; text-transform: uppercase;
+  font-size: 66px; line-height: .9;
+  color: transparent; -webkit-text-stroke: 1.2px rgba(255, 255, 255, .13);
+  white-space: nowrap; user-select: none; pointer-events: none;
+}
+.banner .circle {
+  position: absolute; z-index: -1;
+  width: clamp(240px, 50%, 380px); aspect-ratio: 1; border-radius: 50%;
+  background: var(--blue);
+  right: calc(clamp(240px, 50%, 380px) * -0.62); top: 50%; translate: 0 -50%;
+}
+.sign { display: flex; align-items: center; gap: 14px; font-size: 0.7rem; letter-spacing: .34em; text-transform: uppercase; font-weight: 500; }
+.sign::before { content: ""; flex: none; width: 48px; height: 1px; background: var(--ink); }
+
+/* How to read */
+.legend {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.legend h2 { font-size: 1.15rem; font-weight: 600; letter-spacing: .02em; }
+.legend ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px 16px; font-size: 0.95rem; color: var(--text); }
+.legend li { display: contents; }
+.legend li > :first-child { display: flex; justify-content: center; white-space: nowrap; }
+.legend .breath { margin: 0; }
+.legend .breath::before, .legend .breath::after { display: none; }
+.gender { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 0.95rem; color: var(--text); }
+.chips { display: flex; gap: 6px; }
+.chips button {
+  min-width: 60px; min-height: 40px; padding: 0 16px;
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  background: transparent; cursor: pointer; font-weight: 600;
+  transition: background .25s, border-color .25s, color .25s, transform .2s cubic-bezier(.2, .8, .2, 1);
+}
+.chips button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #FFFFFF; animation: chip .4s cubic-bezier(.3, 1.6, .5, 1); }
+.chips button:active { transform: scale(.9); }
+.chips button:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
+.gender .note { flex-basis: 100%; font-size: 0.82rem; color: var(--muted); }
+
+/* What you say in your own words */
+.fill {
+  font-family: var(--body); text-transform: none; letter-spacing: 0;
+  font-style: italic; font-weight: 500; font-size: .9em;
+  color: var(--blue-hi);
+  border: 1.5px dashed var(--blue-hi); border-radius: 8px;
+  background: var(--blue-soft);
+  padding: 1px 8px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+/* Words with a male and a female form */
+.g { white-space: nowrap; }
+/* The refrain */
+.key { color: var(--ink); font-weight: 600; }
+
+/* Pause for a breath */
+.breath {
+  display: flex; align-items: center; gap: 12px;
+  margin: 4px 0;
+  font: 600 0.78rem var(--display); letter-spacing: .26em; text-transform: uppercase;
+  color: var(--blue-hi);
+}
+.breath::before, .breath::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(42, 150, 255, .5)); }
+.breath::after { background: linear-gradient(90deg, rgba(42, 150, 255, .5), transparent); }
+.breath .dot { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--blue); animation: breathe 8s ease-in-out infinite; }
+
+/* Question cards */
+.steps { display: flex; flex-direction: column; gap: 22px; margin: 0; padding: 0; list-style: none; }
+.step {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 104px);
+  transition: border-color .3s, box-shadow .3s;
+}
+.step.done { border-color: var(--blue); box-shadow: 0 24px 48px -30px rgba(0, 130, 254, .8); }
+.step .num {
+  position: absolute; z-index: -1; right: 14px; top: 2px;
+  font: 700 96px/1 var(--display);
+  color: transparent; -webkit-text-stroke: 1.2px rgba(255, 255, 255, .14);
+  user-select: none; pointer-events: none;
+}
+.q { padding: 22px 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+.q .lbl { color: var(--blue-hi); display: flex; align-items: center; gap: 10px; }
+.q .lbl::before { content: "?"; width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #FFFFFF; display: grid; place-items: center; font: 700 0.85rem var(--display); letter-spacing: 0; }
+.q h2 { font-size: clamp(1.3rem, 5.4vw, 1.75rem); line-height: 1.2; font-weight: 600; padding-right: 64px; }
+.say { border-top: 1px solid var(--line); padding: 20px 18px 8px; display: flex; flex-direction: column; gap: 16px; background: linear-gradient(180deg, rgba(3, 16, 31, .55), rgba(3, 16, 31, 0) 160px); }
+.say .lbl { display: flex; align-items: center; gap: 10px; }
+.say .lbl svg { width: 20px; height: 20px; flex: none; color: var(--blue-hi); }
+.say p { font-size: 1.06rem; line-height: 1.75; color: var(--text); max-width: 62ch; overflow-wrap: break-word; }
+.step-foot { padding: 6px 8px 10px; }
+
+/* Done mark, same as the emotions app */
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .2s;
+}
+.row:hover { background: var(--blue-soft); }
+.row input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.row:has(input:focus-visible) { outline: 2px solid var(--blue-hi); outline-offset: 1px; }
+.box {
+  flex: none;
+  width: 26px; height: 26px;
+  border: 1.6px solid var(--line-strong);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  transition: background .2s, border-color .2s, transform .2s cubic-bezier(.3, 1.6, .5, 1);
+}
+.box::after {
+  content: "";
+  width: 6px; height: 11px;
+  border: solid #FFFFFF;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+  opacity: 0;
+}
+.row:active .box { transform: scale(.85); }
+.row.done .box { background: var(--blue); border-color: var(--blue); }
+.row.done .box::after { opacity: 1; }
+.row.pop .box { animation: tick .5s cubic-bezier(.3, 1.6, .5, 1); }
+.row.pop .box::after { animation: check .3s ease-out .06s both; }
+.row .txt { transition: color .3s; }
+.row.done .txt { color: var(--blue-hi); }
+
+/* Footer */
+.foot { display: flex; flex-direction: column; gap: 14px; }
+.btn {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center; align-self: flex-start;
+  min-height: 46px; padding: 0 22px;
+  border: 2px solid var(--line-strong); border-radius: 999px;
+  background: transparent; color: var(--muted);
+  font: 700 0.8rem var(--body); letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+  cursor: pointer;
+  transition: background .25s, border-color .25s, color .25s, transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s;
+}
+.btn::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s ease; }
+.btn:active { transform: scale(.96); transition-duration: .08s; }
+.btn:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
+.btn.primary { background: var(--blue); border-color: var(--blue); color: #FFFFFF; }
+.next {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px; min-height: 72px;
+  background: var(--bg2); border: 1px solid var(--line); border-radius: 16px;
+  text-decoration: none;
+  transition: border-color .25s;
+}
+.next b { display: block; font: 600 1.15rem/1.15 var(--display); text-transform: uppercase; letter-spacing: .02em; margin-top: 4px; transition: color .25s; }
+.next::after { content: ""; flex: none; width: 10px; height: 10px; border: solid var(--blue-hi); border-width: 2px 2px 0 0; transform: rotate(45deg); margin-right: 6px; transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
+.next:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
+
+/* ---------- Motion (same feel as the program's site) ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes zoomin { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-8%); } }
+@keyframes tick { 0% { transform: scale(.6); box-shadow: 0 0 0 0 rgba(0, 130, 254, .7); } 55% { transform: scale(1.2); } 100% { transform: scale(1); box-shadow: 0 0 0 14px rgba(0, 130, 254, 0); } }
+@keyframes check { from { opacity: 0; transform: rotate(45deg) translate(-1px, -1px) scale(.2); } to { opacity: 1; transform: rotate(45deg) translate(-1px, -1px) scale(1); } }
+@keyframes chip { 0% { transform: scale(.9); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes flip { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+@keyframes breathe { 0%, 100% { transform: scale(.55); box-shadow: 0 0 0 0 rgba(0, 130, 254, 0); } 50% { transform: scale(1); box-shadow: 0 0 0 7px rgba(0, 130, 254, .18); } }
+
+.banner h1, .banner .sign { animation: rise .8s cubic-bezier(.2, .8, .2, 1) both; }
+.banner .sign { animation-delay: .25s; }
+.banner .circle { animation: zoomin 1s cubic-bezier(.2, .8, .2, 1) .1s both, float 7s ease-in-out 1.2s infinite; }
+.banner .words { animation: drift 18s ease-in-out infinite alternate; }
+.legend, .step { animation: rise .6s cubic-bezier(.2, .8, .2, 1) both; }
+.step:nth-child(1) { animation-delay: .1s; }
+.step:nth-child(2) { animation-delay: .18s; }
+.step:nth-child(3) { animation-delay: .26s; }
+.bump { animation: flip .4s cubic-bezier(.2, .8, .2, 1); }
+.pip.pop { animation: chip .4s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* Hover only where there is a mouse, so taps on a phone do not leave things lifted */
+@media (hover: hover) {
+  .btn:hover { transform: translateY(-2px); border-color: var(--ink); color: var(--ink); background: rgba(255, 255, 255, .06); }
+  .btn:hover::after { transform: translateX(120%); }
+  .btn.primary:hover { background: var(--blue-hi); border-color: var(--blue-hi); box-shadow: 0 10px 28px -8px rgba(0, 130, 254, .75); }
+  .chips button:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .pip:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .pip.on:hover { border-color: var(--blue-hi); background: var(--blue-hi); }
+  .back:hover::before { transform: translateX(-4px) rotate(45deg); }
+  .back:hover { color: var(--blue-hi); }
+  .next:hover { border-color: var(--blue); }
+  .next:hover b { color: var(--blue-hi); }
+  .next:hover::after { transform: translateX(4px) rotate(45deg); }
+}
+
+@media (max-width: 420px) {
+  .step .num { font-size: 80px; }
+  .q h2 { padding-right: 52px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .breath .dot { transform: scale(.8); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar" role="status">
+    <div>
+      <div class="lbl">Пройдено</div>
+      <div class="big"><span id="cnt">0</span> <small>из 3</small></div>
+    </div>
+    <nav class="pips" aria-label="Вопросы">
+      <a class="pip" href="#q1" data-s="1" aria-label="Вопрос 1">1</a>
+      <a class="pip" href="#q2" data-s="2" aria-label="Вопрос 2">2</a>
+      <a class="pip" href="#q3" data-s="3" aria-label="Вопрос 3">3</a>
+    </nav>
+    <div class="meter" aria-hidden="true"><i id="bar"></i></div>
+  </div>
+
+  <header class="intro">
+    <a class="back lbl" href="./">Проработка эмоций</a>
+    <div class="banner">
+      <div class="words" aria-hidden="true"><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span></div>
+      <div class="circle" aria-hidden="true"></div>
+      <h1>Проработка<br><span class="b">вторичных выгод</span></h1>
+      <p class="sign">Татьяна Хавро</p>
+    </div>
+    <p>Три вопроса, к каждому свой проговор. Сначала ответьте на вопрос, потом медленно проговорите текст.</p>
+  </header>
+
+  <section class="legend" aria-labelledby="lg">
+    <h2 id="lg">Как читать</h2>
+    <ul>
+      <li><span><span class="fill">в рамке</span></span><span>то, что вы проговариваете своими словами</span></li>
+      <li><span class="breath"><span class="dot" aria-hidden="true"></span>Вдох-выдох</span><span>остановитесь, сделайте вдох и выдох</span></li>
+    </ul>
+    <div class="gender">
+      <span>Говорю о себе:</span>
+      <div class="chips" role="group" aria-label="Род, в котором говорю о себе">
+        <button type="button" data-g="f" aria-pressed="false">Она</button>
+        <button type="button" data-g="m" aria-pressed="false">Он</button>
+      </div>
+      <span class="note">Слова вроде «свободен/на» в тексте станут в нужном роде.</span>
+    </div>
+  </section>
+
+  <ol class="steps">
+    <li class="step" id="q1">
+      <span class="num" aria-hidden="true">01</span>
+      <div class="q">
+        <span class="lbl">Вопрос 1</span>
+        <h2 id="q1t">Что случится самого страшного, если я получу желаемое?</h2>
+      </div>
+      <div class="say">
+        <span class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h6M9 14.5h4"/></svg>Проговор</span>
+        <p>Привет, моя дорогая субличность. Я вижу твои переживания относительно моего запроса <span class="fill">перечисляете все переживания, увиденные на карте</span>.</p>
+        <p>Я признаю всех тех в моем роду, реинкарнациях и связанных с ними, у кого было именно так. Я признаю их и то, что эта модель поведения передалась тебе напрямую и ты не знаешь как по-другому. И ты как послушный член своего рода, либо последователь всех реинкарнаций, которые ты проходила, просто следуешь по давно понятному пути.</p>
+        <p>Я вижу тебя и признаю как ты это делаешь неосознанно. И на нас не влияет то, что мы осознаем. На нас влияет то, что мы не осознаем. И сейчас я могу тебя увидеть и дать тебе место. Я тебя не отвергаю и с тобой не борюсь.</p>
+        <p>И я знаю, что именно такая модель поведения в прошлом, в роду или в произошедшем в реинкарнациях, помогла тебе выжить.</p>
+        <div class="breath"><span class="dot" aria-hidden="true"></span>Вдох-выдох</div>
+        <p>Я благодарю тебя за то, что именно благодаря этому и всему тому поведению, которое было, мы выжили. Но сейчас это старая модель поведения и она мне больше не нужна. Я теперь могу жить по-другому.</p>
+        <div class="breath"><span class="dot" aria-hidden="true"></span>Вдох-выдох</div>
+        <p>И я могу позволить себе <span class="fill">проговариваете желаемое</span> и при этом не бояться, что <span class="fill">проговариваете выявленные опасения</span>. И кажется теперь я могу быть <span class="g" data-f="свободна" data-m="свободен">свободен/на</span> от этой программы. <span class="key">И я даю этому место и время.</span></p>
+        <div class="breath"><span class="dot" aria-hidden="true"></span>Вдох-выдох</div>
+      </div>
+      <div class="step-foot">
+        <label class="row"><input type="checkbox" data-s="1"><span class="box" aria-hidden="true"></span><span class="txt">Проговорено</span></label>
+      </div>
+    </li>
+
+    <li class="step" id="q2">
+      <span class="num" aria-hidden="true">02</span>
+      <div class="q">
+        <span class="lbl">Вопрос 2</span>
+        <h2 id="q2t">Какие у меня появятся новые обязательства, если я получу то, чего хочу?</h2>
+      </div>
+      <div class="say">
+        <span class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h6M9 14.5h4"/></svg>Проговор</span>
+        <p>Я вижу ту часть, у которой появятся новые обязательства <span class="fill">проговариваете выявленное на карте</span>. Я вижу тебя. Я вижу как сложно тебе нести эти обязательства и как ты делаешь все, чтоб от этих обязательств отказаться, даже ценой моего благополучия.</p>
+        <p>Я признаю всех тех в моем роду, реинкарнациях и связанных с ними, кому <span class="fill">проговариваете выявленное на карте</span> было настолько тяжелым, что дорого обошлось. Я признаю всех тех, кто выживал, когда отказывался от <span class="fill">проговариваете выявленное на карте</span>. И кто пускай даже хуже жил, но зато легче. Я признаю всех тех, для кого <span class="fill">проговариваете выявленное на карте</span> равно смерти, поэтому лучше оставаться в своем старом болотце.</p>
+        <p>Я вижу тебя, та часть, которая не хочет брать новые обязательства. Настолько не хочет, что готова оставаться там, где даже мне не нравится. <span class="key">И я даю этому место.</span></p>
+        <p>И я признаю себя, свою личность и возможность оставаться <span class="g" data-f="целостной" data-m="целостным">целостным/ой</span> на своем пути. Я признаю те части себя, которые устали от обязательств и уже готовы сдаться, и которые уже сдались. И даю им место и время.</p>
+        <p>И я признаю, что возможно я могу посмотреть в эту сторону потому, что это то, на что я могу опереться. Когда я это признаю, я с этим не борюсь.</p>
+        <p>И кажется теперь это может стать не чем-то тяжелым, что я буду тащить, как мешок цемента. А чем-то новым. Я могу в это попробовать поиграть. Потому, что моя жизнь всего лишь игра. Или не всего лишь. Но, кажется, я могу попробовать жить жизнь играючи, а не таща её как мешок с цементом. <span class="key">Я даю этому место и время.</span></p>
+        <p>И кажется теперь эта часть может стать мне в помощь, когда я с ней больше не борюсь. <span class="key">И я даю этому место и время.</span></p>
+        <div class="breath"><span class="dot" aria-hidden="true"></span>Вдох-выдох</div>
+      </div>
+      <div class="step-foot">
+        <label class="row"><input type="checkbox" data-s="2"><span class="box" aria-hidden="true"></span><span class="txt">Проговорено</span></label>
+      </div>
+    </li>
+
+    <li class="step" id="q3">
+      <span class="num" aria-hidden="true">03</span>
+      <div class="q">
+        <span class="lbl">Вопрос 3</span>
+        <h2 id="q3t">Что такое есть в моей жизни сейчас, чего не будет, если я буду <span class="fill">озвучить желаемое</span>?</h2>
+      </div>
+      <div class="say">
+        <span class="lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 11h6M9 14.5h4"/></svg>Проговор</span>
+        <p>Привет. И тебя я вижу. Тебя, у которой есть сейчас что-то важное и чего не будет, когда я решу свой запрос. Я вижу тебя и даю тебе место.</p>
+        <p>Я вижу как долго ты меня охраняла, чтобы оставаться в старом. И я знаю как долго я с тобой <span class="g" data-f="пыталась" data-m="пытался">пытался/лась</span> бороться потому, что я не <span class="g" data-f="хотела" data-m="хотел">хотел/а</span> признавать, что там, где я нахожусь мне выгодно; потому, что там, где я нахожусь, я получаю это важное.</p>
+        <p>Я даю тебе место и я знаю, что ты меня охраняла. Я признаю всех тех в моем роду, реинкарнациях и связанных с ними, кто выживал именно таким образом и даю им место. Я признаю всех тех в моем роду, реинкарнациях и связанных с ними, кто сопротивлялся находиться в том, в чем он находится и кому это дорого обошлось.</p>
+        <p>Я вижу тебя и теперь я знаю, что могу по-другому, и теперь я знаю, что я получаю, когда нахожусь там, где я есть, даже если мне это не нравится.</p>
+        <p>И теперь, когда я на это могу посмотреть напрямую, я могу это изменить, потому, что больше это на меня не влияет <span class="key">и я даю этому место.</span></p>
+        <div class="breath"><span class="dot" aria-hidden="true"></span>Вдох-выдох</div>
+      </div>
+      <div class="step-foot">
+        <label class="row"><input type="checkbox" data-s="3"><span class="box" aria-hidden="true"></span><span class="txt">Проговорено</span></label>
+      </div>
+    </li>
+  </ol>
+
+  <section class="foot">
+    <button type="button" class="btn" id="again">Пройти заново</button>
+    <a class="next" href="./"><span><span class="lbl">Ещё практика</span><b>Проработка эмоций</b></span></a>
+  </section>
+</div>
+
+<script>
+(function () {
+  var LS = 'vyg-v1';
+  var S = { done: {}, g: '' };
+  try {
+    var d = JSON.parse(localStorage.getItem(LS) || 'null');
+    if (d && d.done && typeof d.done === 'object') S.done = d.done;
+    if (d && (d.g === 'f' || d.g === 'm')) S.g = d.g;
+  } catch (e) {}
+  function save() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  function all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  function replay(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+  // Male / female word forms
+  all('.g').forEach(function (el) { el.dataset.both = el.textContent; });
+  function applyGender() {
+    all('.g').forEach(function (el) { el.textContent = S.g ? el.dataset[S.g] : el.dataset.both; });
+    all('.chips button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.g === S.g)); });
+  }
+  all('.chips button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      S.g = S.g === b.dataset.g ? '' : b.dataset.g;
+      applyGender(); save();
+    });
+  });
+
+  // Progress
+  var last = -1;
+  function update() {
+    var n = 0;
+    all('.steps input').forEach(function (inp) {
+      var s = inp.dataset.s, on = !!S.done[s];
+      if (on) n++;
+      inp.checked = on;
+      inp.closest('.row').classList.toggle('done', on);
+      $('q' + s).classList.toggle('done', on);
+      document.querySelector('.pip[data-s="' + s + '"]').classList.toggle('on', on);
+    });
+    $('cnt').textContent = n;
+    if (last >= 0 && n !== last) replay($('cnt'), 'bump');
+    last = n;
+    $('bar').style.width = (n / 3 * 100) + '%';
+  }
+  document.addEventListener('change', function (e) {
+    var inp = e.target;
+    if (!inp.dataset || !inp.dataset.s) return;
+    if (inp.checked) S.done[inp.dataset.s] = true; else delete S.done[inp.dataset.s];
+    update(); save();
+    if (inp.checked) {
+      replay(inp.closest('.row'), 'pop');
+      replay(document.querySelector('.pip[data-s="' + inp.dataset.s + '"]'), 'pop');
+    }
+  });
+  $('again').addEventListener('click', function () {
+    S.done = {}; update(); save();
+    $('q1').scrollIntoView({ block: 'start' });
+  });
+
+  applyGender();
+  update();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
