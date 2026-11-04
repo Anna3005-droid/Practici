@@ -1,7 +1,13 @@
 // Offline support: keeps the app files on the phone so it opens without internet.
 // Bump VERSION after changing any app file so phones pick up the new version.
-var VERSION = 'emo-v6';
-var APP = ['./', 'index.html', 'polarities.html', 'style.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
+var VERSION = 'emo-v7';
+var APP = [
+  './', 'index.html', 'style.css',
+  // Emotions
+  'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png',
+  // Polarities (its own link and its own app on the phone)
+  'polarities.html', 'manifest-polarities.webmanifest', 'icon-pol-192.png', 'icon-pol-512.png', 'apple-touch-icon-pol.png'
+];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(APP); }).then(function () { return self.skipWaiting(); }));

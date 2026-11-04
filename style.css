@@ -1,7 +1,7 @@
 :root {
   /* Shared by every practice page (index.html: emotions, polarities.html: polarities).
      Layout: one column in the program's look (deep navy, heavy condensed caps, electric blue).
-     Practice switcher, sticky tally, a banner like the program's, the instruction, the next batch, then the full list.
+     Sticky tally, a banner like the program's, the instruction, the next batch, then the full list.
      Single dark look on purpose, same as the program's site. */
   color-scheme: dark;
   --bg: #051629;
@@ -311,20 +311,6 @@ details > summary .chev, .cl > summary::after { transition: transform .3s cubic-
   .cl > summary:hover .cn, details.how > summary:hover, details.instr > summary:hover { color: var(--blue-hi); }
 }
 
-/* ---------- Practice switcher ---------- */
-.tabs { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 14px; margin-bottom: -18px; }
-.tabs a {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 40px; padding: 0 18px;
-  border: 1px solid var(--line-strong); border-radius: 999px;
-  color: var(--muted); text-decoration: none;
-  font: 700 0.72rem var(--body); letter-spacing: .14em; text-transform: uppercase;
-  transition: background .25s, border-color .25s, color .25s, transform .2s cubic-bezier(.2, .8, .2, 1);
-}
-.tabs a[aria-current="page"] { background: var(--blue); border-color: var(--blue); color: #FFFFFF; }
-.tabs a:active { transform: scale(.94); }
-.tabs a:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
-
 /* ---------- Polarities page ---------- */
 /* A row with a side action: "skip" in the next batch, "delete" in my own pairs */
 .brow { display: flex; align-items: center; gap: 2px; }
@@ -374,7 +360,6 @@ details > summary .chev, .cl > summary::after { transition: transform .3s cubic-
 .grid.pairs { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); }
 
 @media (hover: hover) {
-  .tabs a:not([aria-current]):hover { border-color: var(--ink); color: var(--ink); transform: translateY(-1px); }
   .skip:hover { color: var(--ink); background: rgba(255, 255, 255, .06); }
   .del:hover { color: var(--danger); background: rgba(255, 122, 126, .1); }
 }
