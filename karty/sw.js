@@ -1,7 +1,7 @@
 // Offline support: keeps the app files and the built-in cards on the phone so it opens without internet.
 // Bump VERSION after changing any app file or the card list so phones pick up the new version.
 importScripts('cards.js');
-var VERSION = 'mak-v1';
+var VERSION = 'mak-v2';
 var APP = ['./', 'index.html', 'style.css', 'cards.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 var DECK = (Array.isArray(self.DECK) ? self.DECK : []).map(function (f) { return encodeURI('cards/' + String(f).trim()); });
 
