@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#051629">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Карты">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Метафорические карты</title>
+<meta name="description" content="Метафорические ассоциативные карты: запрос, случайная карта без повторов, вопросы к карте и дневник раскладов.">
+<meta property="og:title" content="Метафорические карты">
+<meta property="og:description" content="Метафорические ассоциативные карты: запрос, случайная карта без повторов, вопросы к карте и дневник раскладов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <div class="bar" role="status">
+    <div>
+      <div class="lbl">Открыто сегодня</div>
+      <div class="big" id="today">0</div>
+    </div>
+    <div class="right">
+      <div class="lbl">Осталось в колоде</div>
+      <div class="big"><span id="left">0</span> <small>из <span id="all">0</span></small></div>
+    </div>
+    <div class="meter" aria-hidden="true"><i id="leftBar"></i></div>
+    <div class="save" id="save" aria-live="polite"></div>
+  </div>
+
+  <header class="intro">
+    <div class="banner">
+      <div class="words" aria-hidden="true"><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span><span>Масштаб</span></div>
+      <div class="circle" aria-hidden="true"></div>
+      <h1 class="long">Метафорические<br><span class="b">карты</span></h1>
+      <p class="sign">Татьяна Хавро</p>
+    </div>
+    <p>Сформулируйте запрос, вытяните случайную карту и посмотрите, что она откроет. Карты не повторяются, пока не выпадет вся колода, потом она перемешивается заново.</p>
+  </header>
+
+  <details class="how">
+    <summary>Как работать с картами<span class="chev" aria-hidden="true"></span></summary>
+    <div class="how-body">
+      <ol>
+        <li>Сформулируйте запрос: ситуацию, вопрос или состояние, с которым хотите поработать. Впишите его в поле «Ваш запрос», тогда он сохранится в дневнике вместе с картами.</li>
+        <li>Выберите, сколько карт тянуть: одну, чтобы получить ответ на вопрос, или три, чтобы посмотреть на ситуацию шире.</li>
+        <li>Выберите, как тянуть. «Случайно»: карты выпадут сами, а вы перевернёте их по одной. «Из веера»: перед вами рубашкой вверх лягут несколько карт, выберите ту, что притягивает, не раздумывая.</li>
+        <li>Нажмите «Перемешать и вытянуть», сделайте вдох и откройте карту.</li>
+        <li>Рассмотрите карту и ответьте себе на вопросы под ней. Первое, что приходит в голову, обычно самое точное.</li>
+        <li>Запишите, что поняли. Запись сохранится в дневнике.</li>
+      </ol>
+      <p class="note">У карты нет правильного или неправильного значения: она показывает то, что уже есть внутри вас. Нажмите на открытую карту, чтобы рассмотреть её крупно.</p>
+    </div>
+  </details>
+
+  <section class="panel" aria-labelledby="rt">
+    <h2 id="rt">Ваш запрос</h2>
+    <textarea class="field" id="req" rows="2" maxlength="300" placeholder="Например: что поможет мне решиться на перемены?" aria-labelledby="rt"></textarea>
+    <p class="note">Запрос сохранится в дневнике вместе с картами.</p>
+  </section>
+
+  <section class="panel main" aria-labelledby="dt">
+    <div class="head">
+      <h2 id="dt">Вытянуть карту</h2>
+    </div>
+    <div class="opts">
+      <div class="chips" role="group" aria-label="Сколько карт тянуть">
+        <span>Карт:</span>
+        <button type="button" data-n="1" aria-pressed="true">1</button>
+        <button type="button" data-n="3" aria-pressed="false">3</button>
+      </div>
+      <div class="chips" role="group" aria-label="Как тянуть">
+        <button type="button" data-mode="rand" aria-pressed="true">Случайно</button>
+        <button type="button" data-mode="fan" aria-pressed="false">Из веера</button>
+      </div>
+    </div>
+    <div id="table"></div>
+    <p class="note hint" id="hint" aria-live="polite"></p>
+    <div class="btns" style="justify-content: center">
+      <button type="button" class="btn primary" id="deal" hidden>Перемешать и вытянуть</button>
+    </div>
+    <div class="after" id="after" hidden>
+      <details class="how qs" open>
+        <summary>Вопросы к карте<span class="chev" aria-hidden="true"></span></summary>
+        <div class="how-body">
+          <ul>
+            <li>Что вы видите на карте? Опишите всё, что замечаете, даже мелочи.</li>
+            <li>Что здесь происходит? Что было до этого момента и что будет потом?</li>
+            <li>Какие чувства вызывает карта? Где в теле они откликаются?</li>
+            <li>Где на этой карте вы? Кем или чем вы могли бы здесь быть?</li>
+            <li>Как карта связана с вашим запросом?</li>
+            <li id="qMany" hidden>Как карты связаны между собой? Какая история из них складывается?</li>
+            <li>Что карта хочет вам подсказать? Какой маленький шаг можно сделать уже сегодня?</li>
+          </ul>
+        </div>
+      </details>
+      <label class="lbl" for="note">Ваши мысли о карте</label>
+      <textarea class="field" id="note" rows="3" maxlength="3000" placeholder="Что вы увидели и поняли"></textarea>
+      <p class="note">Сохраняется в дневнике.</p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="kt">
+    <h2 id="kt">Колода</h2>
+    <p class="note" id="deckNote"></p>
+    <div class="add">
+      <label class="btn primary" id="addBtn"><input type="file" id="file" accept="image/*" multiple>Добавить карты</label>
+    </div>
+    <p class="msg" id="addMsg" aria-live="polite" hidden></p>
+    <details class="how qs" id="deckList" hidden>
+      <summary><span>Все карты (<span id="deckCount">0</span>)</span><span class="chev" aria-hidden="true"></span></summary>
+      <div class="how-body">
+        <p class="note">Бледные карты уже выпадали и не повторятся, пока колода не перемешается заново. Крестик удаляет карту, добавленную с этого устройства.</p>
+        <div class="thumbs" id="thumbs"></div>
+      </div>
+    </details>
+    <div class="btns">
+      <button type="button" class="btn quiet" id="shuffleAll" hidden>Перемешать колоду заново</button>
+      <button type="button" class="btn quiet" id="wipeAsk" hidden>Удалить мои карты</button>
+      <button type="button" class="btn danger" id="wipeYes" hidden>Да, удалить все мои карты</button>
+      <button type="button" class="btn" id="wipeNo" hidden>Отмена</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="lt">
+    <h2 id="lt">Дневник</h2>
+    <div class="diary" id="diary"></div>
+    <div class="btns">
+      <button type="button" class="btn quiet" id="more" hidden>Показать ещё</button>
+    </div>
+  </section>
+
+  <section class="reset">
+    <button type="button" class="btn quiet" id="clearAsk" hidden>Очистить дневник</button>
+    <button type="button" class="btn danger" id="clearYes" hidden>Да, очистить</button>
+    <button type="button" class="btn" id="clearNo" hidden>Отмена</button>
+  </section>
+
+</div>
+
+<dialog class="zoom" id="zoom" aria-label="Карта крупно">
+  <img id="zoomImg" alt="Карта крупно">
+  <button type="button" class="x" aria-label="Закрыть"></button>
+</dialog>
+
+<script src="cards.js"></script>
+<script>
+(function () {
+  var LS = 'mak-v1';
+  var FAN = 9;          // face-down cards to choose from in the fan
+  var LOG_MAX = 300;    // diary entries kept
+  var PAGE = 20;        // diary entries shown at first
+  var still = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  /* The deck: built-in pictures from cards.js, then pictures added on this device */
+  var BUILT = [];
+  (Array.isArray(self.DECK) ? self.DECK : []).forEach(function (f) {
+    f = typeof f === 'string' ? f.trim() : '';
+    if (f && BUILT.indexOf(f) === -1) BUILT.push(f);
+  });
+  var CARDS = [], BY = {}, AR = {};
+  var ready = false, idbBroken = false, busy = false, adding = false, flash = '', shown = PAGE;
+
+  var S = { req: '', n: 1, mode: 'rand', used: {}, cur: null, log: [] };
+
+  function $(id) { return document.getElementById(id); }
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
+  function str(x) { return typeof x === 'string'; }
+  function dayKey(t) {
+    var d = new Date(t), p = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+  function plural(n, one, few, many) {
+    var a = n % 10, b = n % 100;
+    return a === 1 && b !== 11 ? one : a >= 2 && a <= 4 && (b < 12 || b > 14) ? few : many;
+  }
+  function replay(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function setNum(id, v) {
+    var el = $(id), s = String(v);
+    if (el.textContent !== s) { el.textContent = s; replay(el, 'bump'); }
+  }
+
+  /* ---------- fair randomness ---------- */
+  function rnd(n) {
+    if (window.crypto && crypto.getRandomValues) {
+      var a = new Uint32Array(1), lim = Math.floor(4294967296 / n) * n;
+      do { crypto.getRandomValues(a); } while (a[0] >= lim);
+      return a[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
+  function sample(list, k) {
+    var a = list.slice(), out = [];
+    while (out.length < k && a.length) out.push(a.splice(rnd(a.length), 1)[0]);
+    return out;
+  }
+  function uid() { return Date.now().toString(36) + rnd(1679616).toString(36); }
+
+  /* ---------- storage: settings, current spread and diary (this device) ---------- */
+  function load() {
+    var d = null;
+    try { d = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) {}
+    if (!d || typeof d !== 'object') return;
+    if (str(d.req)) S.req = d.req;
+    if (d.n === 1 || d.n === 3) S.n = d.n;
+    if (d.mode === 'rand' || d.mode === 'fan') S.mode = d.mode;
+    if (d.used && typeof d.used === 'object') S.used = Object.assign({}, d.used);
+    if (Array.isArray(d.log)) S.log = d.log.filter(function (e) {
+      return e && str(e.id) && typeof e.t === 'number' && Array.isArray(e.cards);
+    }).map(function (e) {
+      return { id: e.id, t: e.t, req: String(e.req || ''), cards: e.cards.filter(str), note: String(e.note || '') };
+    });
+    var c = d.cur;
+    if (c && c.n >= 1 && c.n <= 3 && (c.mode === 'rand' || c.mode === 'fan') && Array.isArray(c.slots) && Array.isArray(c.open)) {
+      var slots = c.slots.filter(str);
+      S.cur = {
+        n: c.n, mode: c.mode, slots: slots,
+        open: slots.map(function (x, i) { return !!c.open[i]; }),
+        fan: Array.isArray(c.fan) ? c.fan.filter(str) : [],
+        entry: str(c.entry) ? c.entry : null
+      };
+    }
+  }
+  function save() {
+    try {
+      localStorage.setItem(LS, JSON.stringify({ v: 1, req: S.req, n: S.n, mode: S.mode, used: S.used, cur: S.cur, log: S.log, updated: Date.now() }));
+      $('save').textContent = 'Запрос, расклад и дневник сохраняются на этом устройстве';
+    } catch (e) {
+      $('save').textContent = 'Браузер не даёт сохранить, после закрытия всё пропадёт';
+    }
+  }
+
+  /* ---------- storage: card pictures added on this device ---------- */
+  var dbp = null;
+  function db() {
+    if (!dbp) dbp = new Promise(function (res, rej) {
+      if (!window.indexedDB) { rej(new Error('no indexedDB')); return; }
+      var r;
+      try { r = indexedDB.open('mak-cards', 1); } catch (e) { rej(e); return; }
+      r.onupgradeneeded = function () { r.result.createObjectStore('cards', { keyPath: 'id' }); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+    return dbp;
+  }
+  function store(mode, fn) {
+    return db().then(function (d) {
+      return new Promise(function (res, rej) {
+        var t = d.transaction('cards', mode), q = fn(t.objectStore('cards'));
+        t.oncomplete = function () { res(q ? q.result : undefined); };
+        t.onerror = t.onabort = function () { rej(t.error || new Error('transaction failed')); };
+      });
+    });
+  }
+  function keepStorage() {
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  }
+
+  /* ---------- deck ---------- */
+  function builtCards() {
+    return BUILT.map(function (f) { var src = encodeURI('cards/' + f); return { id: 'b:' + f, src: src, thumb: src, own: false }; });
+  }
+  function ownCard(r) {
+    AR[r.id] = r.w / r.h;
+    return { id: r.id, src: URL.createObjectURL(r.full), thumb: URL.createObjectURL(r.thumb || r.full), own: true };
+  }
+  function setCards(list) { CARDS = list; BY = {}; list.forEach(function (c) { BY[c.id] = c; }); }
+  function drop(c) { if (c.own) { URL.revokeObjectURL(c.src); URL.revokeObjectURL(c.thumb); } }
+  function allIds() { return CARDS.map(function (c) { return c.id; }); }
+  function leftIds() { return CARDS.filter(function (c) { return !S.used[c.id]; }).map(function (c) { return c.id; }); }
+  function entry() {
+    var id = S.cur && S.cur.entry;
+    if (!id) return null;
+    for (var i = 0; i < S.log.length; i++) if (S.log[i].id === id) return S.log[i];
+    return null;
+  }
+  function untaken(c) { return c.fan.filter(function (id) { return c.slots.indexOf(id) === -1; }); }
+
+  /* Keep the saved state in line with the cards that exist now */
+  function tidy() {
+    Object.keys(S.used).forEach(function (id) { if (!BY[id]) delete S.used[id]; });
+    var c = S.cur;
+    if (!c) return;
+    if (c.entry && !entry()) c.entry = null;
+    if (c.mode === 'fan') {
+      c.fan = c.fan.filter(function (id) { return BY[id]; });
+      if (c.slots.length < c.n && untaken(c).length < c.n - c.slots.length) {
+        if (c.slots.length) c.n = c.slots.length; else c.fan = [];
+      }
+      if (!c.slots.length && !c.fan.length) S.cur = null;
+    } else if (!c.open.some(Boolean) && c.slots.some(function (id) { return !BY[id]; })) {
+      S.cur = null;
+    }
+  }
+
+  /* ---------- picture of one card ---------- */
+  function cardHTML(id, i, open, delay) {
+    var c = BY[id], ar = open && AR[id];
+    var face = c
+      ? '<img src="' + esc(c.src) + '" alt="' + (open ? 'Карта ' + (i + 1) : '') + '" draggable="false" data-pic="' + esc(id) + '">'
+      : '<span class="gone">Карта удалена из колоды</span>';
+    return '<button type="button" class="card' + (open ? ' open' : '') + '" data-i="' + i + '" style="--n:' + delay + (ar ? ';--ar:' + ar : '') + '"' +
+      ' aria-label="' + (open ? 'Карта ' + (i + 1) + ', рассмотреть крупно' : 'Карта ' + (i + 1) + ' рубашкой вверх, перевернуть') + '">' +
+      '<span class="in"><span class="back"></span><span class="face">' + face + '</span></span></button>';
+  }
+  function slotHTML(c, i, delay) {
+    return c.slots[i] != null
+      ? '<div class="slot" data-slot="' + i + '">' + cardHTML(c.slots[i], i, c.open[i], delay) + '</div>'
+      : '<div class="slot empty" data-slot="' + i + '"><div class="ph">' + (i + 1) + '</div></div>';
+  }
+  function stackHTML() { return '<div class="stack" id="stack" aria-hidden="true"><span class="back"></span><span class="back"></span><span class="back"></span></div>'; }
+
+  /* ---------- render ---------- */
+  function renderBar() {
+    var t = dayKey(Date.now()), td = 0;
+    S.log.forEach(function (e) { if (dayKey(e.t) === t) td += e.cards.length; });
+    var left = leftIds().length, all = CARDS.length;
+    setNum('today', td);
+    setNum('left', left);
+    $('all').textContent = all;
+    $('leftBar').style.width = (all ? left / all * 100 : 0) + '%';
+  }
+
+  function renderChips() {
+    each('[data-n]', function (b) { b.setAttribute('aria-pressed', String(+b.dataset.n === S.n)); });
+    each('[data-mode]', function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)); });
+  }
+
+  function renderTable() {
+    var tb = $('table'), c = S.cur, deal = $('deal');
+    renderChips();
+    if (!ready) {
+      tb.innerHTML = '';
+      deal.hidden = true;
+      $('hint').textContent = 'Загружаю колоду…';
+      $('after').hidden = true;
+      return;
+    }
+    if (!CARDS.length) {
+      tb.innerHTML = '<div class="empty-deck"><div class="stack" aria-hidden="true"><span class="back"></span><span class="back"></span><span class="back"></span></div>' +
+        '<p>В колоде пока нет карт.</p><button type="button" class="btn" id="addFromEmpty">Добавить фото карт</button></div>';
+      deal.hidden = true;
+      $('hint').textContent = '';
+      $('after').hidden = true;
+      return;
+    }
+    deal.hidden = false;
+    if (!c) {
+      tb.innerHTML = stackHTML();
+    } else {
+      var h = '', choosing = c.mode === 'fan' && c.slots.length < c.n;
+      if (choosing) {
+        h += '<div class="fan-wrap" id="fanWrap"><div class="fan" id="fan">';
+        untaken(c).forEach(function (id, i) {
+          h += '<button type="button" data-id="' + esc(id) + '" style="--n:' + i + '" aria-label="Карта рубашкой вверх, выбрать"><span class="back"></span></button>';
+        });
+        h += '</div></div>';
+      }
+      var showSpread = c.slots.length > 0 || c.n > 1;
+      h += '<div class="spread n' + c.n + '" id="spread"' + (showSpread ? '' : ' hidden') + '>';
+      for (var i = 0; i < c.n; i++) h += slotHTML(c, i, i);
+      h += '</div>';
+      tb.innerHTML = h;
+    }
+    renderDealBtn();
+    renderHint();
+    renderAfter();
+  }
+
+  function complete() {
+    var c = S.cur;
+    return !!c && c.slots.length === c.n && c.open.every(Boolean);
+  }
+  function renderDealBtn() {
+    var b = $('deal');
+    b.textContent = S.cur ? 'Новый расклад' : 'Перемешать и вытянуть';
+    b.classList.toggle('pulse', complete());
+    b.disabled = busy;
+  }
+  function renderHint() {
+    var c = S.cur, t = '';
+    if (!ready || !CARDS.length) return;
+    if (!c) {
+      t = 'Подумайте о своём запросе и нажмите «Перемешать и вытянуть».';
+    } else if (c.mode === 'fan' && c.slots.length < c.n) {
+      var k = c.n - c.slots.length;
+      t = 'Не раздумывая, выберите карту, которая притягивает' + (c.n > 1 ? ': ещё ' + k + ' ' + plural(k, 'карту', 'карты', 'карт') + '.' : '.');
+    } else if (c.open.some(function (o) { return !o; })) {
+      t = c.n > 1 ? 'Нажимайте на карты по одной, чтобы перевернуть.' : 'Нажмите на карту, чтобы перевернуть её.';
+    } else {
+      t = 'Нажмите на карту, чтобы рассмотреть её крупно.';
+      if (c.n !== Math.min(S.n, CARDS.length) || c.mode !== S.mode) t += ' Новые настройки сработают со следующего расклада.';
+    }
+    $('hint').textContent = (flash ? flash + ' ' : '') + t;
+  }
+  function renderAfter() {
+    var e = entry(), show = !!(S.cur && e);
+    $('after').hidden = !show;
+    if (!show) return;
+    if (document.activeElement !== $('note')) $('note').value = e.note;
+    $('qMany').hidden = S.cur.n < 2;
+  }
+
+  function renderDeck() {
+    var n = CARDS.length, own = CARDS.filter(function (c) { return c.own; }).length, bi = n - own;
+    var t;
+    if (idbBroken) t = 'Браузер не даёт хранить карты на этом устройстве. Откройте сайт в обычном, не приватном окне браузера.';
+    else if (!n) t = 'Колода пока пустая. Добавьте фото своих карт: сфотографируйте каждую карту или выберите готовые картинки в галерее, можно сразу несколько.';
+    else t = 'В колоде ' + n + ' ' + plural(n, 'карта', 'карты', 'карт') + (bi && own ? ': ' + bi + ' встроенных и ' + own + ' ваших' : '') + '.' +
+      (own ? ' Добавленные вами карты хранятся только на этом устройстве.' : ' Можно добавить и свои карты: сфотографируйте их или выберите картинки в галерее.');
+    $('deckNote').textContent = t;
+    $('deckList').hidden = !n;
+    $('deckCount').textContent = n;
+    var h = '';
+    CARDS.forEach(function (c, i) {
+      h += '<div class="tcell' + (S.used[c.id] ? ' used' : '') + '"><button type="button" class="thumb" data-zoom="' + esc(c.id) + '" aria-label="Карта ' + (i + 1) + ' крупно">' +
+        '<img src="' + esc(c.thumb) + '" alt="" loading="lazy" decoding="async"></button>' +
+        (c.own ? '<button type="button" class="del" data-del="' + esc(c.id) + '" aria-label="Удалить карту ' + (i + 1) + '"></button>' : '') + '</div>';
+    });
+    $('thumbs').innerHTML = h;
+    $('shuffleAll').hidden = !Object.keys(S.used).length;
+    var asking = !$('wipeYes').hidden;
+    $('wipeAsk').hidden = !own || asking;
+    if (!own && asking) { $('wipeYes').hidden = true; $('wipeNo').hidden = true; }
+  }
+
+  function fmt(t) {
+    var d = new Date(t), o = { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' };
+    if (d.getFullYear() !== new Date().getFullYear()) o.year = 'numeric';
+    try { return d.toLocaleString('ru-RU', o); } catch (e) { return d.toLocaleString(); }
+  }
+  function renderDiary() {
+    var h = '';
+    S.log.slice(0, shown).forEach(function (e) {
+      h += '<article class="entry"><div class="when">' + esc(fmt(e.t)) + '</div>' +
+        (e.req.trim() ? '<p class="req">' + esc(e.req) + '</p>' : '<p class="note">Без запроса</p>') +
+        '<div class="mini">' + e.cards.map(function (id) {
+          var c = BY[id];
+          return c
+            ? '<button type="button" class="thumb" data-zoom="' + esc(id) + '" aria-label="Открыть карту крупно"><img src="' + esc(c.thumb) + '" alt="" loading="lazy" decoding="async"></button>'
+            : '<span class="thumb lost">карта удалена</span>';
+        }).join('') + '</div>' +
+        (e.note.trim() ? '<p class="txt">' + esc(e.note) + '</p>' : '') + '</article>';
+    });
+    $('diary').innerHTML = h || '<p class="note">Здесь появятся ваши расклады: дата, запрос, открытые карты и ваши мысли о них.</p>';
+    $('more').hidden = S.log.length <= shown;
+    var asking = !$('clearYes').hidden;
+    $('clearAsk').hidden = !S.log.length || asking;
+    if (!S.log.length && asking) { $('clearYes').hidden = true; $('clearNo').hidden = true; }
+  }
+  var diaryTimer = 0;
+  function renderDiarySoon() { clearTimeout(diaryTimer); diaryTimer = setTimeout(renderDiary, 400); }
+
+  function renderAll() {
+    renderBar();
+    renderTable();
+    renderDeck();
+    renderDiary();
+  }
+
+  /* ---------- drawing ---------- */
+  function newDeal() {
+    var n = Math.min(S.n, CARDS.length), pool = leftIds();
+    flash = '';
+    if (S.mode === 'rand') {
+      var picks = sample(pool, n);
+      if (picks.length < n) {
+        S.used = {};
+        flash = 'Вся колода выпала, она перемешана заново.';
+        picks = picks.concat(sample(allIds().filter(function (id) { return picks.indexOf(id) === -1; }), n - picks.length));
+      }
+      S.cur = { n: n, mode: 'rand', slots: picks, open: picks.map(function () { return false; }), fan: [], entry: null };
+    } else {
+      if (pool.length < n) {
+        S.used = {};
+        flash = 'Вся колода выпала, она перемешана заново.';
+        pool = allIds();
+      }
+      S.cur = { n: n, mode: 'fan', slots: [], open: [], fan: sample(pool, Math.min(FAN, pool.length)), entry: null };
+    }
+    save();
+  }
+
+  function reveal(i, el) {
+    var c = S.cur;
+    if (!c || c.open[i]) return;
+    var id = c.slots[i];
+    c.open[i] = true;
+    if (BY[id]) S.used[id] = 1;
+    var e = entry();
+    if (!e) {
+      e = { id: uid(), t: Date.now(), req: S.req.trim(), cards: [], note: '' };
+      S.log.unshift(e);
+      if (S.log.length > LOG_MAX) S.log.length = LOG_MAX;
+      c.entry = e.id;
+    }
+    e.cards.push(id);
+    if (el) {
+      el.classList.add('open');
+      if (AR[id]) el.style.setProperty('--ar', AR[id]);
+      el.setAttribute('aria-label', 'Карта ' + (i + 1) + ', рассмотреть крупно');
+      var img = el.querySelector('img');
+      if (img) img.alt = 'Карта ' + (i + 1);
+    }
+    save();
+    renderBar();
+    renderDealBtn();
+    renderHint();
+    renderAfter();
+    renderDeck();
+    renderDiary();
+  }
+
+  function choose(id, btn) {
+    var c = S.cur;
+    if (!c || c.slots.length >= c.n || c.slots.indexOf(id) !== -1) return;
+    c.slots.push(id);
+    c.open.push(false);
+    var i = c.slots.length - 1, full = c.slots.length === c.n;
+    save();
+    btn.classList.add('taken');
+    renderHint();
+    setTimeout(function () {
+      if (S.cur !== c) return;
+      btn.remove();
+      var sp = $('spread'), slot = sp && sp.querySelector('[data-slot="' + i + '"]');
+      if (!slot) return;
+      slot.outerHTML = slotHTML(c, i, 0);
+      sp.hidden = false;
+      if (full && $('fanWrap')) $('fanWrap').remove();
+      var el = sp.querySelector('[data-slot="' + i + '"] .card');
+      setTimeout(function () { if (S.cur === c) reveal(i, el); }, still ? 0 : 420);
+    }, still ? 0 : 260);
+  }
+
+  function zoom(id) {
+    var c = BY[id], d = $('zoom');
+    if (!c) return;
+    var im = $('zoomImg');
+    if (AR[id]) im.style.setProperty('--ar', AR[id]); else im.style.removeProperty('--ar');
+    im.src = c.src;
+    if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute('open', '');
+  }
+  function unzoom() { var d = $('zoom'); if (d.close) d.close(); else d.removeAttribute('open'); }
+
+  /* ---------- adding pictures ---------- */
+  function say(t, bad) { var m = $('addMsg'); m.textContent = t; m.hidden = !t; m.classList.toggle('bad', !!bad); }
+  function loadImg(file) {
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file), im = new Image();
+      im.onload = function () { res({ im: im, url: url }); };
+      im.onerror = function () { URL.revokeObjectURL(url); rej(new Error('not a picture')); };
+      im.src = url;
+    });
+  }
+  function toJpeg(im, max, q) {
+    var w = im.naturalWidth, h = im.naturalHeight, k = Math.min(1, max / Math.max(w, h));
+    var cv = document.createElement('canvas');
+    cv.width = Math.max(1, Math.round(w * k));
+    cv.height = Math.max(1, Math.round(h * k));
+    var x = cv.getContext('2d');
+    x.fillStyle = '#FFFFFF';
+    x.fillRect(0, 0, cv.width, cv.height);
+    x.imageSmoothingQuality = 'high';
+    x.drawImage(im, 0, 0, cv.width, cv.height);
+    return new Promise(function (res, rej) {
+      cv.toBlob(function (b) { if (b) res(b); else rej(new Error('could not encode')); }, 'image/jpeg', q);
+    });
+  }
+  function process(file) {
+    return loadImg(file).then(function (o) {
+      var w = o.im.naturalWidth, h = o.im.naturalHeight;
+      if (!w || !h) { URL.revokeObjectURL(o.url); throw new Error('empty picture'); }
+      return Promise.all([toJpeg(o.im, 1400, 0.86), toJpeg(o.im, 360, 0.8)]).then(function (b) {
+        URL.revokeObjectURL(o.url);
+        return { id: 'u:' + uid(), full: b[0], thumb: b[1], w: w, h: h, added: Date.now() };
+      }, function (err) { URL.revokeObjectURL(o.url); throw err; });
+    });
+  }
+  function addFiles(files) {
+    if (adding) return;
+    adding = true;
+    $('file').disabled = true;
+    var i = 0, ok = 0, bad = 0, full = false;
+    say('Добавляю карты: 0 из ' + files.length);
+    (function next() {
+      if (i >= files.length) return finish();
+      var f = files[i++];
+      process(f).then(function (rec) {
+        return store('readwrite', function (s) { return s.put(rec); }).then(function () {
+          var c = ownCard(rec);
+          CARDS.push(c);
+          BY[c.id] = c;
+          ok++;
+        });
+      }).catch(function (err) {
+        bad++;
+        if (err && (err.name === 'QuotaExceededError' || /quota/i.test(err.message || ''))) full = true;
+      }).then(function () {
+        say('Добавляю карты: ' + (ok + bad) + ' из ' + files.length);
+        if (full) i = files.length;
+        next();
+      });
+    })();
+    function finish() {
+      adding = false;
+      $('file').disabled = false;
+      var t = ok ? 'Добавлено: ' + ok + ' ' + plural(ok, 'карта', 'карты', 'карт') + '.' : '';
+      if (full) t += ' На устройстве закончилось место для карт.';
+      else if (bad && idbBroken) t += ' Браузер не даёт хранить карты на этом устройстве.';
+      else if (bad) t += ' Не получилось добавить: ' + bad + '. Подойдут фото и картинки в форматах JPG и PNG.';
+      say(t.trim(), !ok);
+      if (ok) keepStorage();
+      tidy();
+      renderAll();
+    }
+  }
+
+  /* ---------- events ---------- */
+  each('[data-n]', function (b) {
+    b.addEventListener('click', function () { setOpt('n', +b.dataset.n); });
+  });
+  each('[data-mode]', function (b) {
+    b.addEventListener('click', function () { setOpt('mode', b.dataset.mode); });
+  });
+  function setOpt(k, v) {
+    if (S[k] === v) return;
+    S[k] = v;
+    if (S.cur && !S.cur.entry) S.cur = null; // nothing opened yet: start over with the new settings
+    save();
+    if (busy) { renderChips(); return; }
+    renderTable();
+  }
+
+  $('deal').addEventListener('click', function () {
+    if (!CARDS.length || busy) return;
+    newDeal();
+    renderBar();
+    renderDeck();
+    if (still) { renderTable(); return; }
+    busy = true;
+    $('table').innerHTML = stackHTML();
+    $('after').hidden = true;
+    $('hint').textContent = 'Перемешиваю колоду…';
+    renderDealBtn();
+    replay($('stack'), 'shuffle');
+    setTimeout(function () { busy = false; renderTable(); }, 760);
+  });
+
+  $('table').addEventListener('click', function (e) {
+    if (e.target.closest('#addFromEmpty')) { $('file').click(); return; }
+    var f = e.target.closest('.fan button');
+    if (f) { choose(f.dataset.id, f); return; }
+    var card = e.target.closest('.card');
+    if (!card || !S.cur) return;
+    var i = +card.dataset.i;
+    if (!S.cur.open[i]) reveal(i, card);
+    else zoom(S.cur.slots[i]);
+  });
+
+  /* Card proportions: learned when a picture loads, used once the card is face up */
+  document.addEventListener('load', function (e) {
+    var im = e.target;
+    if (!im || im.tagName !== 'IMG' || !im.dataset.pic) return;
+    var id = im.dataset.pic;
+    if (im.naturalWidth && im.naturalHeight) AR[id] = im.naturalWidth / im.naturalHeight;
+    var card = im.closest('.card');
+    if (card && card.classList.contains('open') && AR[id]) card.style.setProperty('--ar', AR[id]);
+  }, true);
+  document.addEventListener('error', function (e) {
+    var im = e.target;
+    if (!im || im.tagName !== 'IMG' || !im.dataset.pic) return;
+    var span = document.createElement('span');
+    span.className = 'gone';
+    span.textContent = 'Не удалось загрузить картинку';
+    im.replaceWith(span);
+  }, true);
+
+  document.addEventListener('click', function (e) {
+    var z = e.target.closest && e.target.closest('[data-zoom]');
+    if (z) zoom(z.dataset.zoom);
+  });
+  $('zoom').addEventListener('click', unzoom);
+  $('zoom').addEventListener('close', function () { $('zoomImg').removeAttribute('src'); });
+
+  $('req').addEventListener('input', function () {
+    S.req = this.value;
+    var e = entry();
+    if (e) { e.req = S.req.trim(); renderDiarySoon(); }
+    save();
+  });
+  $('note').addEventListener('input', function () {
+    var e = entry();
+    if (!e) return;
+    e.note = this.value;
+    save();
+    renderDiarySoon();
+  });
+
+  $('file').addEventListener('change', function () {
+    var files = Array.prototype.slice.call(this.files || []);
+    this.value = '';
+    if (files.length) addFiles(files);
+  });
+  $('thumbs').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-del]');
+    if (!b) return;
+    e.stopPropagation();
+    var id = b.dataset.del;
+    if (!window.confirm('Удалить эту карту из колоды?')) return;
+    store('readwrite', function (s) { return s.delete(id); }).then(function () {
+      var c = BY[id];
+      if (c) drop(c);
+      setCards(CARDS.filter(function (x) { return x.id !== id; }));
+      tidy();
+      save();
+      renderAll();
+    }).catch(function () { say('Не получилось удалить карту.', true); });
+  });
+  $('shuffleAll').addEventListener('click', function () {
+    S.used = {};
+    if (S.cur && !S.cur.entry) S.cur = null;
+    flash = 'Колода перемешана заново.';
+    save();
+    renderAll();
+  });
+  $('wipeAsk').addEventListener('click', function () { $('wipeAsk').hidden = true; $('wipeYes').hidden = false; $('wipeNo').hidden = false; });
+  $('wipeNo').addEventListener('click', function () { $('wipeAsk').hidden = false; $('wipeYes').hidden = true; $('wipeNo').hidden = true; });
+  $('wipeYes').addEventListener('click', function () {
+    store('readwrite', function (s) { return s.clear(); }).then(function () {
+      CARDS.forEach(drop);
+      setCards(CARDS.filter(function (c) { return !c.own; }));
+      $('wipeYes').hidden = true; $('wipeNo').hidden = true;
+      say('Ваши карты удалены.');
+      tidy();
+      save();
+      renderAll();
+    }).catch(function () { say('Не получилось удалить карты.', true); });
+  });
+
+  $('more').addEventListener('click', function () { shown += PAGE; renderDiary(); });
+  $('clearAsk').addEventListener('click', function () { $('clearAsk').hidden = true; $('clearYes').hidden = false; $('clearNo').hidden = false; });
+  $('clearNo').addEventListener('click', function () { $('clearAsk').hidden = false; $('clearYes').hidden = true; $('clearNo').hidden = true; });
+  $('clearYes').addEventListener('click', function () {
+    S.log = [];
+    if (S.cur) S.cur.entry = null;
+    shown = PAGE;
+    $('clearYes').hidden = true; $('clearNo').hidden = true;
+    save();
+    renderAll();
+  });
+
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && ready) renderBar(); });
+
+  /* ---------- start ---------- */
+  load();
+  $('req').value = S.req;
+  setCards(builtCards());
+  renderAll();
+  store('readonly', function (s) { return s.getAll(); }).then(function (rows) {
+    rows = (rows || []).filter(function (r) { return r && str(r.id) && r.full; });
+    rows.sort(function (a, b) { return (a.added || 0) - (b.added || 0); });
+    setCards(builtCards().concat(rows.map(ownCard)));
+  }, function () {
+    idbBroken = true;
+  }).then(function () {
+    ready = true;
+    tidy();
+    save();
+    renderAll();
+  });
+
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>
