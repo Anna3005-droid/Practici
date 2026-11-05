@@ -52,4 +52,5 @@ self.DECK = [
   'karta-47.jpg',
   'karta-48.jpg',
   'karta-49.jpg',
+  'karta-50.jpg',
 ];
