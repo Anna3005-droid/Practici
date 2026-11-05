@@ -52,8 +52,6 @@ button { font: inherit; color: inherit; }
 .b { color: var(--blue); }
 .lbl { font-size: 0.68rem; line-height: 1.4; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 .note { font-size: 0.88rem; color: var(--muted); }
-.msg { font-size: 0.88rem; color: var(--blue-hi); }
-.msg.bad { color: var(--danger); }
 
 /* Sticky tally */
 .bar {
@@ -145,7 +143,7 @@ button { font: inherit; color: inherit; }
 .btn.pulse { animation: pulse 2.4s ease-out infinite; }
 .btn.quiet { color: var(--muted); }
 .btn.danger { border-color: var(--danger); color: var(--danger); }
-.btn:focus-visible, .chips button:focus-visible, summary:focus-visible, .field:focus-visible, .card:focus-visible, .fan button:focus-visible, .del:focus-visible, .thumb:focus-visible {
+.btn:focus-visible, .chips button:focus-visible, summary:focus-visible, .field:focus-visible, .card:focus-visible, .fan button:focus-visible, .thumb:focus-visible {
   outline: 2px solid var(--blue-hi); outline-offset: 2px;
 }
 
@@ -254,23 +252,11 @@ details.qs { background: var(--bg2); border-color: var(--line); }
 .qs li::marker { color: var(--blue-hi); }
 
 /* Deck */
-.add { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.add input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.add .btn:has(input:focus-visible) { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
 .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; }
 .tcell { position: relative; }
 .thumb { display: block; width: 100%; aspect-ratio: 2 / 3; padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg2); cursor: zoom-in; }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .tcell.used .thumb { opacity: .45; }
-.del {
-  position: absolute; top: -8px; right: -8px;
-  width: 30px; height: 30px; border-radius: 50%;
-  border: 1px solid var(--line-strong); background: var(--bg); color: var(--muted); cursor: pointer;
-  transition: color .2s, border-color .2s;
-}
-.del::before, .del::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.6px; border-radius: 1px; background: currentColor; }
-.del::before { transform: translate(-50%, -50%) rotate(45deg); }
-.del::after { transform: translate(-50%, -50%) rotate(-45deg); }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; }
 
 /* Diary */
@@ -343,7 +329,6 @@ dialog.zoom .x::after { transform: translate(-50%, -50%) rotate(-45deg); }
   details.how > summary:hover { color: var(--blue-hi); }
   .card:not(.open):hover .in { transform: translateY(-6px); }
   .fan button:hover { transform: translateY(-6px); }
-  .del:hover { color: var(--danger); border-color: var(--danger); }
 }
 
 @media (max-width: 380px) {
