@@ -1,6 +1,8 @@
 // Offline support: keeps the app files on the phone so it opens without internet.
 // Bump VERSION after changing any app file so phones pick up the new version.
-var VERSION = 'pol-v1';
+// On GitHub Pages several of our sites share one address, so only this site's own copies (PREFIX) are ever deleted.
+var PREFIX = 'pol-';
+var VERSION = PREFIX + 'v2';
 var APP = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
@@ -9,7 +11,7 @@ self.addEventListener('install', function (e) {
 
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== VERSION; }).map(function (k) { return caches.delete(k); }));
+    return Promise.all(keys.filter(function (k) { return k.indexOf(PREFIX) === 0 && k !== VERSION; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
 });
 

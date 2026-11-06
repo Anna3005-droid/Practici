@@ -1,7 +1,9 @@
 // Offline support: keeps the app files and the built-in cards on the phone so it opens without internet.
 // Bump VERSION after changing any app file or the card list so phones pick up the new version.
 importScripts('cards.js');
-var VERSION = 'mak-v7';
+// On GitHub Pages several of our sites share one address, so only this site's own copies (PREFIX) are ever deleted.
+var PREFIX = 'mak-';
+var VERSION = PREFIX + 'v8';
 var APP = ['./', 'index.html', 'style.css', 'cards.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 var DECK = (Array.isArray(self.DECK) ? self.DECK : []).map(function (f) { return encodeURI('cards/' + String(f).trim()); });
 
@@ -16,7 +18,7 @@ self.addEventListener('install', function (e) {
 
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== VERSION; }).map(function (k) { return caches.delete(k); }));
+    return Promise.all(keys.filter(function (k) { return k.indexOf(PREFIX) === 0 && k !== VERSION; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
 });
 
