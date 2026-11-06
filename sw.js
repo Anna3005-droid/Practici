@@ -1,6 +1,8 @@
 // Offline support: keeps the app files on the phone so it opens without internet.
 // Bump VERSION after changing any app file so phones pick up the new version.
-var VERSION = 'emo-v8';
+// On GitHub Pages several of our sites share one address, so only this site's own copies (PREFIX) are ever deleted.
+var PREFIX = 'emo-';
+var VERSION = PREFIX + 'v9';
 var APP = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
@@ -9,7 +11,7 @@ self.addEventListener('install', function (e) {
 
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== VERSION; }).map(function (k) { return caches.delete(k); }));
+    return Promise.all(keys.filter(function (k) { return k.indexOf(PREFIX) === 0 && k !== VERSION; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
 });
 
@@ -18,6 +20,10 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   var sameOrigin = url.origin === self.location.origin;
+  // The other sites live in subfolders next to this one (polyarnosti/, karty/, …) and have their own offline support:
+  // leave their pages and files alone, so this site never saves or serves them.
+  var home = self.registration.scope, path = url.origin + url.pathname;
+  if (sameOrigin && path.indexOf(home) === 0 && path.slice(home.length).indexOf('/') !== -1) return;
 
   // Pages and stylesheets: try the network first so updates arrive,
   // fall back to the saved copy offline. Each page is saved under its own address.
