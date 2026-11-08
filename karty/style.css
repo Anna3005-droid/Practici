@@ -143,7 +143,7 @@ button { font: inherit; color: inherit; }
 .btn.pulse { animation: pulse 2.4s ease-out infinite; }
 .btn.quiet { color: var(--muted); }
 .btn.danger { border-color: var(--danger); color: var(--danger); }
-.btn:focus-visible, .chips button:focus-visible, summary:focus-visible, .field:focus-visible, .card:focus-visible, .fan button:focus-visible, .thumb:focus-visible {
+.btn:focus-visible, .chips button:focus-visible, summary:focus-visible, .field:focus-visible, .card:focus-visible, .fan button:focus-visible, .thumb:focus-visible, .edel:focus-visible {
   outline: 2px solid var(--blue-hi); outline-offset: 2px;
 }
 
@@ -261,9 +261,26 @@ details.qs { background: var(--bg2); border-color: var(--line); }
 
 /* Diary */
 .diary { display: flex; flex-direction: column; gap: 10px; }
-.entry { border-top: 1px solid var(--line); padding-top: 12px; display: grid; grid-template-columns: 1fr; gap: 8px; animation: rise .4s var(--ease) both; }
+.entry { border-top: 1px solid var(--line); padding-top: 12px; display: grid; grid-template-columns: 1fr; gap: 8px; }
 .entry:first-child { border-top: 0; padding-top: 0; }
+.entry .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; }
 .entry .when { font-size: 0.78rem; color: var(--muted); letter-spacing: .04em; }
+.edel {
+  flex: none; min-height: 36px; padding: 0 12px; margin-right: -8px;
+  border: 0; border-radius: 999px; background: transparent; color: var(--muted);
+  font: 600 0.68rem var(--body); letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+  transition: color .2s, background .2s;
+}
+.entry .ask {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px;
+  padding: 12px; border-radius: 14px;
+  background: rgba(255, 122, 126, .08); border: 1px solid rgba(255, 122, 126, .35);
+  animation: open .3s var(--ease);
+}
+.entry .ask span { flex: 1 1 100%; font-size: 0.9rem; }
+.btn.small { min-height: 38px; padding: 0 16px; font-size: 0.7rem; }
+@keyframes leave { to { opacity: 0; transform: translateX(24px); } }
+.entry.gone { animation: leave .25s ease-in forwards; pointer-events: none; }
 .entry .req { font-weight: 600; overflow-wrap: anywhere; }
 .entry .txt { font-size: 0.92rem; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
 .entry .mini { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -327,6 +344,7 @@ dialog.zoom .x::after { transform: translate(-50%, -50%) rotate(-45deg); }
   .btn.pulse:hover { animation: none; }
   .chips button:not(:disabled):hover { border-color: var(--ink); transform: translateY(-1px); }
   details.how > summary:hover { color: var(--blue-hi); }
+  .edel:hover { color: var(--danger); background: rgba(255, 122, 126, .1); }
   .card:not(.open):hover .in { transform: translateY(-6px); }
   .fan button:hover { transform: translateY(-6px); }
 }

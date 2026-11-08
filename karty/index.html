@@ -385,10 +385,15 @@
     if (d.getFullYear() !== new Date().getFullYear()) o.year = 'numeric';
     try { return d.toLocaleString('ru-RU', o); } catch (e) { return d.toLocaleString(); }
   }
+  var askDel = null;   // diary entry waiting for "yes, delete"
   function renderDiary() {
     var h = '';
+    if (askDel && !S.log.some(function (e) { return e.id === askDel; })) askDel = null;
     S.log.slice(0, shown).forEach(function (e) {
-      h += '<article class="entry"><div class="when">' + esc(fmt(e.t)) + '</div>' +
+      var when = esc(fmt(e.t)), ask = askDel === e.id;
+      h += '<article class="entry' + (ask ? ' asking' : '') + '" data-entry="' + esc(e.id) + '">' +
+        '<div class="top"><span class="when">' + when + '</span>' +
+        (ask ? '' : '<button type="button" class="edel" data-edel="' + esc(e.id) + '" aria-label="Удалить запись от ' + when + '">Удалить</button>') + '</div>' +
         (e.req.trim() ? '<p class="req">' + esc(e.req) + '</p>' : '<p class="note">Без запроса</p>') +
         '<div class="mini">' + e.cards.map(function (id) {
           var c = BY[id];
@@ -396,7 +401,11 @@
             ? '<button type="button" class="thumb" data-zoom="' + esc(id) + '" aria-label="Открыть карту крупно"><img src="' + esc(c.thumb) + '" alt="" loading="lazy" decoding="async"></button>'
             : '<span class="thumb lost">карта удалена</span>';
         }).join('') + '</div>' +
-        (e.note.trim() ? '<p class="txt">' + esc(e.note) + '</p>' : '') + '</article>';
+        (e.note.trim() ? '<p class="txt">' + esc(e.note) + '</p>' : '') +
+        (ask ? '<div class="ask" role="group" aria-label="Подтвердите удаление"><span>Удалить этот запрос вместе с картами из дневника?</span>' +
+          '<button type="button" class="btn danger small" data-eyes="' + esc(e.id) + '">Да, удалить</button>' +
+          '<button type="button" class="btn small" data-eno="' + esc(e.id) + '">Отмена</button></div>' : '') +
+        '</article>';
     });
     $('diary').innerHTML = h || '<p class="note">Здесь появятся ваши расклады: дата, запрос, открытые карты и ваши мысли о них.</p>';
     $('more').hidden = S.log.length <= shown;
@@ -566,9 +575,7 @@
   $('zoom').addEventListener('close', function () { $('zoomImg').removeAttribute('src'); });
 
   $('req').addEventListener('input', function () {
-    S.req = this.value;
-    var e = entry();
-    if (e) { e.req = S.req.trim(); renderDiarySoon(); }
+    S.req = this.value;   // goes into the diary with the next spread; earlier entries keep their own request
     save();
   });
   $('note').addEventListener('input', function () {
@@ -585,6 +592,39 @@
     flash = 'Колода перемешана заново.';
     save();
     renderAll();
+  });
+
+  /* Deleting one diary entry: the request with its cards and notes */
+  function removeEntry(id) {
+    var el = $('diary').querySelector('[data-entry="' + id + '"]');
+    var current = !!(S.cur && S.cur.entry === id);
+    S.log = S.log.filter(function (e) { return e.id !== id; });
+    askDel = null;
+    if (current) { S.cur = null; flash = ''; }   // its spread leaves the table too
+    save();
+    function done() {
+      renderBar();
+      if (current) renderTable();
+      renderDiary();
+    }
+    if (el && !still) { el.classList.add('gone'); setTimeout(done, 260); } else done();
+  }
+  $('diary').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-edel], [data-eyes], [data-eno]');
+    if (!b) return;
+    if (b.dataset.edel) {
+      askDel = b.dataset.edel;
+      renderDiary();
+      var yes = $('diary').querySelector('[data-eyes]');
+      if (yes) yes.focus();
+    } else if (b.dataset.eno) {
+      askDel = null;
+      renderDiary();
+      var back = $('diary').querySelector('[data-edel="' + b.dataset.eno + '"]');
+      if (back) back.focus();
+    } else {
+      removeEntry(b.dataset.eyes);
+    }
   });
 
   $('more').addEventListener('click', function () { shown += PAGE; renderDiary(); });
