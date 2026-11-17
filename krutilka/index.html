@@ -160,18 +160,18 @@ input[type=range]{width:100%;accent-color:var(--phase)}
 .ph-cap{font:700 15px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--frame-ink);padding:9px 2px 11px;text-align:center;overflow-wrap:anywhere}
 .ph-score{font:600 10px/1 var(--f-body);letter-spacing:.24em;color:var(--frame-ink);opacity:.65;display:block;margin-top:5px;font-variant-numeric:tabular-nums}
 
-/* figure (top-down) */
-.fig{width:100%;height:auto;display:block}
+/* figure: a person with an outstretched arm, the photo on the fingertip, turning on the spot */
+.fig{width:100%;height:auto;display:block;overflow:visible}
 .fig-neg{color:var(--erase)} .fig-pos{color:var(--rewrite)}
-.fig-track{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1.5;stroke-dasharray:2 6}
-.fig-arc{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round}
-.fig-orbit{fill:none;stroke:currentColor;stroke-opacity:.25;stroke-width:1}
-.fig-arm{stroke:#FFFFFF;stroke-width:5;stroke-linecap:round}
-.fig-body{fill:var(--surface-2);stroke:#FFFFFF;stroke-width:2}
-.fig-head{fill:var(--bg);stroke:#FFFFFF;stroke-width:2}
-.fig-nose{fill:#FFFFFF}
-.fig-pic{fill:currentColor}
-.fig-tip{fill:var(--bg);stroke:#FFFFFF;stroke-width:2}
+.fig-floor{fill:color-mix(in srgb,currentColor 8%,transparent);stroke:color-mix(in srgb,currentColor 45%,transparent);stroke-width:1.5;stroke-dasharray:3 6}
+.fig-arc{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round}
+.fig-limb{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
+.fig-headc{fill:var(--ink)}
+.fig-photo{fill:var(--frame);stroke:color-mix(in srgb,var(--ink) 30%,transparent);stroke-width:1}
+.fig-neg .fig-photo-in{fill:#3B4C61} .fig-pos .fig-photo-in{fill:color-mix(in srgb,currentColor 70%,#FFFFFF)}
+.fig-tip{fill:currentColor;stroke:var(--frame);stroke-width:2}
+.arm-back{opacity:.45}
+.fig-dot{fill:currentColor}
 
 /* spin */
 .spin-stage{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:18px;align-items:center}
@@ -564,28 +564,59 @@ const ICON_CCW = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="t
 const ICON_SPEAK = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 
 let figN = 0;
+/* A person seen from the front, standing on a floor circle, one arm stretched out with the photo on the fingertip.
+   The arm swings around the body (pseudo-3D): poseFig() turns it, the dot on the floor shows where it points. */
 function figureSVG(kind, hand, rotId, animate) {
   const ccw = kind === 'neg';
-  const sx = hand === 'right' ? 22 : -22;
   const mid = 'mk' + (++figN);
-  const r = 94;
-  const pt = a => [r * Math.cos(a * Math.PI / 180), r * Math.sin(a * Math.PI / 180)].map(n => n.toFixed(1)).join(' ');
-  const arc = (a1, a2, sw) => `<path d="M ${pt(a1)} A ${r} ${r} 0 0 ${sw} ${pt(a2)}" class="fig-arc" marker-end="url(#${mid})"/>`;
-  const arcs = ccw ? arc(-12, -72, 0) + arc(168, 108, 0) : arc(-72, -12, 1) + arc(108, 168, 1);
-  const anim = animate && !reduceMotion ? `<animateTransform attributeName="transform" type="rotate" from="0" to="${ccw ? -360 : 360}" dur="16s" repeatCount="indefinite"/>` : '';
-  return `<svg class="fig ${ccw ? 'fig-neg' : 'fig-pos'}" viewBox="-112 -112 224 224" role="img" aria-label="Вид сверху: человек держит фотографию на пальце вытянутой руки и поворачивается ${ccw ? 'против часовой стрелки' : 'по часовой стрелке'}">
-    <defs><marker id="${mid}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
-    <circle r="${r}" class="fig-track"/>${arcs}
-    <circle r="66" class="fig-orbit"/>
-    <g${rotId ? ` id="${rotId}"` : ''}>${anim}
-      <line x1="${sx}" y1="-3" x2="0" y2="-62" class="fig-arm"/>
-      <ellipse rx="29" ry="13" class="fig-body"/>
-      <circle r="11" cy="-1" class="fig-head"/>
-      <path d="M -4.5 -11 L 0 -18 L 4.5 -11 Z" class="fig-nose"/>
-      <rect x="-26" y="-75" width="52" height="8" rx="2" class="fig-pic"/>
-      <circle cy="-66" r="4.5" class="fig-tip"/>
+  const cx = 120, cy = 206, rx = 100, ry = 24;
+  const P = a => [cx + rx * Math.cos(a * Math.PI / 180), cy + ry * Math.sin(a * Math.PI / 180)].map(n => n.toFixed(1)).join(' ');
+  const arc = (a1, a2, sw) => `<path d="M ${P(a1)} A ${rx} ${ry} 0 0 ${sw} ${P(a2)}" class="fig-arc" marker-end="url(#${mid})"/>`;
+  const back = ccw ? arc(312, 228, 0) : arc(228, 312, 1);
+  const front = ccw ? arc(132, 48, 0) : arc(48, 132, 1);
+  const arm = `<rect x="199" y="84" width="32" height="44" rx="2" class="fig-photo"/><rect x="203" y="88" width="24" height="30" class="fig-photo-in"/><line x1="124" y1="106" x2="215" y2="106" class="fig-limb" stroke-width="9"/><circle cx="215" cy="106" r="4.5" class="fig-tip"/>`;
+  return `<svg class="fig fig-${kind}" viewBox="0 40 240 200" data-dir="${ccw ? 'ccw' : 'cw'}"${rotId ? ` id="${rotId}"` : ''}${animate ? ' data-auto' : ''} role="img" aria-label="Человек стоит на месте, держит фотографию на пальце вытянутой руки и поворачивается ${ccw ? 'против часовой стрелки, влево' : 'по часовой стрелке, вправо'}">
+    <defs><marker id="${mid}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+    <ellipse class="fig-floor" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/>
+    <circle class="fig-dot" cx="${cx + rx}" cy="${cy}" r="5"/>
+    ${back}
+    <g class="arm-back" visibility="hidden">${arm}</g>
+    <g class="fig-person">
+      <line x1="114" y1="152" x2="108" y2="203" class="fig-limb" stroke-width="12"/>
+      <line x1="126" y1="152" x2="132" y2="203" class="fig-limb" stroke-width="12"/>
+      <line x1="120" y1="103" x2="120" y2="152" class="fig-limb" stroke-width="26"/>
+      <line x1="109" y1="108" x2="99" y2="148" class="fig-limb" stroke-width="9"/>
+      <circle cx="120" cy="71" r="16" class="fig-headc"/>
     </g>
+    <g class="arm-front">${arm}</g>
+    ${front}
   </svg>`;
+}
+/* th: angle of the arm on the floor, counter-clockwise seen from above; 0 = pointing right */
+function poseFig(svg, th) {
+  if (!svg) return;
+  const c = Math.cos(th), s = Math.sin(th);
+  const m = `matrix(${c.toFixed(4)},0,0,1,${(120 * (1 - c)).toFixed(2)},0)`;
+  const back = svg.querySelector('.arm-back'), front = svg.querySelector('.arm-front'), dot = svg.querySelector('.fig-dot');
+  if (!back || !front) return;
+  back.setAttribute('transform', m); front.setAttribute('transform', m);
+  back.setAttribute('visibility', s > 0 ? 'visible' : 'hidden');
+  front.setAttribute('visibility', s > 0 ? 'hidden' : 'visible');
+  if (dot) { dot.setAttribute('cx', (120 + 100 * c).toFixed(1)); dot.setAttribute('cy', (206 - 24 * s).toFixed(1)); }
+}
+let autoRaf = null;
+function autoFigs() {
+  if (autoRaf) cancelAnimationFrame(autoRaf);
+  autoRaf = null;
+  if (reduceMotion || !$$('.fig[data-auto]').length) return;
+  const t0 = performance.now();
+  const step = now => {
+    const figs = $$('.fig[data-auto]');
+    if (!figs.length) { autoRaf = null; return; }
+    figs.forEach(f => poseFig(f, (f.dataset.dir === 'cw' ? -1 : 1) * (now - t0) / 1000 * (2 * Math.PI / 7)));
+    autoRaf = requestAnimationFrame(step);
+  };
+  autoRaf = requestAnimationFrame(step);
 }
 
 function photoHTML(kind, v, title) {
@@ -806,7 +837,7 @@ function spinView(s, kind) {
   return `
     <div class="eyebrow">${ccw ? 'Этап 1 · Стирание' : 'Этап 2 · Перезапись'}</div>
     <h2 id="step-h">Крутилка ${ccw ? 'против часовой стрелки' : 'по часовой стрелке'}</h2>
-    <p data-say>Медленно, не спеша, вместе с фотографией на пальце ${HAND[hand]} руки сделайте три с половиной оборота вокруг себя ${ccw ? 'против часовой стрелки' : 'по часовой стрелке'}. Смотрите на палец и на ситуацию.</p>
+    <p data-say>Медленно, не спеша, вместе с фотографией на пальце ${HAND[hand]} руки сделайте три с половиной оборота вокруг себя ${ccw ? 'против часовой стрелки, то есть поворачиваясь влево' : 'по часовой стрелке, то есть поворачиваясь вправо'}. Смотрите на палец и на ситуацию.</p>
     <div class="spin-stage">
       ${figureSVG(kind, hand, 'fig-rot', false)}
       <div class="spin-read">
@@ -890,7 +921,7 @@ function prepView() {
 const Spin = { timer: null, phase: 'idle', wake: null, kind: 'neg' };
 async function wakeOn() { try { if (navigator.wakeLock) Spin.wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
 function wakeOff() { try { if (Spin.wake) Spin.wake.release(); } catch (e) {} Spin.wake = null; }
-function setFig(deg) { if (reduceMotion) return; const g = document.getElementById('fig-rot'); if (g) g.setAttribute('transform', `rotate(${deg.toFixed(1)})`); }
+function setFig(turns) { if (reduceMotion) return; poseFig(document.getElementById('fig-rot'), turns * 2 * Math.PI); }
 function setHalves(turns) { $$('.halves i').forEach((el, k) => { el.style.setProperty('--f', Math.max(0, Math.min(1, turns * 2 - k)).toFixed(3)); }); }
 function setRead(num, lbl, status) {
   const n = $('#spin-num'), l = $('#spin-lbl'), s = $('#spin-status');
@@ -905,11 +936,11 @@ function spinActions() {
 }
 function spinStart(kind) {
   spinStop(true);
-  const ccw = kind === 'neg'; const dir = ccw ? -1 : 1;
+  const ccw = kind === 'neg'; const dir = ccw ? 1 : -1;
   const sec = state.settings.sec; const total = 3.5 * sec * 1000; const lead = 3600;
   Spin.kind = kind; Spin.phase = 'lead'; spinActions(); wakeOn();
   beep(440, .1);
-  count(ccw ? 'Вытяните руку с фотографией. Вращаемся против часовой стрелки. Приготовьтесь.' : 'Вытяните неведущую руку с фотографией. Вращаемся по часовой стрелке. Приготовьтесь.');
+  count(ccw ? 'Вытяните руку с фотографией. Вращаемся против часовой стрелки, влево. Приготовьтесь.' : 'Вытяните неведущую руку с фотографией. Вращаемся по часовой стрелке, вправо. Приготовьтесь.');
   const t0 = performance.now(); let started = false, said = 0;
   const words = ['Один.', 'Два.', 'Три. И половинка.'];
   Spin.timer = setInterval(() => {
@@ -918,7 +949,7 @@ function spinStart(kind) {
     if (!started) { started = true; Spin.phase = 'run'; spinActions(); beep(660, .16); count('Поехали.'); }
     const t = Math.min(1, (el - lead) / total);
     const turns = t * 3.5;
-    setFig(dir * turns * 360); setHalves(turns);
+    setFig(dir * turns); setHalves(turns);
     const whole = Math.floor(turns + 1e-6);
     if (whole > said && whole <= 3) { said = whole; beep(whole === 3 ? 740 : 620, .14); count(words[whole - 1]); }
     if (turns < 3) setRead(String(Math.floor(turns) + 1), 'оборот из трёх с половиной', `Оборот ${Math.floor(turns) + 1}. Медленно, смотрите на палец.`);
@@ -990,11 +1021,11 @@ function homeView() {
   <section class="phases" aria-label="Два этапа">
     <div class="phase">
       <div class="phase-h"><span class="phase-ic">${ICON_CCW}</span><div><div class="eyebrow">Этап 1</div><h3>Стирание</h3></div></div>
-      <dl><div><dt>Рука</dt><dd>ведущая, ${HAND[hand]}</dd></div><div><dt>Вращение</dt><dd>3,5 оборота против часовой</dd></div><div><dt>Цель</dt><dd>сила реакции до 0</dd></div></dl>
+      <dl><div><dt>Рука</dt><dd>ведущая, ${HAND[hand]}</dd></div><div><dt>Вращение</dt><dd>3,5 оборота против часовой, влево</dd></div><div><dt>Цель</dt><dd>сила реакции до 0</dd></div></dl>
     </div>
     <div class="phase ph-rewrite">
       <div class="phase-h"><span class="phase-ic">${ICON_CW}</span><div><div class="eyebrow">Этап 2</div><h3>Перезапись</h3></div></div>
-      <dl><div><dt>Рука</dt><dd>неведущая, ${HAND[hand === 'right' ? 'left' : 'right']}</dd></div><div><dt>Вращение</dt><dd>3,5 оборота по часовой</dd></div><div><dt>Цель</dt><dd>вера в новую картинку до 10</dd></div></dl>
+      <dl><div><dt>Рука</dt><dd>неведущая, ${HAND[hand === 'right' ? 'left' : 'right']}</dd></div><div><dt>Вращение</dt><dd>3,5 оборота по часовой, вправо</dd></div><div><dt>Цель</dt><dd>вера в новую картинку до 10</dd></div></dl>
     </div>
   </section>
   <section>
@@ -1071,6 +1102,7 @@ function render(scrollTop) {
   app.innerHTML = state.view === 'journal' ? journalView() : state.view === 'about' ? aboutView() : state.view === 'practice' ? practiceView() : homeView();
   if (state.view === 'practice' && s && (s.step === 'spin' || s.step === 'spin2')) { Spin.phase = 'idle'; spinActions(); }
   if (scrollTop) window.scrollTo(0, 0);
+  autoFigs();
 }
 function refresh() {
   if (state.wantResume && state.view === 'practice' && !state.cur) {

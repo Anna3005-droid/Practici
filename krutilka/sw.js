@@ -1,6 +1,6 @@
 // Работа без интернета: хранит файлы приложения на телефоне.
 // После любого изменения файлов увеличьте VERSION (krutilka-v1 → krutilka-v2), чтобы телефоны получили новую версию.
-const VERSION = 'krutilka-v1';
+const VERSION = 'krutilka-v2';
 const FONTS = 'krutilka-fonts';
 const SHELL = [
   './',

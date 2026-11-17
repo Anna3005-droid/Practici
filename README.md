@@ -84,4 +84,4 @@
 
 ## Если поменяли файлы
 
-В файле `sw.js` того же сайта увеличьте номер версии: в корне это строка `var VERSION = 'emo-v8';` (например, на `emo-v9`), в папке `polyarnosti` — `var VERSION = 'pol-v1';` (например, на `pol-v2`), в папке `karty` — `var VERSION = 'mak-v8';` (например, на `mak-v9`), в папке `krutilka` — `const VERSION = 'krutilka-v1';` (например, на `krutilka-v2`). Тогда телефоны получат новую версию, а не сохранённую старую.
+В файле `sw.js` того же сайта увеличьте номер версии: в корне это строка `var VERSION = 'emo-v8';` (например, на `emo-v9`), в папке `polyarnosti` — `var VERSION = 'pol-v1';` (например, на `pol-v2`), в папке `karty` — `var VERSION = 'mak-v8';` (например, на `mak-v9`), в папке `krutilka` — `const VERSION = 'krutilka-v2';` (например, на `krutilka-v3`). Тогда телефоны получат новую версию, а не сохранённую старую.
