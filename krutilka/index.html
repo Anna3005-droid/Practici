@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Крутилка · Татьяна Хавро</title>
+<meta name="description" content="Тренажёр техники «Крутилка»: стирание негативного опыта прошлого и перезапись, с голосовым счётом оборотов и дневником.">
+<meta name="theme-color" content="#051629">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Крутилка">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{background:#051629;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+/* install card */
+.install{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;background:linear-gradient(135deg,#0A2142,#0D2F60);border:1px solid rgba(0,130,254,.45);border-radius:20px;padding:16px;margin-bottom:28px}
+.install-ic{width:52px;height:52px;border-radius:14px;display:block}
+.install h3{font-size:18px}
+.install p{font-size:13.5px;color:var(--muted);margin-top:4px}
+.install p b{color:var(--ink)}
+.install-act{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+/* Layout: Татьяна Хавро's look — deep navy, white condensed caps, electric blue, spaced small caps with a rule, pill buttons, outlined background words.
+   One calm column (max 640px). «Стирание» runs in electric blue, «Перезапись» in ice blue. Single dark look on purpose, as on her landing. */
+:root{
+  --bg:#051629; --bg2:#03101F; --surface:#0A2142; --surface-2:#0D2A52; --ink:#FFFFFF; --muted:#9DB0CC; --line:rgba(255,255,255,.12);
+  --erase:#0082FE; --erase-hi:#2A96FF; --erase-soft:rgba(0,130,254,.16); --on-erase:#FFFFFF;
+  --rewrite:#9BD0FF; --rewrite-hi:#B9DEFF; --rewrite-soft:rgba(155,208,255,.13); --on-rewrite:#051629;
+  --danger:#E5484D; --frame:#F4F7FB; --frame-ink:#0A2142;
+  --phase:var(--erase); --phase-hi:var(--erase-hi); --phase-soft:var(--erase-soft); --on-phase:var(--on-erase);
+  --f-display:"Oswald","Arial Narrow",Impact,sans-serif;
+  --f-body:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --shadow:0 24px 50px -24px rgba(0,0,0,.75);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:radial-gradient(900px 520px at 90% -12%,rgba(0,130,254,.20),transparent 62%),var(--bg);color:var(--ink);font:400 15.5px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ph-rewrite{--phase:var(--rewrite);--phase-hi:var(--rewrite-hi);--phase-soft:var(--rewrite-soft);--on-phase:var(--on-rewrite)}
+a{color:var(--phase-hi)}
+h1,h2,h3{margin:0;text-wrap:balance;font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.005em}
+h1{font-size:clamp(34px,9.4vw,54px);line-height:.95}
+h2{font-size:clamp(25px,6.4vw,32px);line-height:1.02}
+h3{font-size:19px;line-height:1.1;font-weight:600}
+h1 .b,h2 .b{color:var(--erase)}
+p{margin:0}
+.eyebrow{font:500 11px/1.3 var(--f-body);letter-spacing:.32em;text-transform:uppercase;color:var(--phase-hi)}
+.muted{color:var(--muted)}
+.hint{font-size:13px;color:var(--muted)}
+
+/* bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--erase);color:#fff;flex:none}
+.brand-txt{display:grid;gap:3px}
+.brand-txt b{font:700 19px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.brand-txt small{font:500 9px/1 var(--f-body);letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.tabs{display:flex;gap:2px}
+.tabs a{padding:8px 10px;border-radius:999px;color:var(--muted);text-decoration:none;font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.tabs a[aria-current="page"]{background:var(--erase);color:#fff}
+main{padding-block:22px 72px}
+
+/* buttons */
+.btn{appearance:none;font:700 12.5px/1.2 var(--f-body);letter-spacing:.08em;text-transform:uppercase;padding:15px 24px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;text-decoration:none;text-align:center;border:2px solid transparent;transition:transform .2s,box-shadow .2s,background .2s}
+.btn-primary{background:var(--phase);border-color:var(--phase);color:var(--on-phase)}
+.btn-primary:not([disabled]):hover{transform:translateY(-2px);box-shadow:0 12px 28px -10px color-mix(in srgb,var(--phase) 80%,transparent)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:rgba(255,255,255,.35)}
+.btn-ghost:hover{border-color:#fff}
+.btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-text{appearance:none;border:0;background:none;color:var(--muted);font:600 13px/1.2 var(--f-body);letter-spacing:.04em;padding:10px 6px;min-height:40px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-text:hover{color:var(--ink)}
+.btn[disabled]{opacity:.38;cursor:not-allowed}
+:is(a,button,input,textarea,summary):focus-visible{outline:2px solid var(--erase-hi);outline-offset:3px}
+.say{display:none}
+.can-speak .say{display:inline-flex}
+
+/* cards & generic */
+.card{background:var(--surface);border-radius:24px;padding:22px 20px}
+.stack{display:grid;gap:18px}
+.note{background:var(--phase-soft);border-left:3px solid var(--phase);border-radius:6px 14px 14px 6px;padding:12px 14px;font-size:14.5px;font-weight:500}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-top:4px}
+.actions .grow{flex:1 1 200px}
+.actions .right{display:flex;gap:10px;flex-wrap:wrap;flex:1 1 240px;justify-content:flex-end}
+.actions .right .btn{flex:1 1 180px}
+
+/* instructions: outlined numerals like the program's modules */
+.instr{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:14px}
+.instr li{counter-increment:s;display:grid;grid-template-columns:42px minmax(0,1fr);gap:12px;align-items:start}
+.instr li::before{content:counter(s,decimal-leading-zero);font:700 30px/.9 var(--f-display);color:transparent;-webkit-text-stroke:1.3px var(--phase-hi)}
+
+/* fields */
+.field{display:grid;gap:8px}
+.f-l{font-weight:600;font-size:14.5px}
+.f-l small{font-weight:400;color:var(--muted);font-size:12.5px;margin-left:6px}
+input[type=text],textarea{width:100%;font:400 16px/1.45 var(--f-body);color:var(--ink);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+input[type=text]:focus,textarea:focus{border-color:var(--phase)}
+textarea{resize:vertical;min-height:64px}
+input::placeholder,textarea::placeholder{color:rgba(157,176,204,.7)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;font:600 13px/1 var(--f-body);padding:9px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--phase) 55%,transparent);background:transparent;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--phase);border-color:var(--phase);color:var(--on-phase)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg button{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);border-radius:16px;padding:12px 14px;font:500 13px/1.25 var(--f-body);cursor:pointer;text-align:left}
+.seg button b{display:block;font:700 18px/1.1 var(--f-display);text-transform:uppercase;color:var(--ink);margin-bottom:3px}
+.seg button.on{border-color:var(--phase);background:var(--phase-soft)}
+input[type=range]{width:100%;accent-color:var(--phase)}
+.tg{display:flex;gap:10px;align-items:center;font-size:14.5px;cursor:pointer}
+.tg input{width:20px;height:20px;accent-color:var(--phase);flex:none}
+.toggles{display:grid;gap:10px}
+
+/* 0–10 scale */
+.scale{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.sc{appearance:none;padding:0;min-height:44px;border-radius:10px;border:1px solid var(--line);color:var(--ink);font:600 18px/1 var(--f-display);font-variant-numeric:tabular-nums;cursor:pointer;
+  background:linear-gradient(to top,color-mix(in srgb,var(--phase) 32%,transparent) calc(var(--i) * 10%),rgba(255,255,255,.03) 0)}
+.sc.on{background:var(--phase);border-color:var(--phase);color:var(--on-phase);box-shadow:0 8px 20px -8px var(--phase)}
+.scale-ends{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted)}
+.hist{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.hist b{font:700 20px/1 var(--f-display);letter-spacing:.02em;color:var(--phase-hi);font-variant-numeric:tabular-nums}
+
+/* progress */
+.prog{display:grid;gap:12px;margin-bottom:14px}
+.prog-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.prog-title{font:600 16px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.03em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+.prog-phases{display:grid;grid-template-columns:6fr 5fr;gap:12px}
+.pp{display:grid;gap:7px;min-width:0}
+.pp-l{display:flex;justify-content:space-between;gap:6px;font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.pp-l b{font:700 14px/1 var(--f-display);letter-spacing:.02em;text-transform:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pp1 .pp-l b{color:var(--erase-hi)} .pp2 .pp-l b{color:var(--rewrite)}
+.pp.is-cur .pp-l span{color:var(--ink)}
+.dots{display:flex;gap:4px}
+.dot{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.12)}
+.pp1 .dot.done,.pp1 .dot.cur{background:var(--erase)}
+.pp2 .dot.done,.pp2 .dot.cur{background:var(--rewrite)}
+.dot.cur{box-shadow:0 0 10px color-mix(in srgb,var(--phase) 80%,transparent)}
+
+/* photo on the fingertip */
+.photo-row{display:flex;justify-content:center;padding:6px 0 2px}
+.photo{--i:1;width:min(210px,62vw);background:var(--frame);padding:10px 10px 0;border-radius:4px;box-shadow:var(--shadow);transform:rotate(-1.6deg)}
+.ph-img{position:relative;aspect-ratio:4/3;overflow:hidden;
+  filter:saturate(calc(.12 + .88 * var(--i))) blur(calc((1 - var(--i)) * 2.4px)) contrast(calc(.55 + .45 * var(--i)));
+  opacity:calc(.16 + .84 * var(--i));transition:filter .5s ease,opacity .5s ease}
+.photo-neg .ph-img{background:radial-gradient(ellipse at 72% 26%,rgba(255,255,255,.2),transparent 42%),linear-gradient(162deg,#0B1524 0%,#26364B 48%,#6A788C 100%)}
+.photo-pos .ph-img{background:radial-gradient(circle at 28% 28%,#FFFFFF 0 10%,rgba(255,255,255,.55) 11%,transparent 30%),linear-gradient(175deg,#DDEFFF 0%,#86C3FF 46%,#1F86F2 100%)}
+.ph-img::after{content:"";position:absolute;inset:0;background:repeating-radial-gradient(circle at 30% 40%,rgba(255,255,255,.06) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.finger{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--frame);border:3px solid var(--frame-ink);z-index:1}
+.finger::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px solid var(--frame);opacity:.7;animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{from{transform:scale(.6);opacity:.8}to{transform:scale(1.5);opacity:0}}
+.ph-cap{font:700 15px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.02em;color:var(--frame-ink);padding:9px 2px 11px;text-align:center;overflow-wrap:anywhere}
+.ph-score{font:600 10px/1 var(--f-body);letter-spacing:.24em;color:var(--frame-ink);opacity:.65;display:block;margin-top:5px;font-variant-numeric:tabular-nums}
+
+/* figure (top-down) */
+.fig{width:100%;height:auto;display:block}
+.fig-neg{color:var(--erase)} .fig-pos{color:var(--rewrite)}
+.fig-track{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1.5;stroke-dasharray:2 6}
+.fig-arc{fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round}
+.fig-orbit{fill:none;stroke:currentColor;stroke-opacity:.25;stroke-width:1}
+.fig-arm{stroke:#FFFFFF;stroke-width:5;stroke-linecap:round}
+.fig-body{fill:var(--surface-2);stroke:#FFFFFF;stroke-width:2}
+.fig-head{fill:var(--bg);stroke:#FFFFFF;stroke-width:2}
+.fig-nose{fill:#FFFFFF}
+.fig-pic{fill:currentColor}
+.fig-tip{fill:var(--bg);stroke:#FFFFFF;stroke-width:2}
+
+/* spin */
+.spin-stage{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:18px;align-items:center}
+.spin-read{display:grid;gap:6px}
+.spin-num{font:700 84px/.9 var(--f-display);color:var(--phase);font-variant-numeric:tabular-nums;text-transform:uppercase;text-shadow:0 0 30px color-mix(in srgb,var(--phase) 55%,transparent)}
+.spin-lbl{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+.halves{display:grid;grid-template-columns:2fr 2fr 2fr 1fr;gap:8px}
+.hg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.hg-half{grid-template-columns:1fr}
+.hg i{height:9px;border-radius:5px;--f:0;background:linear-gradient(to right,var(--phase) calc(var(--f) * 100%),rgba(255,255,255,.12) 0)}
+.hg span{grid-column:1/-1;text-align:center;font:700 14px/1 var(--f-display);color:var(--muted);padding-top:5px}
+.spin-status{font-weight:600;min-height:1.5em}
+@media (max-width:460px){.spin-stage{grid-template-columns:1fr;justify-items:center;text-align:center}.spin-stage .fig{max-width:230px}}
+
+/* home */
+.hero{position:relative;display:grid;grid-template-columns:190px minmax(0,1fr);gap:22px;align-items:center;margin-bottom:28px}
+.hero-txt{display:grid;gap:14px;position:relative;z-index:1}
+.hero-txt p{color:var(--muted);max-width:60ch}
+.hero-fig{position:relative;z-index:1}
+.hero-act{display:flex;flex-wrap:wrap;gap:10px;padding-top:4px}
+.outline{position:absolute;right:-8px;top:-6px;z-index:0;font:700 clamp(84px,24vw,150px)/.85 var(--f-display);text-transform:uppercase;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.07);pointer-events:none;user-select:none;white-space:nowrap;overflow:hidden;max-width:100%}
+.sign{display:flex;align-items:center;gap:16px;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink);padding-top:6px}
+.sign::before{content:"";width:56px;height:1px;background:var(--ink);flex:none}
+@media (max-width:560px){.hero{grid-template-columns:1fr}.hero-fig{max-width:170px;justify-self:center}}
+.phases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:32px}
+@media (max-width:520px){.phases{grid-template-columns:1fr}}
+.phase{background:var(--surface);border-radius:20px;padding:18px;display:grid;gap:12px}
+.phase-h{display:flex;gap:12px;align-items:center}
+.phase-ic{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--phase);color:var(--on-phase);flex:none}
+.phase h3{font-size:24px}
+.phase dl{margin:0;display:grid}
+.phase dl div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:8px;font-size:14px;padding-block:8px;border-top:1px solid var(--line)}
+.phase dt{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--phase-hi);font-weight:600;padding-top:3px}
+.phase dd{margin:0;font-weight:500}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+.sec-h a{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-decoration:none}
+.foot{margin-top:28px;font-size:12.5px;color:var(--muted)}
+
+/* journal */
+.page-h{display:grid;gap:8px;margin-bottom:20px}
+.sync{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.sync::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.sync.ok::before{background:var(--erase);box-shadow:0 0 8px var(--erase)}
+.jlist{display:grid;gap:12px}
+.jc{background:var(--surface);border-radius:20px;overflow:hidden;border:1px solid transparent}
+.jc:hover{border-color:rgba(0,130,254,.4)}
+.jc-head{appearance:none;border:0;background:none;color:inherit;font:inherit;text-align:left;width:100%;padding:16px 18px;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center}
+.jc-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.jc-title{font:700 19px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.01em;overflow-wrap:anywhere}
+.jc-meta{grid-column:1;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.jc-head .jc-chart{grid-column:2;grid-row:1/span 2;width:132px}
+@media (max-width:420px){.jc-head .jc-chart{width:104px}}
+.pill{font:700 9.5px/1 var(--f-body);letter-spacing:.16em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--muted);border:1px dashed rgba(255,255,255,.22)}
+.pill-done{background:var(--erase);color:#fff;border-color:var(--erase)}
+.pill-active{background:transparent;color:var(--rewrite);border:1px dashed var(--rewrite)}
+.jc-body{border-top:1px solid var(--line);padding:16px 18px;display:grid;gap:16px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.cols{grid-template-columns:1fr}}
+.col{display:grid;gap:8px;align-content:start;padding:14px;border-radius:16px;background:var(--phase-soft)}
+.col h4{margin:0;font:600 10px/1.3 var(--f-body);letter-spacing:.22em;text-transform:uppercase;color:var(--phase-hi)}
+.kv{display:grid;gap:2px;font-size:14px}
+.kv span{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.kv p{overflow-wrap:anywhere;white-space:pre-wrap}
+.rounds{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:4px}
+.confirm{display:grid;gap:10px;padding:14px;border-radius:16px;border:1px solid var(--danger)}
+.empty{display:grid;gap:14px;justify-items:start;margin-bottom:18px}
+.empty p{color:var(--muted);max-width:60ch}
+
+/* chart */
+.chart{width:100%;height:auto;display:block;max-width:380px}
+.chart text{font-family:var(--f-body);fill:var(--muted)}
+.chart .v{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums}
+.chart .grid{stroke:rgba(255,255,255,.1);stroke-width:1}
+.chart .div{stroke:rgba(255,255,255,.18);stroke-width:1;stroke-dasharray:3 4}
+.c-neg{stroke:var(--erase);fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+.c-pos{stroke:var(--rewrite);fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round}
+.a-neg{fill:var(--erase);fill-opacity:.18;stroke:none}
+.a-pos{fill:var(--rewrite);fill-opacity:.14;stroke:none}
+.p-neg{fill:var(--erase)} .p-pos{fill:var(--rewrite)}
+.chart .v.n{fill:var(--erase-hi)} .chart .v.p{fill:var(--rewrite)}
+
+/* about */
+.prose{display:grid;gap:16px;max-width:62ch}
+.prose h2{margin-top:12px}
+.prose ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.examples{display:grid;gap:8px;padding:14px 16px;border-radius:16px;border:1px dashed rgba(255,255,255,.22)}
+.examples ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px}
+.ex-l{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.safety{display:grid;gap:8px;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.04);border-left:3px solid var(--erase);font-size:14px}
+.safety h3{font-size:17px}
+.safety ul{margin:0;padding-left:18px;display:grid;gap:5px}
+
+/* floating */
+.say-stop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;box-shadow:var(--shadow);background:var(--surface)!important}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:#FFFFFF;color:var(--bg);font-weight:600;padding:12px 18px;border-radius:999px;font-size:13.5px;max-width:calc(100% - 32px);box-shadow:var(--shadow)}
+
+@media (prefers-reduced-motion: reduce){
+  .finger::after{animation:none}
+  .ph-img{transition:none}
+  .btn{transition:none}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="#" data-nav="home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18"><g transform="translate(24,0) scale(-1,1)"><path d="M19 12a7 7 0 1 1-7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M12 1.6 16 5l-4 3.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g></svg></span>
+      <span class="brand-txt"><b>Крутилка</b><small>Татьяна Хавро</small></span>
+    </a>
+    <nav class="tabs" aria-label="Разделы">
+      <a href="#" data-tab="home">Практика</a>
+      <a href="#journal" data-tab="journal">Дневник</a>
+      <a href="#about" data-tab="about">О технике</a>
+    </nav>
+  </div>
+</header>
+<main id="app" class="wrap"></main>
+<button id="say-stop" class="btn btn-ghost say-stop" type="button" hidden>
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+  Остановить чтение
+</button>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+const getPath = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
+const setPath = (o, p, v) => { const ks = p.split('.'); const last = ks.pop(); ks.reduce((a, k) => (a[k] ??= {}), o)[last] = v; };
+const HAND = { right: 'правой', left: 'левой' };
+const fmtDate = ts => { try { return new Date(ts).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } };
+
+const app = $('#app');
+const toastEl = $('#toast');
+let toastT = null;
+function toast(msg) { toastEl.textContent = msg; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { toastEl.hidden = true; }, 3800); }
+
+/* ---------- data ---------- */
+const LS_KEY = 'krutilka-khavro.v1';
+const lsRead = () => { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch (e) { return {}; } };
+const lsWrite = o => { try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch (e) {} };
+
+const DEFAULT_SETTINGS = { hand: 'right', sec: 5, voice: true, beep: true };
+const state = {
+  view: 'home',
+  settings: { ...DEFAULT_SETTINGS },
+  sessions: {},
+  cur: null,
+  open: { example: false },
+  confirmDel: null,
+  sync: 'local',
+  wantResume: false,
+};
+
+const NEG_EMO = ['страх', 'обида', 'стыд', 'злость', 'вина', 'беспомощность', 'тревога', 'грусть', 'растерянность'];
+const NEG_BODY = ['ком в горле', 'сжатие в груди', 'тяжесть', 'дрожь', 'жар', 'холод', 'напряжение в плечах', 'пустота в животе', 'сбитое дыхание'];
+const POS_EMO = ['спокойствие', 'радость', 'облегчение', 'уверенность', 'безопасность', 'сила', 'тепло', 'свобода', 'благодарность'];
+const POS_BODY = ['тепло в груди', 'лёгкость', 'расслабленные плечи', 'ровное дыхание', 'опора в ногах', 'улыбка', 'расправленная спина'];
+
+const EXAMPLE = {
+  id: 'example', kind: 'session', example: true, status: 'done', title: 'Собака во дворе',
+  createdAt: Date.UTC(2026, 10, 12, 16, 40), hand: 'right',
+  neg: { emo: 'страх, беспомощность', body: 'сжатие в груди, дрожь', thoughts: 'Сейчас укусит, и никто не поможет',
+    ratings: [{ v: 8 }, { v: 7, note: 'Картинка стала дальше' }, { v: 3, note: 'Почти не трогает' }, { v: 0, note: 'Смотрю спокойно' }] },
+  pos: { desc: 'Собака подбегает, резко останавливается и начинает ласкаться. Выходит хозяин и зовёт её.', emo: 'облегчение, спокойствие', body: 'тепло в груди, лёгкость', thoughts: 'Я в безопасности',
+    ratings: [{ v: 2 }, { v: 5 }, { v: 7 }, { v: 10 }] },
+};
+
+/* ---------- storage: private per-person db, browser fallback ---------- */
+const pTimers = {};
+const Store = {
+  mode: 'local', col: null, queue: new Map(), busy: false, deleted: new Set(),
+
+  loadLocal() {
+    const d = lsRead();
+    if (d.settings) state.settings = { ...DEFAULT_SETTINGS, ...d.settings };
+    state.sessions = d.sessions || {};
+  },
+  saveLocal() { lsWrite({ settings: state.settings, sessions: this.mode === 'db' ? {} : state.sessions }); },
+
+  async connect() {
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    setSync('connecting');
+    let db = null, user = null;
+    try { [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]); } catch (e) {}
+    const uid = user ? await user.id() : null;
+    if (!db || !uid) { setSync('local'); return; }
+    try { this.col = db.collection('data/users/' + uid); } catch (e) { setSync('local'); return; }
+    let settled = false;
+    const slow = setTimeout(() => { if (!settled) setSync('slow'); }, 10000);
+    this.col.onSnapshot(snap => {
+      if (!snap.metadata.fromCache && !settled) { settled = true; clearTimeout(slow); }
+      this.onSnap(snap);
+    }, err => {
+      settled = true; clearTimeout(slow);
+      this.fallback(err && err.code === 'revoked' ? null : 'Дневник в аккаунте недоступен. Записи сохраняются в этом браузере.');
+    });
+  },
+
+  onSnap(snap) {
+    const remote = {}; let rs = null;
+    for (const d of snap.docs) {
+      const x = d.data(); if (!x) continue;
+      if (d.id === 'settings') { rs = x.value || null; continue; }
+      if (x.kind === 'session' && !this.deleted.has(d.id)) remote[d.id] = clone(x);
+    }
+    const definitive = !snap.metadata.fromCache;
+    if (this.mode !== 'db') {
+      if (!definitive) {
+        for (const [id, x] of Object.entries(remote)) {
+          const loc = state.sessions[id];
+          if (!loc || (loc.updatedAt || 0) < (x.updatedAt || 0)) state.sessions[id] = x;
+        }
+        refresh(); return;
+      }
+      this.mode = 'db'; setSync('db');
+      for (const [id, s] of Object.entries(state.sessions)) {
+        if (!remote[id] || (remote[id].updatedAt || 0) < (s.updatedAt || 0)) { remote[id] = s; this.put(id, clone(s)); }
+      }
+      if (rs) state.settings = { ...DEFAULT_SETTINGS, ...rs };
+      else this.put('settings', { kind: 'settings', value: { ...state.settings } });
+      state.sessions = remote;
+      this.saveLocal();
+      refresh(); return;
+    }
+    if (rs && !this.queue.has('settings')) state.settings = { ...DEFAULT_SETTINGS, ...rs };
+    const next = {};
+    for (const [id, x] of Object.entries(remote)) {
+      const loc = state.sessions[id];
+      next[id] = (loc && ((loc.updatedAt || 0) > (x.updatedAt || 0) || this.queue.has(id) || pTimers[id])) ? loc : x;
+    }
+    for (const [id, loc] of Object.entries(state.sessions)) {
+      if (!next[id] && (this.queue.has(id) || pTimers[id] || id === state.cur)) next[id] = loc;
+    }
+    state.sessions = next;
+    refresh();
+  },
+
+  put(id, data) { if (this.mode !== 'db' && id !== 'settings' && !this.col) return; this.queue.set(id, { op: 'set', data }); this.flush(); },
+  del(id) {
+    this.deleted.add(id);
+    if (this.mode === 'db') { this.queue.set(id, { op: 'del' }); this.flush(); } else this.saveLocal();
+  },
+  async flush() {
+    if (this.busy || !this.col) return;
+    this.busy = true;
+    try {
+      while (this.queue.size && this.mode === 'db') {
+        const [id, job] = this.queue.entries().next().value;
+        const ref = this.col.doc(id);
+        const run = () => job.op === 'del' ? ref.delete() : ref.set(job.data);
+        try { await run(); }
+        catch (e) {
+          const code = e && e.code;
+          if (code === 'unavailable' || code === 'resource_exhausted') {
+            await sleep(700 + Math.random() * 900);
+            try { await run(); } catch (e2) { this.handleErr(e2); }
+          } else this.handleErr(e);
+        }
+        if (this.queue.get(id) === job) this.queue.delete(id);
+      }
+    } finally { this.busy = false; }
+    if (this.queue.size && this.mode === 'db') this.flush();
+  },
+  handleErr(e) {
+    const code = e && e.code;
+    if (code === 'quota_exceeded') { toast('Не удалось сохранить: дневник переполнен. Удалите старые записи.'); return; }
+    this.fallback('Не получилось сохранить в аккаунт. Записи сохраняются в этом браузере.');
+  },
+  fallback(msg) {
+    this.mode = 'local'; this.queue.clear(); this.col = null;
+    this.saveLocal(); setSync('local');
+    if (msg) toast(msg);
+  },
+};
+
+function persist(s, now = false) {
+  s.updatedAt = Date.now();
+  state.sessions[s.id] = s;
+  clearTimeout(pTimers[s.id]);
+  const id = s.id;
+  const go = () => {
+    delete pTimers[id];
+    const cur = state.sessions[id]; if (!cur) return;
+    if (Store.mode === 'db') Store.put(id, clone(cur)); else Store.saveLocal();
+  };
+  if (now) go(); else pTimers[id] = setTimeout(go, 700);
+}
+function flushAll() {
+  for (const id of Object.keys(pTimers)) {
+    clearTimeout(pTimers[id]); delete pTimers[id];
+    const s = state.sessions[id];
+    if (s) { if (Store.mode === 'db') Store.put(id, clone(s)); else Store.saveLocal(); }
+  }
+}
+function saveSettings() {
+  lsWrite({ settings: state.settings, sessions: Store.mode === 'db' ? {} : state.sessions });
+  if (Store.mode === 'db') Store.put('settings', { kind: 'settings', value: { ...state.settings } });
+}
+function setSync(v) { state.sync = v; $$('[data-sync]').forEach(el => { el.outerHTML = syncHTML(); }); }
+function syncHTML() {
+  const t = {
+    connecting: ['', 'Подключаем дневник…'],
+    db: ['ok', 'Записи сохраняются в вашем аккаунте и видны только вам.'],
+    slow: ['', 'Дневник в аккаунте пока не отвечает. Записи сохраняются в этом браузере.'],
+    local: ['ok', 'Записи хранятся только на этом устройстве.'],
+  }[state.sync] || ['', ''];
+  return `<p class="sync ${t[0]}" data-sync>${t[1]}</p>`;
+}
+
+/* ---------- sound & voice ---------- */
+let actx = null;
+function beep(freq = 660, dur = 0.14, vol = 0.18) {
+  if (!state.settings.beep) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.05);
+  } catch (e) {}
+}
+
+const sayStop = $('#say-stop');
+const Voice = {
+  tts: null, off: false, speaking: false, synthSpeaking: false,
+  init() {
+    if (window.claude && typeof window.claude.use === 'function') {
+      window.claude.use('tts').then(t => {
+        if (!t) return;
+        this.tts = t;
+        t.onState(({ state: st }) => { this.speaking = st !== 'idle'; this.ui(); });
+        this.mark();
+      }).catch(() => {});
+    }
+    if ('speechSynthesis' in window) {
+      try { speechSynthesis.onvoiceschanged = () => this.mark(); } catch (e) {}
+    }
+    this.mark();
+  },
+  ruVoice() {
+    try { return speechSynthesis.getVoices().find(v => /^ru(-|_|$)/i.test(v.lang)) || null; } catch (e) { return null; }
+  },
+  available() { return !this.off && (!!this.tts || ('speechSynthesis' in window && !!this.ruVoice())); },
+  mark() { document.documentElement.classList.toggle('can-speak', this.available()); },
+  say(text) {
+    if (this.off || !text) return;
+    if (this.tts) {
+      this.tts.speak(text, { language: 'ru' }).catch(e => {
+        const c = e && e.code;
+        if (c === 'not_granted' || c === 'unavailable') { this.off = true; this.mark(); this.speaking = false; this.ui(); }
+      });
+      return;
+    }
+    if (!('speechSynthesis' in window)) return;
+    const v = this.ruVoice(); if (!v) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.voice = v; u.lang = v.lang; u.rate = 0.95;
+      u.onstart = () => { this.synthSpeaking = true; this.ui(); };
+      u.onend = u.onerror = () => { this.synthSpeaking = false; this.ui(); };
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  },
+  stop() {
+    if (this.tts) this.tts.stop().catch(() => {});
+    try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+    this.synthSpeaking = false; this.ui();
+  },
+  ui() { sayStop.hidden = !(this.speaking || this.synthSpeaking); },
+};
+sayStop.addEventListener('click', () => Voice.stop());
+const count = text => { if (state.settings.voice) Voice.say(text); };
+
+/* ---------- visuals ---------- */
+const ICON_CW = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M19 12a7 7 0 1 1-7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M12 1.6 16 5l-4 3.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_CCW = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><g transform="translate(24,0) scale(-1,1)"><path d="M19 12a7 7 0 1 1-7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M12 1.6 16 5l-4 3.4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
+const ICON_SPEAK = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+let figN = 0;
+function figureSVG(kind, hand, rotId, animate) {
+  const ccw = kind === 'neg';
+  const sx = hand === 'right' ? 22 : -22;
+  const mid = 'mk' + (++figN);
+  const r = 94;
+  const pt = a => [r * Math.cos(a * Math.PI / 180), r * Math.sin(a * Math.PI / 180)].map(n => n.toFixed(1)).join(' ');
+  const arc = (a1, a2, sw) => `<path d="M ${pt(a1)} A ${r} ${r} 0 0 ${sw} ${pt(a2)}" class="fig-arc" marker-end="url(#${mid})"/>`;
+  const arcs = ccw ? arc(-12, -72, 0) + arc(168, 108, 0) : arc(-72, -12, 1) + arc(108, 168, 1);
+  const anim = animate && !reduceMotion ? `<animateTransform attributeName="transform" type="rotate" from="0" to="${ccw ? -360 : 360}" dur="16s" repeatCount="indefinite"/>` : '';
+  return `<svg class="fig ${ccw ? 'fig-neg' : 'fig-pos'}" viewBox="-112 -112 224 224" role="img" aria-label="Вид сверху: человек держит фотографию на пальце вытянутой руки и поворачивается ${ccw ? 'против часовой стрелки' : 'по часовой стрелке'}">
+    <defs><marker id="${mid}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+    <circle r="${r}" class="fig-track"/>${arcs}
+    <circle r="66" class="fig-orbit"/>
+    <g${rotId ? ` id="${rotId}"` : ''}>${anim}
+      <line x1="${sx}" y1="-3" x2="0" y2="-62" class="fig-arm"/>
+      <ellipse rx="29" ry="13" class="fig-body"/>
+      <circle r="11" cy="-1" class="fig-head"/>
+      <path d="M -4.5 -11 L 0 -18 L 4.5 -11 Z" class="fig-nose"/>
+      <rect x="-26" y="-75" width="52" height="8" rx="2" class="fig-pic"/>
+      <circle cy="-66" r="4.5" class="fig-tip"/>
+    </g>
+  </svg>`;
+}
+
+function photoHTML(kind, v, title) {
+  const i = v == null ? 1 : Math.max(0, Math.min(10, v)) / 10;
+  const label = kind === 'neg' ? 'сила' : 'вера';
+  return `<figure class="photo photo-${kind}" style="--i:${i}" aria-label="Фотография ситуации${v != null ? `, ${label} ${v} из 10` : ''}">
+    <div class="ph-img"><span class="finger" aria-hidden="true"></span></div>
+    <figcaption class="ph-cap">${esc(title || 'Без названия')}${v != null ? `<span class="ph-score">${label} ${v}/10</span>` : ''}</figcaption>
+  </figure>`;
+}
+
+function chartSVG(neg, pos, cls = '') {
+  const W = 320, H = 132, pl = 24, pr = 14, pt = 18, pb = 28, gap = 28;
+  const iw = W - pl - pr, ih = H - pt - pb, half = (iw - gap) / 2;
+  const y = v => pt + ih * (1 - v / 10);
+  const xs = (n, x0) => n <= 1 ? [x0 + half / 2] : Array.from({ length: n }, (_, k) => x0 + 6 + k * (half - 12) / (n - 1));
+  const nx = xs(neg.length, pl), px = xs(pos.length, pl + half + gap);
+  let g = '';
+  for (const v of [0, 5, 10]) g += `<line class="grid" x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}"/><text x="${pl - 7}" y="${y(v) + 4}" text-anchor="end" font-size="11">${v}</text>`;
+  const dx = pl + half + gap / 2;
+  g += `<line class="div" x1="${dx}" x2="${dx}" y1="${pt - 6}" y2="${H - pb + 4}"/>`;
+  const series = (vals, xsArr, k) => {
+    if (!vals.length) return `<text x="${xsArr[0]}" y="${y(5) + 4}" text-anchor="middle" font-size="12">—</text>`;
+    const pts = vals.map((v, j) => `${xsArr[j].toFixed(1)},${y(v).toFixed(1)}`);
+    let out = '';
+    if (vals.length > 1) out += `<path class="a-${k}" d="M ${xsArr[0].toFixed(1)} ${y(0)} L ${pts.join(' L ')} L ${xsArr[vals.length - 1].toFixed(1)} ${y(0)} Z"/><polyline class="c-${k}" points="${pts.join(' ')}"/>`;
+    vals.forEach((v, j) => { out += `<circle class="p-${k}" cx="${xsArr[j].toFixed(1)}" cy="${y(v).toFixed(1)}" r="${j === 0 || j === vals.length - 1 ? 3.6 : 2.6}"/>`; });
+    const lab = j => { const v = vals[j]; const yy = v >= 8 ? y(v) + 15 : y(v) - 8; return `<text class="v ${k === 'neg' ? 'n' : 'p'}" x="${xsArr[j].toFixed(1)}" y="${yy.toFixed(1)}" text-anchor="middle" font-size="12">${v}</text>`; };
+    out += lab(0); if (vals.length > 1) out += lab(vals.length - 1);
+    return out;
+  };
+  g += series(neg, nx, 'neg') + series(pos, px, 'pos');
+  g += `<text x="${pl + half / 2}" y="${H - 7}" text-anchor="middle" font-size="11.5">сила реакции</text><text x="${pl + half + gap + half / 2}" y="${H - 7}" text-anchor="middle" font-size="11.5">вера в новое</text>`;
+  const aria = `Сила реакции: ${neg.join(' → ') || 'нет оценок'}. Вера в новую картинку: ${pos.join(' → ') || 'нет оценок'}.`;
+  return `<svg class="chart ${cls}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}">${g}</svg>`;
+}
+
+function scaleHTML(val, kind) {
+  const ends = kind === 'neg' ? ['0 — не трогает', '10 — очень сильно'] : ['0 — совсем не верю', '10 — это правда'];
+  let b = '';
+  for (let i = 0; i <= 10; i++) b += `<button type="button" class="sc ${val === i ? 'on' : ''}" style="--i:${i}" role="radio" aria-checked="${val === i}" aria-label="${i} из 10" data-act="rate" data-v="${i}">${i}</button>`;
+  return `<div class="scale" role="radiogroup">${b}</div><div class="scale-ends"><span>${ends[0]}</span><span>${ends[1]}</span></div>`;
+}
+
+const tokens = v => String(v || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
+function chipsField(s, path, label, chips, ph) {
+  const val = getPath(s, path) || ''; const tk = tokens(val); const id = 'f-' + path.replace('.', '-');
+  return `<div class="field" data-chipfield="${path}">
+    <label class="f-l" for="${id}">${label}</label>
+    <div class="chips">${chips.map(c => `<button type="button" class="chip ${tk.includes(c) ? 'on' : ''}" aria-pressed="${tk.includes(c)}" data-act="chip" data-path="${path}" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <textarea id="${id}" rows="2" data-field="${path}" placeholder="${esc(ph)}">${esc(val)}</textarea>
+  </div>`;
+}
+function textField(s, path, label, ph, rows = 2, opt = '') {
+  const id = 'f-' + path.replace('.', '-');
+  return `<div class="field"><label class="f-l" for="${id}">${label}${opt ? `<small>${opt}</small>` : ''}</label><textarea id="${id}" rows="${rows}" data-field="${path}" placeholder="${esc(ph)}">${esc(getPath(s, path) || '')}</textarea></div>`;
+}
+const sayBtn = () => `<button type="button" class="btn-text say" data-act="speak">${ICON_SPEAK} Озвучить</button>`;
+
+/* ---------- practice steps ---------- */
+const STEPS = [
+  { id: 'situation', phase: 1, t: 'Ситуация' },
+  { id: 'peak', phase: 1, t: 'Пик' },
+  { id: 'freeze', phase: 1, t: 'Стоп-кадр' },
+  { id: 'photo', phase: 1, t: 'Фотография' },
+  { id: 'spin', phase: 1, t: 'Вращение' },
+  { id: 'rate', phase: 1, t: 'Оценка' },
+  { id: 'wish', phase: 2, t: 'Новая версия' },
+  { id: 'wishpeak', phase: 2, t: 'Пик' },
+  { id: 'photo2', phase: 2, t: 'Фотография' },
+  { id: 'spin2', phase: 2, t: 'Вращение' },
+  { id: 'rate2', phase: 2, t: 'Оценка' },
+  { id: 'done', phase: 3, t: 'Готово' },
+];
+const NEXT = { situation: 'peak', peak: 'freeze', freeze: 'photo', photo: 'spin', spin: 'rate', wish: 'wishpeak', wishpeak: 'photo2', photo2: 'spin2', spin2: 'rate2' };
+const BACK = { peak: 'situation', freeze: 'peak', photo: 'freeze', spin: 'photo', rate: 'spin', wishpeak: 'wish', photo2: 'wishpeak', spin2: 'photo2', rate2: 'spin2' };
+const vals = arr => (arr || []).map(r => r.v);
+const lastV = arr => arr && arr.length ? arr[arr.length - 1].v : null;
+const arrow = a => a.length > 1 ? `${a[0]} → ${a[a.length - 1]}` : a.length ? String(a[0]) : '';
+
+function backBtn(s) { return BACK[s.step] ? `<button type="button" class="btn-text" data-act="back">← Назад</button>` : '<span></span>'; }
+
+const VIEW = {
+  situation: s => `
+    <div class="eyebrow">Этап 1 · Стирание</div>
+    <h2 id="step-h">Вспомните ситуацию</h2>
+    <p data-say>Вспомните ситуацию из прошлого, которая до сих пор вызывает эмоции и с которой вы ещё не работали. Это могут быть школьные или подростковые годы, а может быть и что-то недавнее. Ситуация может быть стрессовой и тяжёлой, но не шоковой.</p>
+    <div class="note">Если ситуация повторялась, возьмите самое сильное повторение.</div>
+    <div class="field">
+      <label class="f-l" for="f-title">Как назвать её в дневнике</label>
+      <input type="text" id="f-title" data-field="title" value="${esc(s.title)}" placeholder="Например: собака во дворе" maxlength="80" autocomplete="off">
+      <span class="hint">Пары слов достаточно. Ваши записи видите только вы.</span>
+    </div>
+    <div class="actions"><button type="button" class="btn-text" data-act="exit">← Выйти</button><div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next">Далее</button></div></div>`,
+
+  peak: s => `
+    <div class="eyebrow">Этап 1 · Стирание</div>
+    <h2 id="step-h">Погрузитесь и найдите пик</h2>
+    <ol class="instr" data-say>
+      <li>Представьте, что ситуация лежит перед вами. Посмотрите на неё: вот она, свежая.</li>
+      <li>Погрузитесь в неё, как будто это происходит сейчас. Смотрите своими глазами, не со стороны.</li>
+      <li>Найдите самую пиковую точку: момент, где было сильнее всего.</li>
+    </ol>
+    <div class="actions">${backBtn(s)}<div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next">Пик найден</button></div></div>`,
+
+  freeze: s => `
+    <div class="eyebrow">Этап 1 · Стирание</div>
+    <h2 id="step-h">Стоп-кадр</h2>
+    <p data-say>Оставаясь внутри ситуации, заморозьте пиковый момент. Это стоп-кадр. Проговорите себе, что вы чувствуете, и запишите: потом это легко забыть.</p>
+    ${chipsField(s, 'neg.emo', 'Какие эмоции?', NEG_EMO, 'Или своими словами')}
+    ${chipsField(s, 'neg.body', 'Какие ощущения в теле?', NEG_BODY, 'Где и как ощущается')}
+    ${textField(s, 'neg.thoughts', 'Какие мысли?', 'Что звучит в голове в этот момент')}
+    <div class="field"><div class="f-l" id="rate-l">Насколько сильно это сейчас?</div>${scaleHTML(s.pending, 'neg')}</div>
+    <div class="actions">${backBtn(s)}<div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next" ${s.pending == null ? 'disabled' : ''}>Дальше</button></div></div>`,
+
+  photo: s => `
+    <div class="photo-row">${photoHTML('neg', lastV(s.neg.ratings), s.title)}</div>
+    <div class="eyebrow">Этап 1 · Стирание</div>
+    <h2 id="step-h">Повесьте фотографию</h2>
+    <ol class="instr" data-say>
+      <li>Сожмите объёмную картинку стоп-кадра в небольшую фотографию.</li>
+      <li>Вытяните руки и повесьте фотографию перед собой на расстоянии вытянутой руки.</li>
+      <li>Указательным пальцем ${HAND[s.hand]} руки воткнитесь в центр фотографии и удерживайте её. Теперь она держится на пальце.</li>
+    </ol>
+    <div class="actions">${backBtn(s)}<div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next">К вращению</button></div></div>`,
+
+  spin: s => spinView(s, 'neg'),
+
+  rate: s => {
+    const hist = vals(s.neg.ratings); const p = s.pending; const cur = p ?? lastV(s.neg.ratings);
+    const zero = p === 0;
+    return `
+    <div class="photo-row">${photoHTML('neg', cur, s.title)}</div>
+    <div class="eyebrow">Этап 1 · Стирание · круг ${hist.length}</div>
+    <h2 id="step-h">Оцените ещё раз</h2>
+    <p data-say>Уберите палец и посмотрите на фотографию. Что вы чувствуете? Какие ощущения в теле, какие мысли? На сколько баллов это сейчас?</p>
+    <div class="hist">Было: <b>${hist.join(' → ')}</b></div>
+    <div class="field">${scaleHTML(p, 'neg')}</div>
+    ${textField(s, 'pendingNote', 'Что изменилось', 'Эмоции, ощущения, мысли после круга', 2, 'необязательно')}
+    ${zero ? '<div class="note">Ноль: ситуация стёрта. Можно переходить к перезаписи.</div>' : ''}
+    <div class="actions">${backBtn(s)}<div class="right">
+      ${zero ? `<button type="button" class="btn btn-primary" data-act="to-rewrite">К перезаписи</button>`
+        : `<button type="button" class="btn btn-ghost" data-act="to-rewrite" ${p == null ? 'disabled' : ''}>Достаточно, к перезаписи</button><button type="button" class="btn btn-primary" data-act="more" ${p == null ? 'disabled' : ''}>Ещё круг</button>`}
+    </div></div>`;
+  },
+
+  wish: s => `
+    <div class="eyebrow">Этап 2 · Перезапись</div>
+    <h2 id="step-h">Какой могла бы быть эта ситуация?</h2>
+    <p data-say>Теперь ситуацию нужно перезаписать. Придумайте, какую ситуацию вы хотели бы иметь вместо этой, и просто визуализируйте то, что приходит.</p>
+    <div class="examples"><div class="ex-l">Например</div><ul>
+      <li>Собака бежала к вам, вы испугались. А теперь она резко останавливается и убегает в другую сторону. Или начинает ласкаться, или приходит хозяин.</li>
+      <li>Вы тонули. А теперь вы представляете, как вдруг поплыли и научились плавать.</li>
+    </ul></div>
+    ${textField(s, 'pos.desc', 'Новая версия ситуации', 'Как бы вы хотели, чтобы всё было', 3)}
+    <div class="actions"><span></span><div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next">Далее</button></div></div>`,
+
+  wishpeak: s => `
+    <div class="eyebrow">Этап 2 · Перезапись</div>
+    <h2 id="step-h">Пик новой ситуации</h2>
+    <p data-say>Найдите пик новой ситуации: той, которой не было, но которую вы хотели бы. Войдите в неё и заморозьте пиковый момент в стоп-кадр. Посмотрите: какие чувства, ощущения в теле, мысли?</p>
+    ${chipsField(s, 'pos.emo', 'Какие чувства?', POS_EMO, 'Или своими словами')}
+    ${chipsField(s, 'pos.body', 'Какие ощущения в теле?', POS_BODY, 'Где и как ощущается')}
+    ${textField(s, 'pos.thoughts', 'Какие мысли?', 'Что вы думаете в этот момент')}
+    <div class="field"><div class="f-l">Насколько вы верите в эту картинку?</div>${scaleHTML(s.pending, 'pos')}</div>
+    <div class="actions">${backBtn(s)}<div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next" ${s.pending == null ? 'disabled' : ''}>Дальше</button></div></div>`,
+
+  photo2: s => `
+    <div class="photo-row">${photoHTML('pos', lastV(s.pos.ratings), s.title)}</div>
+    <div class="eyebrow">Этап 2 · Перезапись</div>
+    <h2 id="step-h">Повесьте новую фотографию</h2>
+    <ol class="instr" data-say>
+      <li>Сделайте из пика новой ситуации фотографию.</li>
+      <li>Повесьте её перед собой на расстоянии вытянутой руки.</li>
+      <li>Указательным пальцем ${HAND[s.hand === 'right' ? 'left' : 'right']} руки, неведущей, воткнитесь в центр фотографии.</li>
+      <li>Посмотрите на неё: какие чувства, ощущения в теле, мысли?</li>
+    </ol>
+    <div class="actions">${backBtn(s)}<div class="right">${sayBtn()}<button type="button" class="btn btn-primary" data-act="next">К вращению</button></div></div>`,
+
+  spin2: s => spinView(s, 'pos'),
+
+  rate2: s => {
+    const hist = vals(s.pos.ratings); const p = s.pending; const cur = p ?? lastV(s.pos.ratings);
+    const ten = p === 10;
+    return `
+    <div class="photo-row">${photoHTML('pos', cur, s.title)}</div>
+    <div class="eyebrow">Этап 2 · Перезапись · круг ${hist.length}</div>
+    <h2 id="step-h">Насколько теперь верите?</h2>
+    <p data-say>Посмотрите на фотографию. Насколько вы теперь в неё верите? Какие эмоции, ощущения в теле? Доращивайте до десяти.</p>
+    <div class="hist">Было: <b>${hist.join(' → ')}</b></div>
+    <div class="field">${scaleHTML(p, 'pos')}</div>
+    ${textField(s, 'pendingNote', 'Что изменилось', 'Эмоции, ощущения, мысли после круга', 2, 'необязательно')}
+    ${ten ? '<div class="note">Десять: новая картинка записана.</div>' : ''}
+    <div class="actions">${backBtn(s)}<div class="right">
+      ${ten ? `<button type="button" class="btn btn-primary" data-act="finish">Завершить</button>`
+        : `<button type="button" class="btn btn-ghost" data-act="finish" ${p == null ? 'disabled' : ''}>Завершить на этом</button><button type="button" class="btn btn-primary" data-act="more" ${p == null ? 'disabled' : ''}>Ещё круг</button>`}
+    </div></div>`;
+  },
+
+  done: s => {
+    const n = vals(s.neg.ratings), p = vals(s.pos.ratings);
+    const unfinished = (n.length && n[n.length - 1] > 0) || (p.length && p[p.length - 1] < 10);
+    return `
+    <div class="eyebrow">Готово</div>
+    <h2 id="step-h">Ситуация «${esc(s.title || 'Без названия')}» отработана</h2>
+    ${chartSVG(n, p)}
+    ${detailCols(s)}
+    ${unfinished ? '<div class="note">Если что-то ещё откликается, вернитесь к этой ситуации в другой день и сделайте ещё несколько кругов.</div>' : ''}
+    <p class="muted">По словам автора техники, прошлое не меняется. Но незавершённая ситуация перестаёт лежать в подсознании незавершённым гештальтом, и вы перестаёте притягивать похожих людей и ситуации, чтобы её закрыть.</p>
+    <div class="actions"><button type="button" class="btn btn-ghost" data-nav="journal">Открыть дневник</button><button type="button" class="btn btn-primary grow" data-act="new">Следующая ситуация</button></div>`;
+  },
+};
+
+function spinView(s, kind) {
+  const ccw = kind === 'neg';
+  const hand = ccw ? s.hand : (s.hand === 'right' ? 'left' : 'right');
+  const sec = state.settings.sec;
+  return `
+    <div class="eyebrow">${ccw ? 'Этап 1 · Стирание' : 'Этап 2 · Перезапись'}</div>
+    <h2 id="step-h">Крутилка ${ccw ? 'против часовой стрелки' : 'по часовой стрелке'}</h2>
+    <p data-say>Медленно, не спеша, вместе с фотографией на пальце ${HAND[hand]} руки сделайте три с половиной оборота вокруг себя ${ccw ? 'против часовой стрелки' : 'по часовой стрелке'}. Смотрите на палец и на ситуацию.</p>
+    <div class="spin-stage">
+      ${figureSVG(kind, hand, 'fig-rot', false)}
+      <div class="spin-read">
+        <span class="spin-num" id="spin-num">3½</span>
+        <span class="spin-lbl" id="spin-lbl">оборота ${ccw ? 'против' : 'по'} часовой · около ${Math.round(sec * 3.5)} сек</span>
+      </div>
+    </div>
+    <div class="halves" aria-hidden="true">
+      <div class="hg"><i></i><i></i><span>1</span></div>
+      <div class="hg"><i></i><i></i><span>2</span></div>
+      <div class="hg"><i></i><i></i><span>3</span></div>
+      <div class="hg hg-half"><i></i><span>½</span></div>
+    </div>
+    <p class="spin-status" id="spin-status" aria-live="polite">Нажмите «Начать», вытяните руку и слушайте счёт.</p>
+    <div class="actions" id="spin-actions"></div>`;
+}
+
+function detailCols(s) {
+  const kv = (label, v) => v ? `<div class="kv"><span>${label}</span><p>${esc(v)}</p></div>` : '';
+  const rounds = arr => {
+    const items = (arr || []).slice(1).map((r, j) => `<li>Круг ${j + 1}: <b>${r.v}</b>${r.note ? ` · ${esc(r.note)}` : ''}</li>`).join('');
+    return items ? `<ol class="rounds" style="list-style:none;padding:0">${items}</ol>` : '';
+  };
+  return `<div class="cols">
+    <div class="col"><h4>Было · стоп-кадр${s.neg.ratings[0] ? ` · ${s.neg.ratings[0].v}/10` : ''}</h4>
+      ${kv('Эмоции', s.neg.emo)}${kv('Тело', s.neg.body)}${kv('Мысли', s.neg.thoughts)}${rounds(s.neg.ratings)}
+      ${!s.neg.emo && !s.neg.body && !s.neg.thoughts && !s.neg.ratings.length ? '<p class="hint">Пока без записей</p>' : ''}
+    </div>
+    <div class="col ph-rewrite"><h4>Стало · новая версия${s.pos.ratings[0] ? ` · ${s.pos.ratings[0].v}/10` : ''}</h4>
+      ${kv('Сюжет', s.pos.desc)}${kv('Чувства', s.pos.emo)}${kv('Тело', s.pos.body)}${kv('Мысли', s.pos.thoughts)}${rounds(s.pos.ratings)}
+      ${!s.pos.desc && !s.pos.emo && !s.pos.ratings.length ? '<p class="hint">Пока без записей</p>' : ''}
+    </div>
+  </div>`;
+}
+
+function progressHTML(s) {
+  const st = STEPS.find(x => x.id === s.step) || STEPS[0];
+  const idx = STEPS.indexOf(st);
+  const dots = ph => STEPS.filter(x => x.phase === ph).map(x => { const k = STEPS.indexOf(x); return `<span class="dot ${k < idx ? 'done' : k === idx ? 'cur' : ''}"></span>`; }).join('');
+  const n = vals(s.neg.ratings), p = vals(s.pos.ratings);
+  return `<div class="prog">
+    <div class="prog-top"><button type="button" class="btn-text" data-act="exit">← Выйти</button><span class="prog-title">${esc(s.title || 'Новая ситуация')}</span></div>
+    <div class="prog-phases" aria-label="Шаг ${idx + 1} из ${STEPS.length}: ${st.t}">
+      <div class="pp pp1 ${st.phase === 1 ? 'is-cur' : ''}"><div class="pp-l"><span>Стирание</span><b>${arrow(n)}</b></div><div class="dots">${dots(1)}</div></div>
+      <div class="pp pp2 ${st.phase === 2 ? 'is-cur' : ''}"><div class="pp-l"><span>Перезапись</span><b>${arrow(p)}</b></div><div class="dots">${dots(2)}</div></div>
+    </div>
+  </div>`;
+}
+
+function prepView() {
+  const st = state.settings;
+  return `<div class="card stack">
+    <div class="eyebrow">Перед началом</div>
+    <h2 id="step-h">Подготовка</h2>
+    <div class="field"><div class="f-l">Ведущая рука</div>
+      <div class="seg" role="radiogroup" aria-label="Ведущая рука">
+        <button type="button" role="radio" aria-checked="${st.hand === 'right'}" class="${st.hand === 'right' ? 'on' : ''}" data-act="hand" data-v="right"><b>Правая</b>я правша</button>
+        <button type="button" role="radio" aria-checked="${st.hand === 'left'}" class="${st.hand === 'left' ? 'on' : ''}" data-act="hand" data-v="left"><b>Левая</b>я левша</button>
+      </div>
+      <span class="hint">Стираете ведущей рукой, перезаписываете неведущей.</span>
+    </div>
+    <div class="field"><label class="f-l" for="f-sec">Темп: <span id="sec-out">${st.sec} сек</span> на один оборот</label>
+      <input type="range" id="f-sec" min="3" max="10" step="1" value="${st.sec}" data-field="settings.sec">
+      <span class="hint" id="sec-hint">3,5 оборота займут около ${Math.round(st.sec * 3.5)} секунд. Вращайтесь медленно, не спеша.</span>
+    </div>
+    <div class="toggles">
+      <label class="tg" for="f-voice"><input type="checkbox" id="f-voice" data-field="settings.voice" ${st.voice ? 'checked' : ''}><span>Считать обороты вслух</span></label>
+      <label class="tg" for="f-beep"><input type="checkbox" id="f-beep" data-field="settings.beep" ${st.beep ? 'checked' : ''}><span>Звуковой сигнал на каждый оборот</span></label>
+    </div>
+    <div class="safety"><h3>Безопасность</h3><ul>
+      <li>Освободите место вокруг себя: вы будете поворачиваться на месте.</li>
+      <li>Если закружится голова, остановитесь и присядьте. Можно поворачиваться совсем медленно, маленькими шагами.</li>
+      <li>Берите стрессовую, но не шоковую ситуацию. Шоковые травмы (война, насилие, гибель близких) прорабатывайте со специалистом.</li>
+      <li>Практика не заменяет помощь психолога или психотерапевта.</li>
+    </ul></div>
+    <div class="actions"><button type="button" class="btn-text" data-nav="home">← На главную</button><button type="button" class="btn btn-primary grow" data-act="begin">Начать</button></div>
+  </div>`;
+}
+
+/* ---------- spin engine ---------- */
+const Spin = { timer: null, phase: 'idle', wake: null, kind: 'neg' };
+async function wakeOn() { try { if (navigator.wakeLock) Spin.wake = await navigator.wakeLock.request('screen'); } catch (e) {} }
+function wakeOff() { try { if (Spin.wake) Spin.wake.release(); } catch (e) {} Spin.wake = null; }
+function setFig(deg) { if (reduceMotion) return; const g = document.getElementById('fig-rot'); if (g) g.setAttribute('transform', `rotate(${deg.toFixed(1)})`); }
+function setHalves(turns) { $$('.halves i').forEach((el, k) => { el.style.setProperty('--f', Math.max(0, Math.min(1, turns * 2 - k)).toFixed(3)); }); }
+function setRead(num, lbl, status) {
+  const n = $('#spin-num'), l = $('#spin-lbl'), s = $('#spin-status');
+  if (n && num != null) n.textContent = num; if (l && lbl != null) l.textContent = lbl; if (s && status != null) s.textContent = status;
+}
+function spinActions() {
+  const box = $('#spin-actions'); if (!box) return;
+  const s = state.sessions[state.cur]; if (!s) return;
+  if (Spin.phase === 'idle') box.innerHTML = `${backBtn(s)}<div class="right"><button type="button" class="btn btn-ghost" data-act="spin-skip">Без таймера</button><button type="button" class="btn btn-primary" data-act="spin-start">Начать вращение</button></div>`;
+  else if (Spin.phase === 'done') box.innerHTML = `<button type="button" class="btn-text" data-act="spin-start">Повторить вращение</button><div class="right"><button type="button" class="btn btn-primary" data-act="next">Оценить</button></div>`;
+  else box.innerHTML = `<span></span><div class="right"><button type="button" class="btn btn-ghost" data-act="spin-stop">Остановить</button></div>`;
+}
+function spinStart(kind) {
+  spinStop(true);
+  const ccw = kind === 'neg'; const dir = ccw ? -1 : 1;
+  const sec = state.settings.sec; const total = 3.5 * sec * 1000; const lead = 3600;
+  Spin.kind = kind; Spin.phase = 'lead'; spinActions(); wakeOn();
+  beep(440, .1);
+  count(ccw ? 'Вытяните руку с фотографией. Вращаемся против часовой стрелки. Приготовьтесь.' : 'Вытяните неведущую руку с фотографией. Вращаемся по часовой стрелке. Приготовьтесь.');
+  const t0 = performance.now(); let started = false, said = 0;
+  const words = ['Один.', 'Два.', 'Три. И половинка.'];
+  Spin.timer = setInterval(() => {
+    const el = performance.now() - t0;
+    if (el < lead) { setRead(String(Math.ceil((lead - el) / 1200)), 'приготовьтесь', 'Вытяните руку, палец в центре фотографии.'); return; }
+    if (!started) { started = true; Spin.phase = 'run'; spinActions(); beep(660, .16); count('Поехали.'); }
+    const t = Math.min(1, (el - lead) / total);
+    const turns = t * 3.5;
+    setFig(dir * turns * 360); setHalves(turns);
+    const whole = Math.floor(turns + 1e-6);
+    if (whole > said && whole <= 3) { said = whole; beep(whole === 3 ? 740 : 620, .14); count(words[whole - 1]); }
+    if (turns < 3) setRead(String(Math.floor(turns) + 1), 'оборот из трёх с половиной', `Оборот ${Math.floor(turns) + 1}. Медленно, смотрите на палец.`);
+    else if (t < 1) setRead('½', 'и половинка', 'И половинка…');
+    if (t >= 1) {
+      clearInterval(Spin.timer); Spin.timer = null; Spin.phase = 'done';
+      beep(880, .4, .22); count('Стоп. Уберите палец и оцените.');
+      setRead('Стоп', 'уберите палец', 'Готово. Уберите палец и посмотрите на фотографию.');
+      wakeOff(); spinActions();
+    }
+  }, 50);
+}
+function spinStop(silent) {
+  if (Spin.timer) { clearInterval(Spin.timer); Spin.timer = null; }
+  const wasRunning = Spin.phase === 'lead' || Spin.phase === 'run';
+  Spin.phase = 'idle'; wakeOff();
+  if (wasRunning && !silent) { Voice.stop(); setFig(0); setHalves(0); setRead('3½', 'оборота', 'Остановлено. Можно начать заново.'); spinActions(); }
+}
+
+/* ---------- views ---------- */
+function journalCard(s, example) {
+  const open = !!state.open[s.id];
+  const n = vals(s.neg.ratings), p = vals(s.pos.ratings);
+  const st = STEPS.find(x => x.id === s.step);
+  const pill = example ? '<span class="pill">Пример</span>' : s.status === 'done' ? '<span class="pill pill-done">Завершена</span>' : '<span class="pill pill-active">В процессе</span>';
+  const meta = [fmtDate(s.createdAt), n.length ? `сила ${arrow(n)}` : '', p.length ? `вера ${arrow(p)}` : '', s.status !== 'done' && st ? `шаг: ${st.t.toLowerCase()}` : ''].filter(Boolean).join(' · ');
+  let body = '';
+  if (open) {
+    const del = state.confirmDel === s.id
+      ? `<div class="confirm"><p>Удалить запись «${esc(s.title || 'Без названия')}» навсегда?</p><div class="actions"><button type="button" class="btn btn-ghost" data-act="del-no">Отмена</button><button type="button" class="btn btn-danger" data-act="del-yes" data-id="${s.id}">Удалить</button></div></div>`
+      : '';
+    body = `<div class="jc-body">
+      ${detailCols(s)}
+      ${example ? '<p class="hint">Это пример записи. Ваши ситуации появятся здесь после первой практики.</p>' : `
+      ${del}
+      <div class="actions">
+        <button type="button" class="btn-text" data-act="del" data-id="${s.id}">Удалить</button>
+        ${s.status !== 'done' ? `<button type="button" class="btn btn-primary" data-act="resume" data-id="${s.id}">Продолжить</button>` : ''}
+      </div>`}
+    </div>`;
+  }
+  return `<article class="jc">
+    <button type="button" class="jc-head" data-act="toggle" data-id="${s.id}" aria-expanded="${open}">
+      <span class="jc-top"><span class="jc-title">${esc(s.title || 'Без названия')}</span>${pill}</span>
+      <span class="jc-meta">${meta}</span>
+      ${chartSVG(n, p, 'jc-chart')}
+    </button>${body}
+  </article>`;
+}
+
+function homeView() {
+  const all = Object.values(state.sessions).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const active = all.filter(s => s.status !== 'done').sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
+  const hand = state.settings.hand;
+  return `
+  <section class="hero"><div class="outline" aria-hidden="true">Крутилка</div>
+    <div class="hero-fig">${figureSVG('neg', hand, null, true)}</div>
+    <div class="hero-txt">
+      <div class="eyebrow">Техника работы с прошлым</div>
+      <h1>Сотрите <span class="b">негативный опыт</span> и перезапишите его</h1>
+      <p>Вы берёте ситуацию, которая до сих пор вызывает эмоции, превращаете её пик в фотографию на кончике пальца и поворачиваетесь вместе с ней. Против часовой стрелки, чтобы стереть. По часовой, чтобы записать новую версию.</p>
+      <div class="hero-act">${active
+        ? `<button type="button" class="btn btn-primary" data-act="resume" data-id="${active.id}">Продолжить «${esc(active.title || 'Без названия')}»</button><button type="button" class="btn btn-ghost" data-act="new">Новая ситуация</button>`
+        : `<button type="button" class="btn btn-primary" data-act="new">Начать новую ситуацию</button>`}</div>
+      <p class="sign">Татьяна Хавро</p>
+    </div>
+  </section>
+  ${installHTML()}
+  <section class="phases" aria-label="Два этапа">
+    <div class="phase">
+      <div class="phase-h"><span class="phase-ic">${ICON_CCW}</span><div><div class="eyebrow">Этап 1</div><h3>Стирание</h3></div></div>
+      <dl><div><dt>Рука</dt><dd>ведущая, ${HAND[hand]}</dd></div><div><dt>Вращение</dt><dd>3,5 оборота против часовой</dd></div><div><dt>Цель</dt><dd>сила реакции до 0</dd></div></dl>
+    </div>
+    <div class="phase ph-rewrite">
+      <div class="phase-h"><span class="phase-ic">${ICON_CW}</span><div><div class="eyebrow">Этап 2</div><h3>Перезапись</h3></div></div>
+      <dl><div><dt>Рука</dt><dd>неведущая, ${HAND[hand === 'right' ? 'left' : 'right']}</dd></div><div><dt>Вращение</dt><dd>3,5 оборота по часовой</dd></div><div><dt>Цель</dt><dd>вера в новую картинку до 10</dd></div></dl>
+    </div>
+  </section>
+  <section>
+    <div class="sec-h"><h2>${all.length ? 'Последние ситуации' : 'Как выглядит запись'}</h2><a href="#journal">Дневник</a></div>
+    <div class="jlist">${all.length ? all.slice(0, 3).map(s => journalCard(s)).join('') : journalCard(EXAMPLE, true)}</div>
+  </section>
+  <p class="foot">Практика не заменяет помощь специалиста. Шоковые травмы прорабатывайте с психологом.</p>
+  ${syncHTML()}`;
+}
+
+function journalView() {
+  const all = Object.values(state.sessions).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const done = all.filter(s => s.status === 'done').length;
+  return `<div class="page-h"><h1>Дневник</h1>${syncHTML()}${all.length ? `<p class="muted">${all.length} ${plural(all.length, 'ситуация', 'ситуации', 'ситуаций')}, завершено ${done}.</p>` : ''}</div>
+    ${all.length ? `<div class="jlist">${all.map(s => journalCard(s)).join('')}</div>`
+      : `<div class="empty"><p>Здесь появятся ваши ситуации: что вы чувствовали в стоп-кадре и как менялись баллы от круга к кругу. Ниже пример такой записи.</p><button type="button" class="btn btn-primary" data-act="new">Начать первую ситуацию</button></div><div class="jlist">${journalCard(EXAMPLE, true)}</div>`}`;
+}
+const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? b : c; };
+
+function aboutView() {
+  return `<article class="prose">
+    <div class="eyebrow">О технике</div>
+    <h1>Крутилка</h1>
+    <p class="sign">Татьяна Хавро</p>
+    <p>Техника помогает стирать негативный опыт прошлого. Вы находите ситуации, которые помните до сих пор, которые всё ещё вызывают эмоции и с которыми вы не работали. Стирая такой опыт, вы возвращаете себе энергию, которая в нём осталась.</p>
+    <h2>Этап 1. Стирание</h2>
+    <ol class="instr">
+      <li>Вспомните ситуацию и представьте, что она лежит перед вами.</li>
+      <li>Погрузитесь в неё, как будто она происходит сейчас: смотрите своими глазами, не со стороны. Найдите пик. Если ситуация повторялась, возьмите самое сильное повторение и пик в нём.</li>
+      <li>Заморозьте пик в стоп-кадр. Проговорите: какие эмоции, какие ощущения в теле, какие мысли. Оцените силу от 0 до 10. Лучше записать, потому что потом это забывается.</li>
+      <li>Превратите объёмную картинку в небольшую фотографию и повесьте её на расстоянии вытянутой руки.</li>
+      <li>Указательным пальцем ведущей руки (правша правой, левша левой) воткнитесь в центр фотографии и удерживайте её.</li>
+      <li>Медленно сделайте 3,5 оборота вокруг себя против часовой стрелки, глядя на палец и на ситуацию.</li>
+      <li>Уберите палец и оцените снова. Повторяйте круги, пока не дойдёте до нуля.</li>
+    </ol>
+    <h2 class="ph-rewrite">Этап 2. Перезапись</h2>
+    <div class="ph-rewrite"><ol class="instr">
+      <li>Придумайте, какую ситуацию вы хотели бы иметь вместо этой, и визуализируйте её.</li>
+      <li>Найдите пик новой ситуации, сделайте из него фотографию и повесьте перед собой.</li>
+      <li>Посмотрите на неё: какие чувства, ощущения в теле, мысли. Оцените, насколько верите в эту картинку, от 0 до 10.</li>
+      <li>Пальцем неведущей руки воткнитесь в фотографию и сделайте 3,5 оборота по часовой стрелке.</li>
+      <li>Оцените снова. После каждого круга смотрите, на сколько баллов выросло. Доращивайте до десяти.</li>
+    </ol></div>
+    <h2>Зачем это</h2>
+    <p>Прошлое переписать нельзя. По словам автора техники, незавершённая негативная ситуация лежит в подсознании как незавершённый гештальт, и мы притягиваем похожих людей и ситуации, пытаясь её завершить. Когда на её место встаёт позитивная картинка, цикл завершается, и вы перестаёте его отрабатывать.</p>
+    <div class="safety"><h3>Безопасность</h3><ul>
+      <li>Начинайте со стрессовых, но не шоковых ситуаций. Шоковые травмы (война, насилие, гибель близких) не берите: с ними лучше работать со специалистом.</li>
+      <li>Вращайтесь медленно и на свободном месте. Если кружится голова, остановитесь и присядьте.</li>
+      <li>Техника не заменяет помощь психолога или психотерапевта. Если воспоминание вызывает слишком сильную реакцию, остановитесь.</li>
+    </ul></div>
+    <p class="hint">Источник: <a href="https://youtu.be/eCtOjSd5Qik" target="_blank" rel="noopener">видео с демонстрацией техники</a>.</p>
+    <div><button type="button" class="btn btn-primary" data-act="new">Попробовать</button></div>
+  </article>`;
+}
+
+function practiceView() {
+  const s = state.sessions[state.cur];
+  if (!s) return prepView();
+  const st = STEPS.find(x => x.id === s.step) || STEPS[0];
+  const ph = st.phase === 2 ? 'ph-rewrite' : '';
+  return `${progressHTML(s)}<section class="card stack ${ph}" aria-labelledby="step-h">${(VIEW[s.step] || VIEW.situation)(s)}</section>`;
+}
+
+function render(scrollTop) {
+  spinStop(true);
+  $$('.tabs a').forEach(a => {
+    const t = a.dataset.tab;
+    const on = t === state.view || (t === 'home' && state.view === 'practice');
+    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+  const s = state.sessions[state.cur];
+  const phase2 = state.view === 'practice' && s && (STEPS.find(x => x.id === s.step) || {}).phase === 2;
+  app.className = 'wrap' + (phase2 ? ' ph-rewrite' : '');
+  app.innerHTML = state.view === 'journal' ? journalView() : state.view === 'about' ? aboutView() : state.view === 'practice' ? practiceView() : homeView();
+  if (state.view === 'practice' && s && (s.step === 'spin' || s.step === 'spin2')) { Spin.phase = 'idle'; spinActions(); }
+  if (scrollTop) window.scrollTo(0, 0);
+}
+function refresh() {
+  if (state.wantResume && state.view === 'practice' && !state.cur) {
+    const a = Object.values(state.sessions).filter(s => s.status !== 'done').sort((x, y) => (y.updatedAt || 0) - (x.updatedAt || 0))[0];
+    if (a) { state.cur = a.id; state.wantResume = false; render(); return; }
+  }
+  if (state.view === 'home' || state.view === 'journal') render();
+}
+
+/* ---------- navigation ---------- */
+const VIEWS = ['practice', 'journal', 'about'];
+const viewFromHash = () => { const h = location.hash.replace('#', ''); return VIEWS.includes(h) ? h : 'home'; };
+function nav(view) {
+  const h = view === 'home' ? '' : view;
+  if (location.hash.replace('#', '') === h) { state.view = view; render(true); }
+  else location.hash = h;
+}
+window.addEventListener('hashchange', () => { state.view = viewFromHash(); state.confirmDel = null; render(true); });
+
+function newSession() {
+  const id = 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const s = { kind: 'session', id, createdAt: Date.now(), updatedAt: Date.now(), status: 'active', step: 'situation', hand: state.settings.hand, title: '',
+    neg: { emo: '', body: '', thoughts: '', ratings: [] }, pos: { desc: '', emo: '', body: '', thoughts: '', ratings: [] }, pending: null, pendingNote: '' };
+  state.cur = id; state.wantResume = false;
+  persist(s, true);
+  render(true);
+}
+function goStep(s, id) {
+  spinStop(true);
+  s.step = id;
+  s.pending = id === 'freeze' ? (s.neg.ratings[0]?.v ?? null) : id === 'wishpeak' ? (s.pos.ratings[0]?.v ?? null) : null;
+  s.pendingNote = '';
+  if (id === 'done') { s.status = 'done'; s.completedAt = Date.now(); }
+  persist(s, true);
+  render(true);
+}
+function pushRound(s, side) {
+  s[side].ratings.push(s.pendingNote ? { v: s.pending, note: s.pendingNote } : { v: s.pending });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  const navEl = e.target.closest('[data-nav]');
+  if (navEl) { e.preventDefault(); if (navEl.dataset.nav === 'home') state.cur = state.view === 'practice' ? null : state.cur; nav(navEl.dataset.nav); return; }
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  const act = b.dataset.act;
+  const s = state.sessions[state.cur];
+  switch (act) {
+    case 'new': state.cur = null; state.wantResume = false; if (state.view === 'practice') render(true); else nav('practice'); break;
+    case 'begin': newSession(); break;
+    case 'resume': state.cur = b.dataset.id; state.wantResume = false; if (state.view === 'practice') render(true); else nav('practice'); break;
+    case 'exit': flushAll(); spinStop(); state.cur = null; nav('home'); break;
+    case 'hand': state.settings.hand = b.dataset.v; saveSettings(); render(); break;
+    case 'toggle': state.open[b.dataset.id] = !state.open[b.dataset.id]; state.confirmDel = null; render(); break;
+    case 'del': state.confirmDel = b.dataset.id; render(); break;
+    case 'del-no': state.confirmDel = null; render(); break;
+    case 'del-yes': {
+      const id = b.dataset.id; clearTimeout(pTimers[id]); delete pTimers[id];
+      delete state.sessions[id]; if (state.cur === id) state.cur = null;
+      Store.del(id); state.confirmDel = null; toast('Запись удалена'); render(); break;
+    }
+    case 'speak': {
+      const box = b.closest('section') || app;
+      const text = $$('[data-say]', box).map(el => el.tagName === 'OL' ? $$('li', el).map(li => li.textContent.trim()).join(' ') : el.textContent.trim()).join(' ');
+      Voice.say(text); break;
+    }
+    case 'chip': {
+      if (!s) break;
+      const path = b.dataset.path, w = b.dataset.v;
+      const parts = String(getPath(s, path) || '').split(',').map(t => t.trim()).filter(Boolean);
+      const i = parts.findIndex(p => p.toLowerCase() === w);
+      if (i >= 0) parts.splice(i, 1); else parts.push(w);
+      const v = parts.join(', '); setPath(s, path, v); persist(s);
+      const field = b.closest('[data-chipfield]'); const ta = field && $('textarea', field);
+      if (ta) ta.value = v; syncChips(field, v); break;
+    }
+    case 'rate': if (!s) break; s.pending = +b.dataset.v; persist(s); render(); break;
+    case 'next': {
+      if (!s) break;
+      if (s.step === 'freeze') { if (s.pending == null) break; if (s.neg.ratings.length) s.neg.ratings[0].v = s.pending; else s.neg.ratings.push({ v: s.pending }); }
+      if (s.step === 'wishpeak') { if (s.pending == null) break; if (s.pos.ratings.length) s.pos.ratings[0].v = s.pending; else s.pos.ratings.push({ v: s.pending }); }
+      goStep(s, NEXT[s.step]); break;
+    }
+    case 'back': if (s && BACK[s.step]) goStep(s, BACK[s.step]); break;
+    case 'more': if (!s || s.pending == null) break; pushRound(s, s.step === 'rate' ? 'neg' : 'pos'); goStep(s, s.step === 'rate' ? 'spin' : 'spin2'); break;
+    case 'to-rewrite': if (!s || s.pending == null) break; pushRound(s, 'neg'); goStep(s, 'wish'); break;
+    case 'finish': if (!s || s.pending == null) break; pushRound(s, 'pos'); goStep(s, 'done'); break;
+    case 'spin-start': if (s) spinStart(s.step === 'spin' ? 'neg' : 'pos'); break;
+    case 'spin-stop': spinStop(); break;
+    case 'spin-skip': if (s) goStep(s, NEXT[s.step]); break;
+    case 'install': if (Install.prompt) { Install.prompt.prompt(); Install.prompt.userChoice.finally(() => { Install.prompt = null; render(); }); } break;
+    case 'install-hide': Install.hide(); render(); break;
+  }
+});
+function syncChips(field, v) {
+  if (!field) return; const tk = tokens(v);
+  $$('.chip', field).forEach(c => { const on = tk.includes(c.dataset.v); c.classList.toggle('on', on); c.setAttribute('aria-pressed', on); });
+}
+app.addEventListener('input', e => {
+  const f = e.target.closest('[data-field]'); if (!f || f.type === 'checkbox') return;
+  const path = f.dataset.field;
+  if (path === 'settings.sec') {
+    state.settings.sec = +f.value; saveSettings();
+    const o = $('#sec-out'), h = $('#sec-hint');
+    if (o) o.textContent = `${f.value} сек`; if (h) h.textContent = `3,5 оборота займут около ${Math.round(f.value * 3.5)} секунд. Вращайтесь медленно, не спеша.`;
+    return;
+  }
+  const s = state.sessions[state.cur]; if (!s) return;
+  setPath(s, path, f.value); persist(s);
+  if (path === 'title') { const t = $('.prog-title'); if (t) t.textContent = f.value || 'Новая ситуация'; }
+  const cf = f.closest('[data-chipfield]'); if (cf) syncChips(cf, f.value);
+});
+app.addEventListener('change', e => {
+  const f = e.target.closest('[data-field]'); if (!f || f.type !== 'checkbox') return;
+  const k = f.dataset.field.split('.')[1]; state.settings[k] = f.checked; saveSettings();
+});
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushAll(); else if (Spin.phase === 'run' || Spin.phase === 'lead') wakeOn(); });
+window.addEventListener('pagehide', flushAll);
+
+/* ---------- install as an app ---------- */
+const Install = {
+  prompt: null,
+  standalone: (() => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } })(),
+  ios: /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+  hidden() { try { return localStorage.getItem('krutilka-install-hidden') === '1'; } catch (e) { return false; } },
+  hide() { try { localStorage.setItem('krutilka-install-hidden', '1'); } catch (e) {} },
+};
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); Install.prompt = e; if (state.view === 'home') render(); });
+window.addEventListener('appinstalled', () => { Install.prompt = null; Install.hide(); toast('Приложение установлено. Ищите «Крутилку» на главном экране.'); if (state.view === 'home') render(); });
+function installHTML() {
+  if (Install.standalone || Install.hidden()) return '';
+  const how = Install.prompt ? 'Одно нажатие, и «Крутилка» появится на главном экране. Работает без интернета.'
+    : Install.ios ? 'В Safari нажмите <b>«Поделиться»</b> внизу экрана и выберите <b>«На экран „Домой“»</b>. Работает без интернета.'
+    : 'В меню браузера (⋮) выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>. Работает без интернета.';
+  return `<section class="install" aria-label="Установка">
+    <img class="install-ic" src="icon-192.png" alt="" width="52" height="52">
+    <div><h3>Установите приложение</h3><p>${how}</p></div>
+    <div class="install-act"><button type="button" class="btn-text" data-act="install-hide">Не сейчас</button>${Install.prompt ? '<button type="button" class="btn btn-primary" data-act="install">Установить</button>' : ''}</div>
+  </section>`;
+}
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+
+/* ---------- boot ---------- */
+function start(data) {
+  Store.loadLocal();
+  data = data || {};
+  if (data.session && data.session.id) {
+    const loc = state.sessions[data.session.id];
+    if (!loc || (loc.updatedAt || 0) <= (data.session.updatedAt || 0)) state.sessions[data.session.id] = data.session;
+  }
+  state.view = viewFromHash();
+  if (data.cur && state.sessions[data.cur]) state.cur = data.cur;
+  else if (state.view === 'practice') state.wantResume = true;
+  if (state.wantResume) refresh();
+  render();
+  Voice.init();
+  Store.connect();
+}
+try {
+  window.claude?.hot?.snapshot?.(() => ({ cur: state.cur, session: state.cur ? state.sessions[state.cur] : null }));
+} catch (e) {}
+if (window.claude?.hot?.ready) window.claude.hot.ready(start); else start(window.claude?.hot?.data ?? {});
+})();
+</script>
+
+</body>
+</html>
