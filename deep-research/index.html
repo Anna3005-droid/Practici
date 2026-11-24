@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ИИ с нуля · Глубокое исследование</title>
+<meta name="description" content="Пошаговая памятка: как с помощью ИИ пройти путь от «не знаю, с чего начать» до плана на месяц. Все запросы уже внутри — нажимайте «Скопировать».">
+<meta name="theme-color" content="#F6F5F1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#F6F5F1; --card:#FFFFFF; --ink:#0B0B12; --muted:#6B6B78; --line:rgba(11,11,18,.08);
+  --lime:#D3F23A; --lime-d:#B9D81F; --purple:#7C5CF0; --purple-s:#EEE9FE; --ok:#2FAE62;
+  --shadow:0 10px 30px -14px rgba(40,30,90,.22);
+  --f:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg);-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;color:var(--ink);font:500 16px/1.6 var(--f);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(700px 420px at 100% -5%,rgba(124,92,240,.14),transparent 65%),radial-gradient(600px 400px at -10% 30%,rgba(211,242,58,.18),transparent 60%),var(--bg);
+  padding-bottom:env(safe-area-inset-bottom,0)}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+a{color:var(--purple)}
+h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+p{margin:0 0 12px}
+b{font-weight:700}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:rgba(246,245,241,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0)}
+.bar .wrap{display:flex;align-items:center;gap:12px;height:52px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;white-space:nowrap}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--lime);display:inline-block}
+.track{flex:1;height:8px;background:#E4E2DA;border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--ink);border-radius:99px;transition:width .35s}
+.count{font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap}
+
+/* hero */
+.hero{padding:40px 0 18px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;margin-bottom:16px}
+h1{font-size:clamp(34px,9.4vw,54px);font-weight:800}
+.u{position:relative;display:inline;white-space:normal;background:linear-gradient(transparent 62%,var(--lime) 62%,var(--lime) 88%,transparent 88%)}
+.lead{color:var(--muted);font-size:17px;margin:18px 0 20px;max-width:560px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:#fff;border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;font-size:14px;box-shadow:var(--shadow)}
+.dots{width:90px;height:60px;margin-top:18px;background-image:radial-gradient(var(--lime-d) 2px,transparent 2.5px);background-size:15px 15px;opacity:.8}
+
+/* rows like slides */
+.rows{display:grid;gap:10px;margin:14px 0}
+.row{display:flex;align-items:center;gap:14px;background:#fff;border-radius:99px;padding:10px 20px 10px 10px;box-shadow:var(--shadow);font-weight:700;border:1px solid var(--line)}
+.row .n{flex:none;width:40px;height:40px;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-weight:800;font-size:18px}
+.row small{display:block;font-weight:500;color:var(--muted);font-size:13px;line-height:1.3}
+a.row{text-decoration:none;color:inherit}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px 18px;margin:18px 0;box-shadow:var(--shadow)}
+.card.done{border-color:var(--ok);box-shadow:0 0 0 3px rgba(47,174,98,.14)}
+.card.lime{background:var(--lime);border-color:transparent}
+.head{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.num{flex:none;width:46px;height:46px;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-weight:800;font-size:22px}
+.done .num{background:var(--ok);color:#fff}
+.head h2{font-size:26px}
+.time{font-size:13px;color:var(--muted);margin-top:5px;font-weight:600}
+.what{background:var(--purple-s);border-radius:18px;padding:12px 14px;margin-bottom:16px;font-size:15px}
+.what b{color:var(--purple)}
+h3.sub{font-size:19px;margin:22px 0 8px}
+
+.do{list-style:none;padding:0;margin:0 0 16px;counter-reset:s}
+.do li{counter-increment:s;position:relative;padding:5px 0 5px 40px;min-height:34px}
+.do li::before{content:counter(s);position:absolute;left:0;top:5px;width:28px;height:28px;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-weight:800;font-size:14px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:99px;padding:11px 20px;font:700 15px var(--f);cursor:pointer;text-decoration:none;color:var(--lime);background:var(--ink);transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn.sm{padding:8px 16px;font-size:14px}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}
+.tool{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:9px 13px;font-size:14px;font-weight:700;text-decoration:none;color:var(--ink)}
+.tool:hover{border-color:var(--ink)}
+
+/* prompt */
+.prompt{background:#FAF9FF;border:1.5px solid #E2DAFB;border-radius:20px;margin:12px 0 16px;overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 10px 16px;background:var(--purple-s);flex-wrap:wrap}
+.pt{font-weight:800;font-size:15px}
+.pt small{display:block;font-weight:600;color:var(--muted);font-size:12.5px}
+.pb{margin:0;padding:14px 16px;max-height:210px;overflow:auto;white-space:pre-wrap;word-break:break-word;font:500 14px/1.6 var(--f);color:#26263A}
+.pb.open{max-height:none}
+.more{display:block;width:100%;background:#FAF9FF;border:0;border-top:1px solid #E2DAFB;color:var(--purple);padding:10px;font:700 13px var(--f);cursor:pointer}
+.pb mark{background:var(--lime);color:var(--ink);border-radius:5px;padding:0 4px}
+.pb mark.empty{background:#FFE9A8;color:#6B4B00}
+.copy.ok{background:var(--ok);color:#fff}
+
+.tip,.warn,.out{border-radius:18px;padding:12px 14px;margin:14px 0;font-size:15px}
+.tip{background:#fff;border:1.5px dashed #CFC8EE}
+.warn{background:#FFF3CF;border:1.5px solid #F2DC8A}
+.out{background:#E9F8EF;border:1.5px solid #B9E6CB}
+.out b{color:var(--ok)}
+
+.check{display:flex;align-items:center;gap:12px;margin-top:18px;padding:14px;border-radius:18px;background:var(--bg);cursor:pointer;font-weight:700;user-select:none}
+.check input{width:24px;height:24px;accent-color:var(--ok);flex:none}
+
+/* forms */
+.form{display:grid;gap:12px;margin:8px 0}
+label.f{display:block;font-weight:800;font-size:15px}
+label.f small{display:block;color:var(--muted);font-weight:500;margin:2px 0 6px;font-size:13.5px}
+input[type=text],textarea{width:100%;background:#fff;border:1.5px solid #DAD7CC;border-radius:16px;color:var(--ink);padding:12px 14px;font:500 16px var(--f)}
+textarea{min-height:72px;resize:vertical}
+input[type=text]:focus,textarea:focus{outline:0;border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,92,240,.15)}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.row3{grid-template-columns:1fr}}
+
+/* scouts */
+.scouts{display:grid;gap:12px;margin:12px 0}
+.scout{border:1.5px solid var(--line);border-radius:22px;padding:14px 16px;background:#fff}
+.scout h4{margin:0 0 4px;font-size:18px;font-weight:800;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:800;border-radius:99px;padding:3px 10px;background:var(--lime)}
+.tag.opt{background:var(--purple-s);color:var(--purple)}
+.scout p{margin:4px 0 8px;color:var(--muted);font-size:14.5px}
+.scout ol{margin:0 0 10px;padding-left:20px;font-size:15px}
+
+details{background:#fff;border-radius:20px;margin:10px 0;border:1.5px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:800;display:flex;gap:10px;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:24px;color:var(--purple);flex:none;line-height:1}
+details[open]>summary::after{content:"–"}
+details .in{padding:0 16px 14px}
+.ex{display:grid;gap:8px;font-size:15px}
+.ex div{background:var(--bg);border-radius:14px;padding:10px 12px}
+.ex b{color:var(--purple)}
+
+.words{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.words{grid-template-columns:1fr}}
+.words div{background:var(--bg);border-radius:16px;padding:10px 14px;font-size:14.5px}
+.words b{display:block}
+
+.big{font-size:22px;font-weight:800;line-height:1.25;letter-spacing:-.01em}
+footer{padding:26px 0 56px;text-align:center;color:var(--muted);font-size:13px}
+.reset{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <div class="brand"><span class="dot"></span>ИИ с нуля</div>
+  <div class="track"><div class="fill" id="pfill"></div></div>
+  <div class="count" id="pcount">0 из 5</div>
+</div></div>
+
+<main class="wrap">
+
+<header class="hero">
+  <div class="kicker"><span class="dot"></span>Памятка к занятию</div>
+  <h1>Глубокое исследование: от «не знаю, с чего начать» до <span class="u">плана на месяц</span></h1>
+  <p class="lead">Пять шагов, которые мы прошли на примере Натальи. Здесь все запросы уже готовы: нажимайте «Скопировать», вставляйте в нужный сервис — и повторяйте путь на себе.</p>
+  <div class="pills">
+    <div class="pill">🧭 5 шагов</div>
+    <div class="pill">⏱ около часа вашего времени</div>
+    <div class="pill">🔑 нужен гугл-аккаунт</div>
+  </div>
+  <div class="dots"></div>
+</header>
+
+<section class="card">
+  <p class="big">Половину времени ИИ ищет сам. Вам нужно только копировать запросы и читать ответы.</p>
+  <div class="tip">🛟 <b>Здесь нельзя ничего сломать.</b> Всё, что получится, — черновик: его можно стирать, переписывать и выбрасывать. Не успеваете за один день — ничего страшного, всё понемногу.</div>
+</section>
+
+<!-- путь -->
+<section>
+  <h2 style="font-size:28px;margin:26px 0 6px">Весь путь</h2>
+  <div class="rows">
+    <a class="row" href="#s1"><span class="n">1</span><span>Карточка ДНК<small>рассказываем ИИ о себе</small></span></a>
+    <a class="row" href="#s2"><span class="n">2</span><span>Запрос на разведку<small>его пишет Claude</small></span></a>
+    <a class="row" href="#s3"><span class="n">3</span><span>Три разведчицы<small>ищут в интернете по нашему запросу</small></span></a>
+    <a class="row" href="#s4"><span class="n">4</span><span>Папка с источниками<small>собираем найденное в Gemini Notebook</small></span></a>
+    <a class="row" href="#s5"><span class="n">5</span><span>Одно направление<small>выбираем и записываем одной строкой</small></span></a>
+  </div>
+</section>
+
+<!-- инструменты -->
+<section class="card">
+  <h2 style="margin-bottom:12px">Кто сегодня работает</h2>
+  <div class="rows" style="margin-top:0">
+    <a class="row" href="https://claude.ai" target="_blank" rel="noopener"><span class="n">C</span><span>Claude<small>пишет и думает: опишет вас и напишет запрос</small></span></a>
+    <a class="row" href="https://notebooklm.google.com" target="_blank" rel="noopener"><span class="n">G</span><span>Gemini Notebook<small>папка с источниками (раньше — NotebookLM). Сам ищет в интернете и отвечает только по найденному</small></span></a>
+    <a class="row" href="https://www.perplexity.ai" target="_blank" rel="noopener"><span class="n">P</span><span>Perplexity<small>поисковик с ответами: ищет и на форумах, всегда показывает ссылки</small></span></a>
+    <a class="row" href="https://parallel.ai" target="_blank" rel="noopener"><span class="n">∥</span><span>Parallel<small>самая дотошная, читает сотни сайтов. Сделан для программистов — можно просто посмотреть</small></span></a>
+  </div>
+  <p style="color:var(--muted);font-size:14px">Есть ещё ChatGPT — он тоже умеет так искать. Как марки машин: все ездят, отличаются мелочами. У многих сервисов есть бесплатный вариант; условия меняются, сверяйте на сайте.</p>
+
+  <h3 class="sub">Слова, которые будем повторять</h3>
+  <div class="words">
+    <div><b>Запрос</b>просьба к ИИ, написанная словами</div>
+    <div><b>ДНК</b>страница о человеке: кто я, что умею, что у меня есть, чего хочу</div>
+    <div><b>Глубокое исследование</b>ИИ долго ищет и приносит выписки со ссылками</div>
+    <div><b>Разведчица</b>сервис, который ищет в интернете по нашему запросу</div>
+    <div><b>Источник</b>ссылка или текст, на которых стоит ответ</div>
+    <div><b>Блокнот</b>папка с источниками в Gemini Notebook</div>
+  </div>
+</section>
+
+<section class="card lime">
+  <h2 style="font-size:24px;margin-bottom:8px">Что не кладём в ИИ</h2>
+  <p style="margin:0">Паспорт, адрес, фамилию и чужие истории. Имена и места можно заменить. И второе: <b>цифры, законы и налоги проверяем на официальных сайтах</b> — ИИ может ошибиться, особенно в правилах конкретной страны.</p>
+</section>
+
+<!-- ШАГ 1 -->
+<section class="card" id="s1" data-step="1">
+  <div class="head"><div class="num">1</div><div><h2>Карточка ДНК</h2><div class="time">⏱ 10–15 минут · Claude</div></div></div>
+  <div class="what"><b>Зачем.</b> ИИ советует точно только тому, кого знает. Плохо: «Что мне делать, чтобы заработать?» — получится ответ для всех сразу. Хорошо: тот же вопрос вместе с карточкой о вас — тогда ответ будет про вас.</div>
+
+  <h3 class="sub" style="margin-top:6px">Сначала подготовьте папку в Claude</h3>
+  <div class="tools"><a class="tool" href="https://claude.ai" target="_blank" rel="noopener">Открыть Claude ↗</a></div>
+  <ol class="do">
+    <li>В Claude откройте <b>«Проекты»</b> (Projects) → создайте новый проект, например «Мои новые шаги».</li>
+    <li>Проект — это папка: один раз рассказали о себе, дальше помощник помнит.</li>
+    <li>Внутри проекта откройте <b>новый чат</b>. Здесь будет жить вся ваша история: карточка, запрос, план.</li>
+  </ol>
+
+  <h3 class="sub">Ответьте на 5 вопросов о себе</h3>
+  <p>Коротко, своими словами. Можно голосом: включите диктовку на телефоне. Ответы сохраняются на этой странице, и запрос внизу заполнится сам.</p>
+  <div class="form">
+    <label class="f">1. Кто я и где живу<small>Возраст, чем занимаюсь, в какой стране. Без фамилии и адреса.</small><textarea id="f-a1"></textarea></label>
+    <label class="f">2. Что умею<small>Всё, что получается: работа, хобби, прошлый опыт.</small><textarea id="f-a2"></textarea></label>
+    <label class="f">3. Что у меня есть<small>Время, деньги на старт, языки, техника.</small><textarea id="f-a3"></textarea></label>
+    <label class="f">4. Чего хочу через месяц и через год<small>Два коротких ответа.</small><textarea id="f-a4"></textarea></label>
+    <label class="f">5. Чего точно не хочу<small>Красные линии: вложения, долги, формат работы.</small><textarea id="f-a5"></textarea></label>
+  </div>
+  <details><summary>Пример: ответы Натальи, 48 лет (она придуманная)</summary><div class="in ex">
+    <div><b>1.</b> Мне 48. Ухаживаю за пожилыми людьми в Италии, живу у подопечной.</div>
+    <div><b>2.</b> Умею ухаживать, готовить, спокойно разговаривать с людьми. Раньше шила.</div>
+    <div><b>3.</b> Около часа в день. Денег на старт немного. Итальянский на бытовом уровне, родные языки — украинский и русский. Есть смартфон.</div>
+    <div><b>4.</b> Через месяц — понять, с чего начать. Через год — второй источник дохода, чтобы не зависеть только от этой работы.</div>
+    <div><b>5.</b> Не хочу больших вложений и долгов.</div>
+  </div></details>
+
+  <h3 class="sub">Запрос 1 → в Claude</h3>
+  <ol class="do">
+    <li>Нажмите «Скопировать».</li>
+    <li>Вставьте в новый чат внутри вашего проекта и отправьте.</li>
+    <li>Claude соберёт одну страницу — это ваша <b>ДНК</b>. Прочтите. Что не так — напишите «поправь: …».</li>
+  </ol>
+  <div class="prompt" data-p="q1"></div>
+  <div class="out"><b>Что получится:</b> карточка ДНК на одну страницу из пяти частей. Без неё ИИ советует всем одно и то же.</div>
+  <label class="check"><input type="checkbox" data-done="1"> Готово, карточка есть</label>
+</section>
+
+<!-- ШАГ 2 -->
+<section class="card" id="s2" data-step="2">
+  <div class="head"><div class="num">2</div><div><h2>Запрос на разведку</h2><div class="time">⏱ 5 минут · Claude, тот же чат</div></div></div>
+  <div class="what"><b>Зачем.</b> Запрос для разведчиц мы не пишем сами: его пишет ИИ по вашей карточке. Так точнее любого шаблона. В нём будут три вопроса: <b>что бывает вокруг</b>, <b>кому это нужно</b> и <b>как начинали другие</b>.</div>
+  <ol class="do">
+    <li>Останьтесь в том же чате Claude, где лежит карточка.</li>
+    <li>Скопируйте запрос 2 и отправьте.</li>
+    <li>Claude выдаст готовый текст. Найдите в нём три вопроса. Этот текст вы будете копировать на следующем шаге.</li>
+  </ol>
+  <div class="prompt" data-p="q2"></div>
+  <div class="out"><b>Что получится:</b> один готовый запрос на разведку, написанный под вас.</div>
+  <label class="check"><input type="checkbox" data-done="2"> Готово, запрос на разведку получен</label>
+</section>
+
+<!-- ШАГ 3 -->
+<section class="card" id="s3" data-step="3">
+  <div class="head"><div class="num">3</div><div><h2>Три разведчицы</h2><div class="time">⏱ запуск 10 минут, поиск — от нескольких минут до получаса</div></div></div>
+  <div class="what"><b>Зачем.</b> Даже умный ИИ может склеить правду с выдумкой, как кентавра: сверху человек, снизу конь, шва не видно. Поэтому посылаем не одну разведчицу, а несколько. <b>Что принесли все — берём. Что принесла одна — проверяем.</b></div>
+  <p>Один и тот же запрос, который написал Claude, копируем в окна разведчиц. Пока они ищут — загляните в блок «Собираем всё в папку» ниже и не закрывайте вкладки.</p>
+
+  <div class="scouts">
+    <div class="scout">
+      <h4>Gemini Notebook <span class="tag">главная</span></h4>
+      <p>Папка с источниками. Сама ищет в интернете.</p>
+      <ol>
+        <li>Откройте Gemini Notebook → создайте <b>новый блокнот</b>.</li>
+        <li>Добавьте карточку ДНК: «Добавить источник» → <b>«Вставленный текст»</b>.</li>
+        <li>Запустите <b>поиск источников</b>, режим <b>Deep Research</b>, и вставьте запрос из шага 2.</li>
+      </ol>
+      <a class="tool" href="https://notebooklm.google.com" target="_blank" rel="noopener">Открыть Gemini Notebook ↗</a>
+    </div>
+    <div class="scout">
+      <h4>Perplexity <span class="tag opt">по желанию</span></h4>
+      <p>Быстрее, показывает ссылки, ищет и на форумах.</p>
+      <ol>
+        <li>Нажмите <b>«+»</b> → <b>«Глубокое исследование»</b>.</li>
+        <li>Источники: отметьте <b>«Веб»</b> и <b>«Социальные»</b>.</li>
+        <li>Вставьте запрос из шага 2.</li>
+      </ol>
+      <a class="tool" href="https://www.perplexity.ai" target="_blank" rel="noopener">Открыть Perplexity ↗</a>
+    </div>
+    <div class="scout">
+      <h4>Parallel <span class="tag opt">можно посмотреть</span></h4>
+      <p>Самая дотошная: читает сотни сайтов, ищет дольше.</p>
+      <ol>
+        <li>Выберите <b>Deep Research</b>, среднюю модель и галочку <b>«fast»</b>.</li>
+        <li>Вставьте запрос из шага 2.</li>
+      </ol>
+      <a class="tool" href="https://parallel.ai" target="_blank" rel="noopener">Открыть Parallel ↗</a>
+    </div>
+  </div>
+  <div class="tip">🔧 Названия кнопок в сервисах иногда меняются: ищите слова «Deep Research» или «Глубокое исследование».</div>
+  <div class="tip">⏳ <b>Разведка идёт долго?</b> Это нормально: разведчицы ещё в библиотеке. Отметьте шаг, когда поиск запущен, и идите дальше — вернётесь за результатом.</div>
+  <label class="check"><input type="checkbox" data-done="3"> Готово, разведка запущена</label>
+</section>
+
+<!-- ШАГ 4 -->
+<section class="card" id="s4" data-step="4">
+  <div class="head"><div class="num">4</div><div><h2>Собираем всё в папку</h2><div class="time">⏱ 15–20 минут · Gemini Notebook</div></div></div>
+  <div class="what"><b>Зачем.</b> Блокнот не выдумывает: он отвечает только по тому, что в нём лежит, и показывает, откуда взялась каждая фраза. Нажмите на цифру-сноску — увидите источник.</div>
+  <ol class="do">
+    <li>Откройте свой блокнот в Gemini Notebook. Если поиск ещё идёт — это нормально, как в кулинарном шоу: достаньте то, что готово.</li>
+    <li>Нажмите <b>«Добавить источник»</b>. Ссылки из Perplexity добавляйте через <b>«Сайты»</b>.</li>
+    <li>Ответы Perplexity и Parallel, а также карточку ДНК добавляйте через <b>«Вставленный текст»</b>.</li>
+    <li>Каждый источник подпишите: «Perplexity», «Parallel». Тогда потом не запутаетесь.</li>
+  </ol>
+  <div class="tip">💡 <b>Совет для Perplexity.</b> Чтобы получить ссылки, напишите в том же чате: «Выпиши только список URL-ссылок, которые ты использовал в ответе. Только ссылки, каждая с новой строки».</div>
+
+  <h3 class="sub">Три вопроса блокноту</h3>
+  <p>Отчёт целиком не читаем — мы его допрашиваем. Вставляйте вопросы в чат блокнота <b>по одному</b>, а после каждого ответа нажимайте на цифры-сноски и смотрите, откуда взято.</p>
+
+  <div class="prompt" data-p="q41"></div>
+  <div class="prompt" data-p="q42"></div>
+  <div class="prompt" data-p="q43"></div>
+
+  <div class="warn">🔍 <b>Разведка — это черновик знаний.</b> Откройте хотя бы одну ссылку: она открывается? Там то же, что в ответе? Цифры, цены и даты проверяйте сами. Если ссылка не открывается — выбрасывайте этот пункт. Вопрос 4.2 покажет, где разведчицы спорят: например, можно ли подрабатывать по вашему контракту и как платить налоги. Это проверяем на официальных сайтах.</div>
+  <div class="out"><b>Что получится:</b> блокнот с источниками, три направления, список спорных мест для проверки и истории людей в похожей ситуации.</div>
+  <label class="check"><input type="checkbox" data-done="4"> Готово, вопросы заданы</label>
+</section>
+
+<!-- ШАГ 5 -->
+<section class="card" id="s5" data-step="5">
+  <div class="head"><div class="num">5</div><div><h2>Одно направление</h2><div class="time">⏱ 10 минут · Gemini Notebook</div></div></div>
+  <div class="what"><b>Зачем.</b> Из многих идей нужно выбрать <b>одну</b>. Маленький шаг сегодня лучше большого плана на потом.</div>
+  <ol class="do">
+    <li>Вставьте запрос 5 в чат блокнота. Он предложит три направления, которые подходят вам по умениям, времени и деньгам.</li>
+    <li>Для каждого блокнот напишет: кому это нужно, первый шаг на эту неделю, риск и как его проверить.</li>
+    <li>Выберите <b>одно</b> и впишите его ниже. Решает человек, а не ИИ.</li>
+  </ol>
+  <div class="prompt" data-p="q5"></div>
+
+  <h3 class="sub">Моя строка выбора</h3>
+  <p class="big" style="font-size:18px">Я делаю … для …, первый шаг — …</p>
+  <div class="form">
+    <label class="f">Я делаю<input type="text" id="f-d1" placeholder="например: шью детские вещи"></label>
+    <label class="f">для<input type="text" id="f-d2" placeholder="например: мам в моём городе"></label>
+    <label class="f">Первый шаг<input type="text" id="f-d3" placeholder="например: найти три группы мам и посмотреть, что там спрашивают"></label>
+  </div>
+  <div class="out"><b>Что получится:</b> одно направление, записанное одной строкой. Одно, не три.</div>
+  <label class="check"><input type="checkbox" data-done="5"> Готово, направление выбрано</label>
+</section>
+
+<!-- БОНУС: план 30 дней -->
+<section class="card" id="s6">
+  <div class="head"><div class="num" style="background:var(--purple-s)">+</div><div><h2>План на 30 дней</h2><div class="time">По желанию · Claude · ⏱ 10 минут</div></div></div>
+  <div class="what"><b>Зачем.</b> От «не знаю, с чего начать» до плана на месяц за один вечер: три цели на месяц и по два маленьких шага в неделю, каждый на 20–30 минут.</div>
+  <ol class="do">
+    <li>Вернитесь в чат Claude, в тот же проект.</li>
+    <li>Вставьте запрос 6 со своей строкой из шага 5.</li>
+    <li>Claude задаст три уточняющих вопроса. Ответьте коротко.</li>
+    <li>Получите план. В нём будут пометки, что проверить самой на официальных сайтах.</li>
+  </ol>
+  <div class="prompt" data-p="q6"></div>
+  <div class="tip">Одна цель на месяц лучше трёх на всё. Без давления: всё понемногу, можно сделать позже.</div>
+</section>
+
+<!-- памятка -->
+<section class="card">
+  <h2 style="margin-bottom:12px">Домашнее задание</h2>
+  <p>Пройдите этот путь на себе. <b>Обязательно</b> — шаги с первого по пятый. <b>По желанию</b> — вторая разведчица Perplexity и план на месяц.</p>
+  <div class="rows">
+    <div class="row"><span class="n">1</span><span>Карточка о себе в Claude</span></div>
+    <div class="row"><span class="n">2</span><span>Запрос на разведку</span></div>
+    <div class="row"><span class="n">3</span><span>Блокнот и глубокое исследование</span></div>
+    <div class="row"><span class="n">4</span><span>Три вопроса блокноту, 4.1–4.3</span></div>
+    <div class="row"><span class="n">5</span><span>Одно направление одной строкой</span></div>
+  </div>
+  <div class="tip">Не успеете всё за один день — ничего. Половину времени ИИ ищет сам, вам нужен час и гугл-аккаунт.</div>
+  <h3 class="sub">Один маленький шаг на завтра</h3>
+  <p>Придумайте один шаг и запишите одной строкой. Например: открыть Claude и вставить свои ответы. Это не обязательство, а точка опоры.</p>
+</section>
+
+<footer>
+  Пример с Натальей вымышленный. ИИ помогает увидеть варианты и сделать первый шаг, решает человек. Доход и сроки никто не обещает.<br>
+  <button class="reset" id="reset" type="button">Сбросить отметки и мои ответы</button>
+</footer>
+</main>
+
+<script>
+(function(){
+  var KEY='ai-nulya-v1';
+  var state={fields:{},done:{}};
+  try{var raw=localStorage.getItem(KEY);if(raw)state=JSON.parse(raw)||state;}catch(e){}
+  state.fields=state.fields||{};state.done=state.done||{};
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+  var label={a1:'ОТВЕТ 1',a2:'ОТВЕТ 2',a3:'ОТВЕТ 3',a4:'ОТВЕТ 4',a5:'ОТВЕТ 5',d1:'ЧТО ДЕЛАЮ',d2:'ДЛЯ КОГО',d3:'ПЕРВЫЙ ШАГ'};
+  var ids={a1:'f-a1',a2:'f-a2',a3:'f-a3',a4:'f-a4',a5:'f-a5',d1:'f-d1',d2:'f-d2',d3:'f-d3'};
+
+  var P={
+  q1:{t:'Запрос 1 · Карточка ДНК',s:'Вставьте в Claude, в новый чат внутри проекта',x:
+"Помоги составить карточку обо мне. Я называю её «ДНК»: это одна страница из пяти частей. Она нужна, чтобы дальше ИИ давал советы именно мне, а не всем сразу.\n\nМои ответы:\n1. Кто я и где живу: {a1}\n2. Что умею: {a2}\n3. Что у меня есть (время, деньги, язык, техника): {a3}\n4. Чего хочу через месяц и через год: {a4}\n5. Чего точно не хочу: {a5}\n\nСобери из этого карточку ДНК: пять коротких разделов с названиями выше, простым языком, от первого лица. Ничего не выдумывай и не добавляй от себя. Если чего-то не хватает — в конце списком напиши, что мне стоит уточнить. Не включай в карточку паспортные данные, адрес и фамилию."},
+  q2:{t:'Запрос 2 · Запрос на разведку',s:'Вставьте в Claude, в тот же чат',x:
+"Теперь напиши за меня один запрос для глубокого исследования. Я скопирую его в несколько сервисов-разведчиц (Perplexity, Gemini Notebook, Parallel), поэтому он должен быть самодостаточным: вставь в него короткую выжимку из моей карточки ДНК.\n\nВ запросе должны быть три вопроса:\n1. Что вокруг бывает: какие занятия подходят человеку с такими умениями, временем и деньгами и что нужно для старта.\n2. Кому это нужно: кто за это платит и где этих людей найти.\n3. Как начинали другие: с чего начали и на чём споткнулись.\n\nТребования к запросу:\n- искать с учётом моей страны и языка (и на английском, если там больше данных);\n- к каждому факту давать ссылку на источник;\n- отделять проверенные факты от предположений;\n- не обещать доход и не называть суммы и сроки заработка;\n- в конце сделать выводы по трём вопросам.\n\nВыдай только текст запроса, готовый к копированию."},
+  q41:{t:'Вопрос 4.1 · Что встречается чаще всего',s:'Вставьте в чат блокнота Gemini Notebook',x:
+"Какие три направления встречаются в источниках чаще всего? Для каждого напиши: что это за занятие, кому это нужно и что нужно для старта. Опирайся только на источники в блокноте."},
+  q42:{t:'Вопрос 4.2 · Где разведчицы расходятся',s:'Вставьте в чат блокнота после ответа на 4.1',x:
+"Где источники и разведчицы расходятся или противоречат друг другу? По каждому спору напиши: что утверждает каждый источник и что мне нужно проверить самой на официальных сайтах (особенно правила, законы, налоги и цифры моей страны)."},
+  q43:{t:'Вопрос 4.3 · Истории людей',s:'Вставьте в чат блокнота после ответа на 4.2',x:
+"Какие истории людей в похожей на мою ситуации есть в источниках? С чего они начали, сколько времени это заняло, на чём споткнулись. Пиши только то, что есть в источниках, ничего не придумывай. Если историй мало — так и скажи."},
+  q5:{t:'Запрос 5 · Три направления',s:'Вставьте в чат блокнота',x:
+"На основе всех источников в блокноте и моей карточки ДНК предложи три направления, которые подходят мне по умениям, времени и деньгам.\n\nДля каждого направления напиши:\n1. Кому это нужно.\n2. Первый шаг на эту неделю.\n3. Главный риск и как его проверить.\n\nНе обещай доход, не называй суммы и сроки заработка."},
+  q6:{t:'Запрос 6 · План на 30 дней',s:'Вставьте в Claude, в тот же проект',x:
+"Моё решение: я делаю {d1} для {d2}, первый шаг — {d3}.\n\nСначала задай мне три уточняющих вопроса, по одному за раз. Потом, на основе моей карточки ДНК и этого решения, составь план на 30 дней:\n- три цели на месяц;\n- на каждую неделю по два маленьких шага, каждый на 20–30 минут;\n- отметь, что мне нужно проверить самой на официальных сайтах.\n\nТон спокойный, без давления: всё понемногу. Не обещай доход, не называй суммы и сроки заработка."}
+  };
+
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function val(k){return (state.fields[k]||'').trim();}
+  function fill(text,html){
+    return text.replace(/\{(\w+)\}/g,function(_,k){
+      var v=val(k),empty=!v;
+      if(empty)v='['+(label[k]||k)+']';
+      return html?'<mark'+(empty?' class="empty"':'')+'>'+esc(v)+'</mark>':v;
+    });
+  }
+
+  var boxes=[].slice.call(document.querySelectorAll('.prompt[data-p]'));
+  boxes.forEach(function(b){
+    var p=P[b.getAttribute('data-p')];
+    b.innerHTML='<div class="ph"><div class="pt">'+esc(p.t)+'<small>'+esc(p.s)+'</small></div><button class="btn sm copy" type="button">Скопировать</button></div><pre class="pb"></pre><button class="more" type="button">Показать весь запрос ▾</button>';
+  });
+  function renderAll(){
+    boxes.forEach(function(b){
+      var p=P[b.getAttribute('data-p')];
+      b.querySelector('.pb').innerHTML=fill(esc(p.x),true);
+    });
+  }
+  function copy(text,ok){
+    function fb(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(ta);}
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(ok,fb);}else fb();
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.classList.contains('copy')){
+      var p=P[t.closest('.prompt').getAttribute('data-p')];
+      copy(fill(p.x,false),function(){t.textContent='Скопировано ✓';t.classList.add('ok');setTimeout(function(){t.textContent='Скопировать';t.classList.remove('ok');},1800);});
+    }
+    if(t.classList.contains('more')){
+      var pb=t.parentNode.querySelector('.pb');pb.classList.toggle('open');
+      t.textContent=pb.classList.contains('open')?'Свернуть ▴':'Показать весь запрос ▾';
+    }
+  });
+
+  Object.keys(ids).forEach(function(k){
+    var el=document.getElementById(ids[k]);if(!el)return;
+    el.value=state.fields[k]||'';
+    el.addEventListener('input',function(){state.fields[k]=el.value;save();renderAll();});
+  });
+
+  var checks=[].slice.call(document.querySelectorAll('input[data-done]'));
+  function progress(){
+    var n=0;
+    checks.forEach(function(c){
+      var on=!!state.done[c.getAttribute('data-done')];
+      c.checked=on;c.closest('.card').classList.toggle('done',on);if(on)n++;
+    });
+    document.getElementById('pcount').textContent=n+' из '+checks.length;
+    document.getElementById('pfill').style.width=(n/checks.length*100)+'%';
+  }
+  checks.forEach(function(c){
+    c.addEventListener('change',function(){
+      var k=c.getAttribute('data-done');state.done[k]=c.checked;save();progress();
+      if(c.checked){var nx=document.getElementById('s'+(+k+1));if(nx)setTimeout(function(){nx.scrollIntoView({behavior:'smooth',block:'start'});},250);}
+    });
+  });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('Стереть отметки и ваши ответы на этой странице?'))return;
+    state={fields:{},done:{}};save();location.reload();
+  });
+
+  renderAll();progress();
+})();
+</script>
+</body>
+</html>
