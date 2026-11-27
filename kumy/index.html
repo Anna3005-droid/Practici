@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#fbf6f0">
+<title>Рома й Альона. Рік разом</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600&display=swap">
+<style>
+/* Layout: one warm light page. A sealed envelope opens into the story, then photos and the greeting scroll below it; a last button reveals one more wish. */
+:root {
+  --bg: #fbf6f0;
+  --bg-2: #f3e8dc;
+  --paper: #fffdfa;
+  --ink: #3a2f2b;
+  --muted: #7d6b63;
+  --rose: #b4636f;
+  --sage: #8a9a82;
+  --line: rgba(58, 47, 43, .14);
+  --display: "Cormorant Garamond", "Times New Roman", serif;
+  --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hand: "Caveat", "Segoe Script", cursive;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 1.05rem/1.75 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; width: 100%; height: auto; max-width: 100%; }
+h1, h2, p, figure { margin: 0; }
+button { font: inherit; }
+:focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
+[hidden] { display: none !important; }
+
+.wrap {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-left: max(22px, env(safe-area-inset-left, 0px));
+  padding-right: max(22px, env(safe-area-inset-right, 0px));
+}
+.eyebrow { font-size: .76rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--rose); }
+.display { font-family: var(--display); font-weight: 500; line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; }
+.display em { font-style: italic; font-weight: 400; color: var(--rose); }
+.btn {
+  appearance: none; cursor: pointer; border: 0; border-radius: 999px;
+  padding: 18px 34px; background: var(--rose); color: #fff;
+  font-weight: 600; font-size: 1rem; letter-spacing: .02em;
+  box-shadow: 0 10px 24px -10px rgba(180, 99, 111, .7);
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+.btn:hover { background: #a2545f; transform: translateY(-2px); }
+.btn:active { transform: scale(.97); }
+
+/* Opening screen */
+.opening {
+  min-height: 100svh;
+  display: grid; place-items: center;
+  padding-block: 40px;
+  background: radial-gradient(120% 80% at 50% 0%, #fff 0%, var(--bg) 55%, var(--bg-2) 100%);
+}
+.opening-inner { display: grid; gap: 28px; justify-items: center; text-align: center; width: 100%; }
+.ask { font-size: clamp(2.2rem, 8vw, 3.8rem); max-width: 14em; }
+.opening-inner > .btn { animation: float 3.2s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-5px); } }
+
+/* Envelope */
+.env { position: relative; width: min(320px, 78vw); aspect-ratio: 3 / 2; transition: transform .8s ease, opacity .8s ease; }
+.env > * { position: absolute; }
+.env-back { inset: 0; background: #ecd6c4; border-radius: 6px; box-shadow: 0 24px 40px -20px rgba(58, 47, 43, .45); }
+.env-letter {
+  left: 8%; right: 8%; top: 6%; height: 78%;
+  background: var(--paper); border-radius: 4px;
+  box-shadow: 0 1px 0 var(--line);
+  transition: transform .9s cubic-bezier(.3, .8, .3, 1) .45s;
+  padding: 14% 12%;
+}
+.env-letter i { display: block; height: 3px; border-radius: 2px; background: var(--line); margin-bottom: 9%; }
+.env-letter i:nth-child(2) { width: 70%; }
+.env-letter i:nth-child(3) { width: 85%; }
+.env-front { inset: 0; background: #f3e1d0; clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%); border-radius: 6px; }
+.env-front::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,255,255,.5), rgba(180,99,111,.08)); }
+.env-flap {
+  left: 0; right: 0; top: 0; height: 58%;
+  background: #e8cdb8; clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top; transition: transform .7s ease, z-index 0s .35s;
+  z-index: 4;
+}
+.env-seal {
+  left: 50%; top: 51%; width: 44px; height: 44px; margin: -22px 0 0 -22px; z-index: 5;
+  background: var(--rose); color: #fff; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.2rem; line-height: 1;
+  box-shadow: 0 6px 12px -4px rgba(180, 99, 111, .8);
+  transition: opacity .3s;
+}
+.env.open .env-flap { transform: rotateX(180deg); z-index: 0; }
+.env.open .env-seal { opacity: 0; }
+.env.open .env-letter { transform: translateY(-42%); }
+.env.gone { opacity: 0; transform: translateY(20px) scale(.96); pointer-events: none; }
+
+/* Story card */
+.story { display: none; width: 100%; max-width: 520px; }
+.story.on { display: grid; gap: 22px; text-align: center; }
+.story p { font-family: var(--display); font-size: clamp(1.6rem, 5.2vw, 2.2rem); line-height: 1.3; text-wrap: balance; }
+.story p:last-child em { font-style: italic; color: var(--rose); }
+.w { display: inline-block; opacity: 0; transform: translateY(8px); transition: opacity .8s ease, transform .8s ease; transition-delay: calc(var(--i) * .17s); white-space: pre; }
+.story.show .w { opacity: 1; transform: none; }
+.scroll-cue { margin-top: 10px; justify-self: center; font-size: .85rem; color: var(--muted); letter-spacing: .08em; opacity: 0; transition: opacity 1s; text-decoration: none; display: grid; gap: 6px; justify-items: center; }
+.scroll-cue.on { opacity: 1; }
+.scroll-cue::after { content: ""; width: 1px; height: 28px; background: var(--rose); }
+
+/* Rest of the page */
+.rest { animation: rise 1s ease-out both; }
+@keyframes rise { from { transform: translateY(24px); } to { transform: none; } }
+.photo-block { padding-block: clamp(56px, 9vw, 96px) 0; display: grid; gap: 18px; justify-items: center; text-align: center; }
+.arch { width: min(100%, 380px); border-radius: 999px 999px 6px 6px; overflow: hidden; background: var(--bg-2); box-shadow: 0 0 0 8px var(--bg), 0 0 0 9px var(--line); }
+.arch img { aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 35%; }
+.photo-block figcaption { font-size: .9rem; color: var(--muted); }
+
+.celebrate { padding-block: clamp(56px, 9vw, 96px) 0; display: grid; gap: 24px; justify-items: center; text-align: center; }
+.celebrate h2 { font-size: clamp(2.3rem, 7.5vw, 4rem); max-width: 12em; }
+.celebrate .frame { width: min(100%, 460px); border-radius: 6px; overflow: hidden; box-shadow: 0 30px 50px -28px rgba(58, 47, 43, .6); }
+.celebrate .frame img { aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; }
+
+.letter { padding-block: clamp(48px, 8vw, 88px) 0; display: grid; gap: 22px; }
+.letter p { text-wrap: pretty; }
+.letter .lead { font-family: var(--display); font-size: clamp(1.5rem, 4.4vw, 2rem); line-height: 1.3; text-wrap: balance; }
+.letter p strong { font-weight: 600; }
+
+.strip { padding-block: clamp(44px, 7vw, 72px) 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 2vw, 18px); align-items: center; }
+.strip figure { background: var(--paper); padding: 8px 8px 22px; box-shadow: 0 14px 26px -16px rgba(58, 47, 43, .55); }
+.strip img { aspect-ratio: 3 / 4; object-fit: cover; }
+.strip figure:nth-child(1) { transform: rotate(-3deg); }
+.strip figure:nth-child(2) { transform: translateY(-10px) rotate(1.5deg); }
+.strip figure:nth-child(3) { transform: rotate(3deg); }
+
+.more { padding-block: clamp(48px, 8vw, 80px) clamp(64px, 10vw, 110px); display: grid; gap: 28px; justify-items: center; text-align: center; }
+.wish { display: grid; gap: 28px; justify-items: center; animation: rise 1s ease-out both; }
+.wish blockquote { margin: 0; font-family: var(--display); font-weight: 500; font-style: italic; font-size: clamp(1.9rem, 6vw, 3rem); line-height: 1.2; color: var(--ink); text-wrap: balance; max-width: 18em; }
+.sign { font-family: var(--hand); font-size: clamp(1.7rem, 5vw, 2.3rem); line-height: 1.25; color: var(--rose); }
+.sign small { display: block; font-family: var(--body); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
+.sage-rule { width: 56px; height: 2px; background: var(--sage); border: 0; margin: 0; }
+
+footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text-align: center; font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); }
+
+.heart { position: fixed; bottom: -30px; z-index: 50; pointer-events: none; color: var(--rose); animation: up linear forwards; }
+@keyframes up { to { transform: translate3d(var(--dx), -112vh, 0) rotate(var(--rot)); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .opening-inner > .btn, .rest, .wish { animation: none; }
+  .w { transition: none; transition-delay: 0s; }
+  .heart { display: none; }
+}
+</style>
+</head>
+<body>
+
+<section class="opening" id="opening">
+  <div class="wrap opening-inner">
+    <h1 class="display ask" id="ask">Ромо й Альоно, <em>пам’ятаєте, з чого все почалося?</em></h1>
+    <div class="env" id="env" aria-hidden="true">
+      <div class="env-back"></div>
+      <div class="env-letter"><i></i><i></i><i></i></div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">♥</div>
+    </div>
+    <button class="btn" id="openBtn" type="button">Відкрити нашу історію 💌</button>
+
+    <div class="story" id="story">
+      <p class="l">Одного дня ви стали хрещеними нашого синочка.</p>
+      <p class="l">А після — стали парою.</p>
+      <p class="l">Хто ж знав, що ті хрестини стануть початком <em>ще однієї сім’ї?</em> 🤍</p>
+      <a class="scroll-cue" id="cue" href="#rest">гортайте далі</a>
+    </div>
+  </div>
+</section>
+
+<main class="rest" id="rest" hidden>
+  <section class="wrap photo-block">
+    <figure>
+      <div class="arch"><img src="img/hrestyny.jpg" alt="Рома й Альона з маленьким Ярославчиком на хрестинах" width="960" height="1280"></div>
+    </figure>
+    <p class="eyebrow">Хрестини Ярославчика</p>
+    <p style="margin-top:-8px;color:var(--muted);font-size:.95rem">Ваше перше фото разом.</p>
+  </section>
+
+  <section class="wrap celebrate">
+    <p class="eyebrow">27 листопада · Перша річниця</p>
+    <h2 class="display">З першою річницею весілля, <em>наші дорогі куми!</em></h2>
+    <figure class="frame"><img src="img/hero.jpg" alt="Рома й Альона в день весілля" width="1000" height="1500" loading="lazy"></figure>
+  </section>
+
+  <section class="wrap letter">
+    <p class="lead">Ромо й Альоно, як же тепло знати, що початок вашої історії пов’язаний із таким важливим днем для нашої сім’ї.</p>
+    <p>За цей рік у вас було менше зустрічей та обіймів, ніж хотілося б. Тому бажаємо вам найціннішого — <strong>більше часу разом</strong>. Щоб можна було просто пити ранкову каву, говорити про свій день і засинати поруч.</p>
+    <p>Ромо, бережи себе. Нехай служба дозволяє частіше повертатися до коханої, а попереду на вас чекає мирне життя разом.</p>
+    <p>Любі наші куми, бережіть свою ніжність, смійтеся разом і будуйте плани, які обов’язково здійсняться. Ми дуже радіємо за вашу сім’ю! 🤍</p>
+  </section>
+
+  <section class="wrap strip" aria-label="Фото">
+    <figure><img src="img/dance.jpg" alt="Танець у білій кімнаті" width="1000" height="1500" loading="lazy"></figure>
+    <figure><img src="img/bouquet.jpg" alt="Рома й Альона з букетом" width="1000" height="1500" loading="lazy"></figure>
+    <figure><img src="img/selfie.jpg" alt="Рома цілує Альону в щоку" width="720" height="1280" loading="lazy"></figure>
+  </section>
+
+  <section class="wrap more">
+    <hr class="sage-rule">
+    <button class="btn" id="moreBtn" type="button">І ще одне побажання…</button>
+    <div class="wish" id="wish" hidden>
+      <blockquote>Нехай наступний рік подарує вам більше спільних ранків, ніж повідомлень «сумую».</blockquote>
+      <p class="sign">З любов’ю, ваші куми та похресник Ярославчик 🤍<small>27 листопада</small></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">27.11.2025 — 27.11.2026 · Рік разом</div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t = function (ms) { return reduce ? 0 : ms; };
+
+  // split story lines into words so they can appear one by one
+  var i = 0;
+  function split(node) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+          var s = document.createElement('span');
+          s.className = 'w'; s.style.setProperty('--i', i++); s.textContent = part;
+          frag.appendChild(s);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1) { split(n); }
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.story .l'), split);
+
+  var opened = false;
+  $('openBtn').addEventListener('click', function () {
+    if (opened) return; opened = true;
+    $('openBtn').hidden = true;
+    $('ask').style.transition = 'opacity .6s'; $('ask').style.opacity = '0';
+    $('env').classList.add('open');
+    setTimeout(function () {
+      $('env').classList.add('gone');
+      $('ask').hidden = true;
+      setTimeout(function () {
+        $('env').hidden = true;
+        $('story').classList.add('on');
+        requestAnimationFrame(function () { requestAnimationFrame(function () { $('story').classList.add('show'); }); });
+        setTimeout(function () {
+          $('rest').hidden = false;
+          $('cue').classList.add('on');
+        }, t(i * 170 + 1200));
+      }, t(700));
+    }, t(1700));
+  });
+
+  function hearts() {
+    if (reduce) return;
+    for (var k = 0; k < 26; k++) {
+      var h = document.createElement('span');
+      h.className = 'heart'; h.textContent = '♥';
+      h.style.left = (Math.random() * 100) + 'vw';
+      h.style.fontSize = (14 + Math.random() * 20) + 'px';
+      h.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+      h.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+      h.style.animationDuration = (3 + Math.random() * 3) + 's';
+      h.style.animationDelay = (Math.random() * 0.8) + 's';
+      document.body.appendChild(h);
+      (function (el) { setTimeout(function () { el.remove(); }, 7500); })(h);
+    }
+  }
+
+  $('moreBtn').addEventListener('click', function () {
+    $('moreBtn').hidden = true;
+    $('wish').hidden = false;
+    hearts();
+    $('wish').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  });
+})();
+</script>
+</body>
+</html>
