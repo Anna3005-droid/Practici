@@ -139,7 +139,7 @@ button { font: inherit; color: inherit; }
 
 /* Message from the godson */
 .baby-card { display: grid; gap: 16px; justify-items: center; text-align: center; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 22px 22px 28px; width: min(100%, 360px); box-shadow: 0 30px 50px -30px rgba(58, 47, 43, .55); animation: pop .6s ease-out both; }
-.baby-card img { border-radius: 6px; aspect-ratio: 26 / 29; object-fit: cover; }
+.baby-card img { border-radius: 6px; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; }
 .baby-card blockquote { margin: 0; font-family: var(--display); font-size: clamp(1.6rem, 5vw, 2rem); line-height: 1.25; font-style: italic; text-wrap: balance; }
 .baby-card .by { font-family: var(--hand); font-size: 1.6rem; color: var(--rose); }
 
@@ -251,7 +251,7 @@ footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text
     <p class="eyebrow">Сюрприз від похресника</p>
     <button class="btn" id="babyBtn" type="button">Вам повідомлення від Ярославчика</button>
     <div class="baby-card" id="babyCard" hidden>
-      <img src="img/yaroslavchyk.jpg" alt="Маленький Ярославчик на руках у тата" width="520" height="580">
+      <img src="img/yaroslavchyk.jpg" alt="Ярославчик" width="866" height="1100">
       <blockquote>«Любі хрещені, з річницею! Цілую вас!»</blockquote>
       <p class="by">ваш Ярославчик</p>
     </div>
