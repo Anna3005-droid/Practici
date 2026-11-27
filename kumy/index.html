@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600&display=swap">
 <style>
-/* Layout: one warm light page. A sealed envelope opens into the story, then photos and the greeting scroll below it; a last button reveals one more wish. */
+/* Layout: one warm light page that unlocks step by step. Sealed envelope, hearts over a photo, a four-piece puzzle, three gifts, a note from the godson. */
 :root {
   --bg: #fbf6f0;
   --bg-2: #f3e8dc;
@@ -18,6 +18,8 @@
   --ink: #3a2f2b;
   --muted: #7d6b63;
   --rose: #b4636f;
+  --rose-2: #d9919b;
+  --blush: #f1c9cd;
   --sage: #8a9a82;
   --line: rgba(58, 47, 43, .14);
   --display: "Cormorant Garamond", "Times New Roman", serif;
@@ -25,126 +27,125 @@
   --hand: "Caveat", "Segoe Script", cursive;
   color-scheme: light;
 }
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 400 1.05rem/1.75 var(--body);
-  -webkit-font-smoothing: antialiased;
-}
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.05rem/1.75 var(--body); -webkit-font-smoothing: antialiased; }
 img { display: block; width: 100%; height: auto; max-width: 100%; }
-h1, h2, p, figure { margin: 0; }
-button { font: inherit; }
+h1, h2, p, figure, blockquote { margin: 0; }
+button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
 [hidden] { display: none !important; }
 
-.wrap {
-  width: 100%;
-  max-width: 760px;
-  margin-inline: auto;
-  padding-left: max(22px, env(safe-area-inset-left, 0px));
-  padding-right: max(22px, env(safe-area-inset-right, 0px));
-}
+.wrap { width: 100%; max-width: 760px; margin-inline: auto; padding-left: max(22px, env(safe-area-inset-left, 0px)); padding-right: max(22px, env(safe-area-inset-right, 0px)); }
 .eyebrow { font-size: .76rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--rose); }
 .display { font-family: var(--display); font-weight: 500; line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; }
 .display em { font-style: italic; font-weight: 400; color: var(--rose); }
-.btn {
-  appearance: none; cursor: pointer; border: 0; border-radius: 999px;
-  padding: 18px 34px; background: var(--rose); color: #fff;
-  font-weight: 600; font-size: 1rem; letter-spacing: .02em;
-  box-shadow: 0 10px 24px -10px rgba(180, 99, 111, .7);
-  transition: transform .2s, box-shadow .2s, background .2s;
-}
+.hint { font-size: .9rem; color: var(--muted); }
+.btn { appearance: none; cursor: pointer; border: 0; border-radius: 999px; padding: 18px 34px; background: var(--rose); color: #fff; font-weight: 600; font-size: 1rem; letter-spacing: .02em; box-shadow: 0 10px 24px -10px rgba(180, 99, 111, .7); transition: transform .2s, background .2s; }
 .btn:hover { background: #a2545f; transform: translateY(-2px); }
 .btn:active { transform: scale(.97); }
 
-/* Opening screen */
-.opening {
-  min-height: 100svh;
-  display: grid; place-items: center;
-  padding-block: 40px;
-  background: radial-gradient(120% 80% at 50% 0%, #fff 0%, var(--bg) 55%, var(--bg-2) 100%);
-}
+.step { padding-block: clamp(56px, 9vw, 96px) 0; display: grid; gap: 20px; justify-items: center; text-align: center; animation: rise .9s ease-out both; }
+.step h2 { font-size: clamp(2.2rem, 7vw, 3.6rem); max-width: 13em; }
+@keyframes rise { from { transform: translateY(22px); } to { transform: none; } }
+@keyframes pop { from { transform: scale(.94); } to { transform: none; } }
+
+/* Opening */
+.opening { min-height: 100svh; display: grid; place-items: center; padding-block: 40px; background: radial-gradient(120% 80% at 50% 0%, #fff 0%, var(--bg) 55%, var(--bg-2) 100%); }
 .opening-inner { display: grid; gap: 28px; justify-items: center; text-align: center; width: 100%; }
 .ask { font-size: clamp(2.2rem, 8vw, 3.8rem); max-width: 14em; }
-.opening-inner > .btn { animation: float 3.2s ease-in-out infinite; }
-@keyframes float { 50% { transform: translateY(-5px); } }
-
-/* Envelope */
 .env { position: relative; width: min(320px, 78vw); aspect-ratio: 3 / 2; transition: transform .8s ease, opacity .8s ease; }
 .env > * { position: absolute; }
 .env-back { inset: 0; background: #ecd6c4; border-radius: 6px; box-shadow: 0 24px 40px -20px rgba(58, 47, 43, .45); }
-.env-letter {
-  left: 8%; right: 8%; top: 6%; height: 78%;
-  background: var(--paper); border-radius: 4px;
-  box-shadow: 0 1px 0 var(--line);
-  transition: transform .9s cubic-bezier(.3, .8, .3, 1) .45s;
-  padding: 14% 12%;
-}
+.env-letter { left: 8%; right: 8%; top: 6%; height: 78%; background: var(--paper); border-radius: 4px; box-shadow: 0 1px 0 var(--line); transition: transform .9s cubic-bezier(.3, .8, .3, 1) .45s; padding: 14% 12%; }
 .env-letter i { display: block; height: 3px; border-radius: 2px; background: var(--line); margin-bottom: 9%; }
 .env-letter i:nth-child(2) { width: 70%; }
 .env-letter i:nth-child(3) { width: 85%; }
 .env-front { inset: 0; background: #f3e1d0; clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%); border-radius: 6px; }
 .env-front::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,255,255,.5), rgba(180,99,111,.08)); }
-.env-flap {
-  left: 0; right: 0; top: 0; height: 58%;
-  background: #e8cdb8; clip-path: polygon(0 0, 100% 0, 50% 100%);
-  transform-origin: top; transition: transform .7s ease, z-index 0s .35s;
-  z-index: 4;
-}
+.env-flap { left: 0; right: 0; top: 0; height: 58%; background: #e8cdb8; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top; transition: transform .7s ease, z-index 0s .35s; z-index: 4; }
 .env-seal {
-  left: 50%; top: 51%; width: 44px; height: 44px; margin: -22px 0 0 -22px; z-index: 5;
-  background: var(--rose); color: #fff; border-radius: 50%;
-  display: grid; place-items: center; font-size: 1.2rem; line-height: 1;
-  box-shadow: 0 6px 12px -4px rgba(180, 99, 111, .8);
+  left: 50%; top: 51%; width: 52px; height: 52px; margin: -26px 0 0 -26px; z-index: 5;
+  appearance: none; border: 0; cursor: pointer; padding: 0;
+  background: var(--rose); color: #fff; border-radius: 50%; font-size: 1.3rem; line-height: 1;
+  display: grid; place-items: center;
+  animation: beat 1.6s ease-in-out infinite;
   transition: opacity .3s;
 }
+.env-seal::before { content: ""; position: absolute; inset: -14px; } /* bigger tap area */
+@keyframes beat {
+  0%, 100% { transform: scale(1); box-shadow: 0 6px 12px -4px rgba(180, 99, 111, .8), 0 0 0 0 rgba(180, 99, 111, .35); }
+  50% { transform: scale(1.1); box-shadow: 0 6px 12px -4px rgba(180, 99, 111, .8), 0 0 0 12px rgba(180, 99, 111, 0); }
+}
 .env.open .env-flap { transform: rotateX(180deg); z-index: 0; }
-.env.open .env-seal { opacity: 0; }
+.env.open .env-seal { opacity: 0; pointer-events: none; animation: none; }
 .env.open .env-letter { transform: translateY(-42%); }
 .env.gone { opacity: 0; transform: translateY(20px) scale(.96); pointer-events: none; }
 
-/* Story card */
 .story { display: none; width: 100%; max-width: 520px; }
 .story.on { display: grid; gap: 22px; text-align: center; }
 .story p { font-family: var(--display); font-size: clamp(1.6rem, 5.2vw, 2.2rem); line-height: 1.3; text-wrap: balance; }
-.story p:last-child em { font-style: italic; color: var(--rose); }
+.story p:last-of-type em { font-style: italic; color: var(--rose); }
 .w { display: inline-block; opacity: 0; transform: translateY(8px); transition: opacity .8s ease, transform .8s ease; transition-delay: calc(var(--i) * .17s); white-space: pre; }
 .story.show .w { opacity: 1; transform: none; }
 .scroll-cue { margin-top: 10px; justify-self: center; font-size: .85rem; color: var(--muted); letter-spacing: .08em; opacity: 0; transition: opacity 1s; text-decoration: none; display: grid; gap: 6px; justify-items: center; }
 .scroll-cue.on { opacity: 1; }
 .scroll-cue::after { content: ""; width: 1px; height: 28px; background: var(--rose); }
 
-/* Rest of the page */
-.rest { animation: rise 1s ease-out both; }
-@keyframes rise { from { transform: translateY(24px); } to { transform: none; } }
-.photo-block { padding-block: clamp(56px, 9vw, 96px) 0; display: grid; gap: 18px; justify-items: center; text-align: center; }
-.arch { width: min(100%, 380px); border-radius: 999px 999px 6px 6px; overflow: hidden; background: var(--bg-2); box-shadow: 0 0 0 8px var(--bg), 0 0 0 9px var(--line); }
-.arch img { aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 35%; }
-.photo-block figcaption { font-size: .9rem; color: var(--muted); }
+/* Photo under paper hearts */
+.cover { position: relative; width: min(100%, 380px); }
+.cover .arch { width: 100%; border-radius: 999px 999px 6px 6px; overflow: hidden; background: var(--bg-2); box-shadow: 0 0 0 8px var(--bg), 0 0 0 9px var(--line); }
+.cover .arch img { aspect-ratio: 3 / 4; object-fit: cover; object-position: 50% 35%; filter: blur(16px) saturate(.85); transform: scale(1.08); transition: filter 1.2s ease, transform 1.2s ease; }
+.cover.clear .arch img { filter: none; transform: none; }
+.paper { position: absolute; width: 62%; aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 8px 10px rgba(58, 47, 43, .28)); transition: transform .5s ease, opacity .5s ease; z-index: 2; }
+.paper svg { width: 100%; height: 100%; display: block; }
+.paper:nth-of-type(1) { left: -4%; top: 14%; transform: rotate(-12deg); }
+.paper:nth-of-type(2) { right: -4%; top: 20%; transform: rotate(10deg); }
+.paper:nth-of-type(3) { left: 19%; top: 46%; transform: rotate(-4deg); }
+.paper:active { filter: drop-shadow(0 4px 6px rgba(58, 47, 43, .3)); }
+.paper.gone { opacity: 0; transform: translateY(-40px) scale(.4) rotate(40deg) !important; pointer-events: none; }
+.paper-count { font-size: .9rem; color: var(--muted); min-height: 1.5em; }
+.reveal-text { font-family: var(--display); font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.3; max-width: 17em; text-wrap: balance; animation: rise .9s ease-out both; }
+.reveal-text em { color: var(--rose); }
 
-.celebrate { padding-block: clamp(56px, 9vw, 96px) 0; display: grid; gap: 24px; justify-items: center; text-align: center; }
-.celebrate h2 { font-size: clamp(2.3rem, 7.5vw, 4rem); max-width: 12em; }
-.celebrate .frame { width: min(100%, 460px); border-radius: 6px; overflow: hidden; box-shadow: 0 30px 50px -28px rgba(58, 47, 43, .6); }
-.celebrate .frame img { aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; }
+/* Puzzle */
+.puzzle { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: min(100%, 330px); aspect-ratio: 2 / 3; }
+.tile { appearance: none; border: 0; padding: 0; cursor: pointer; border-radius: 3px; background-image: url("img/hero.jpg"); background-size: 200% 200%; box-shadow: 0 6px 14px -8px rgba(58, 47, 43, .5); transition: transform .35s ease, outline-color .2s; outline: 3px solid transparent; outline-offset: -3px; }
+.tile.sel { outline-color: var(--rose); transform: scale(.96); }
+.puzzle.done { gap: 0; box-shadow: 0 30px 50px -28px rgba(58, 47, 43, .6); }
+.puzzle.done .tile { border-radius: 0; box-shadow: none; pointer-events: none; }
+.linkbtn { appearance: none; background: none; border: 0; padding: 4px; cursor: pointer; font-size: .85rem; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 
-.letter { padding-block: clamp(48px, 8vw, 88px) 0; display: grid; gap: 22px; }
+/* Greeting */
+.letter { padding-block: clamp(56px, 9vw, 96px) 0; display: grid; gap: 22px; animation: rise .9s ease-out both; }
+.letter .head { display: grid; gap: 16px; justify-items: center; text-align: center; margin-bottom: 10px; }
+.letter .head h2 { font-size: clamp(2.3rem, 7.5vw, 4rem); max-width: 12em; }
 .letter p { text-wrap: pretty; }
 .letter .lead { font-family: var(--display); font-size: clamp(1.5rem, 4.4vw, 2rem); line-height: 1.3; text-wrap: balance; }
-.letter p strong { font-weight: 600; }
+.letter strong { font-weight: 600; }
 
-.strip { padding-block: clamp(44px, 7vw, 72px) 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 2vw, 18px); align-items: center; }
-.strip figure { background: var(--paper); padding: 8px 8px 22px; box-shadow: 0 14px 26px -16px rgba(58, 47, 43, .55); }
-.strip img { aspect-ratio: 3 / 4; object-fit: cover; }
-.strip figure:nth-child(1) { transform: rotate(-3deg); }
-.strip figure:nth-child(2) { transform: translateY(-10px) rotate(1.5deg); }
-.strip figure:nth-child(3) { transform: rotate(3deg); }
+/* Gifts */
+.gifts { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(10px, 2vw, 18px); width: 100%; }
+.gift { appearance: none; cursor: pointer; text-align: center; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 18px 12px 16px; display: grid; gap: 10px; align-content: start; justify-items: center; min-height: 190px; box-shadow: 0 14px 24px -18px rgba(58, 47, 43, .5); transition: transform .25s, background .3s; }
+.gift:hover { transform: translateY(-3px); }
+.gift .box { width: 52px; height: 52px; }
+.gift .title { font-family: var(--display); font-size: 1.25rem; line-height: 1.15; font-weight: 500; }
+.gift .tap { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--rose); }
+.gift .text { display: none; font-family: var(--display); font-style: italic; font-size: 1.12rem; line-height: 1.3; color: var(--ink); text-wrap: balance; }
+.gift.open { background: #fff; cursor: default; }
+.gift.open .box, .gift.open .tap { display: none; }
+.gift.open .text { display: block; animation: pop .5s ease-out both; }
+.gift.open .title { color: var(--rose); font-size: 1rem; letter-spacing: .08em; text-transform: uppercase; font-family: var(--body); font-weight: 600; }
 
-.more { padding-block: clamp(48px, 8vw, 80px) clamp(64px, 10vw, 110px); display: grid; gap: 28px; justify-items: center; text-align: center; }
-.wish { display: grid; gap: 28px; justify-items: center; animation: rise 1s ease-out both; }
-.wish blockquote { margin: 0; font-family: var(--display); font-weight: 500; font-style: italic; font-size: clamp(1.9rem, 6vw, 3rem); line-height: 1.2; color: var(--ink); text-wrap: balance; max-width: 18em; }
+/* Message from the godson */
+.baby-card { display: grid; gap: 16px; justify-items: center; text-align: center; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 22px 22px 28px; width: min(100%, 360px); box-shadow: 0 30px 50px -30px rgba(58, 47, 43, .55); animation: pop .6s ease-out both; }
+.baby-card img { border-radius: 6px; aspect-ratio: 26 / 29; object-fit: cover; }
+.baby-card blockquote { margin: 0; font-family: var(--display); font-size: clamp(1.6rem, 5vw, 2rem); line-height: 1.25; font-style: italic; text-wrap: balance; }
+.baby-card .by { font-family: var(--hand); font-size: 1.6rem; color: var(--rose); }
+
+/* Final */
+.final { padding-bottom: clamp(64px, 10vw, 110px); }
+.final blockquote { font-family: var(--display); font-weight: 500; font-style: italic; font-size: clamp(1.9rem, 6vw, 3rem); line-height: 1.2; text-wrap: balance; max-width: 18em; }
 .sign { font-family: var(--hand); font-size: clamp(1.7rem, 5vw, 2.3rem); line-height: 1.25; color: var(--rose); }
 .sign small { display: block; font-family: var(--body); font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-top: 10px; }
 .sage-rule { width: 56px; height: 2px; background: var(--sage); border: 0; margin: 0; }
@@ -154,10 +155,14 @@ footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text
 .heart { position: fixed; bottom: -30px; z-index: 50; pointer-events: none; color: var(--rose); animation: up linear forwards; }
 @keyframes up { to { transform: translate3d(var(--dx), -112vh, 0) rotate(var(--rot)); opacity: 0; } }
 
+@media (max-width: 460px) {
+  .gifts { grid-template-columns: 1fr; }
+  .gift { min-height: 0; padding-block: 20px; }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .opening-inner > .btn, .rest, .wish { animation: none; }
-  .w { transition: none; transition-delay: 0s; }
+  .step, .letter, .reveal-text, .baby-card, .gift.open .text, .env-seal { animation: none; }
+  .w, .cover .arch img, .paper, .tile { transition: none; transition-delay: 0s; }
   .heart { display: none; }
 }
 </style>
@@ -167,59 +172,95 @@ footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text
 <section class="opening" id="opening">
   <div class="wrap opening-inner">
     <h1 class="display ask" id="ask">Ромо й Альоно, <em>пам’ятаєте, з чого все почалося?</em></h1>
-    <div class="env" id="env" aria-hidden="true">
+    <div class="env" id="env">
       <div class="env-back"></div>
       <div class="env-letter"><i></i><i></i><i></i></div>
       <div class="env-front"></div>
       <div class="env-flap"></div>
-      <div class="env-seal">♥</div>
+      <button class="env-seal" id="seal" type="button" aria-label="Відкрити конверт">♥</button>
     </div>
-    <button class="btn" id="openBtn" type="button">Відкрити нашу історію 💌</button>
+    <p class="hint" id="sealHint">Торкніться печатки 💌</p>
 
     <div class="story" id="story">
       <p class="l">Одного дня ви стали хрещеними нашого синочка.</p>
       <p class="l">А після — стали парою.</p>
       <p class="l">Хто ж знав, що ті хрестини стануть початком <em>ще однієї сім’ї?</em> 🤍</p>
-      <a class="scroll-cue" id="cue" href="#rest">гортайте далі</a>
+      <a class="scroll-cue" id="cue" href="#s-photo">гортайте далі</a>
     </div>
   </div>
 </section>
 
-<main class="rest" id="rest" hidden>
-  <section class="wrap photo-block">
-    <figure>
+<main id="rest">
+
+  <section class="wrap step" id="s-photo" hidden>
+    <p class="eyebrow">Пам’ятаєте цей день?</p>
+    <div class="cover" id="cover">
       <div class="arch"><img src="img/hrestyny.jpg" alt="Рома й Альона з маленьким Ярославчиком на хрестинах" width="960" height="1280"></div>
-    </figure>
-    <p class="eyebrow">Хрестини Ярославчика</p>
-    <p style="margin-top:-8px;color:var(--muted);font-size:.95rem">Ваше перше фото разом.</p>
+      <button class="paper" type="button" aria-label="Паперове сердечко"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5S2.5 15.6 2.5 9.2A5.2 5.2 0 0 1 12 6.3a5.2 5.2 0 0 1 9.5 2.9c0 6.400-9.500 12.300-9.500 12.300z" fill="#d9919b"/></svg></button>
+      <button class="paper" type="button" aria-label="Паперове сердечко"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5S2.5 15.6 2.5 9.2A5.2 5.2 0 0 1 12 6.3a5.2 5.2 0 0 1 9.5 2.9c0 6.400-9.500 12.300-9.500 12.300z" fill="#b4636f"/></svg></button>
+      <button class="paper" type="button" aria-label="Паперове сердечко"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5S2.5 15.6 2.5 9.2A5.2 5.2 0 0 1 12 6.3a5.2 5.2 0 0 1 9.5 2.9c0 6.400-9.500 12.300-9.500 12.300z" fill="#f1c9cd"/></svg></button>
+    </div>
+    <p class="paper-count" id="paperCount" aria-live="polite">Торкніться кожного сердечка: залишилось 3</p>
+    <p class="reveal-text" id="photoText" hidden>Ви прийшли стати хрещеними. <em>А знайшли ще й одне одного.</em></p>
   </section>
 
-  <section class="wrap celebrate">
-    <p class="eyebrow">27 листопада · Перша річниця</p>
-    <h2 class="display">З першою річницею весілля, <em>наші дорогі куми!</em></h2>
-    <figure class="frame"><img src="img/hero.jpg" alt="Рома й Альона в день весілля" width="1000" height="1500" loading="lazy"></figure>
+  <section class="wrap step" id="s-puzzle" hidden>
+    <p class="eyebrow">Складіть ваше щастя</p>
+    <div class="puzzle" id="puzzle" role="group" aria-label="Пазл із весільного фото"></div>
+    <p class="hint" id="puzzleHint">Торкніться двох частинок, щоб поміняти їх місцями</p>
+    <button class="linkbtn" id="solveBtn" type="button">Допоможіть мені</button>
+    <p class="reveal-text" id="puzzleText" hidden>Разом — усе на своєму місці 🤍</p>
   </section>
 
-  <section class="wrap letter">
+  <section class="wrap letter" id="s-letter" hidden>
+    <div class="head">
+      <p class="eyebrow">27 листопада · Перша річниця</p>
+      <h2 class="display">З першою річницею весілля, <em>наші дорогі куми!</em></h2>
+    </div>
     <p class="lead">Ромо й Альоно, як же тепло знати, що початок вашої історії пов’язаний із таким важливим днем для нашої сім’ї.</p>
     <p>За цей рік у вас було менше зустрічей та обіймів, ніж хотілося б. Тому бажаємо вам найціннішого — <strong>більше часу разом</strong>. Щоб можна було просто пити ранкову каву, говорити про свій день і засинати поруч.</p>
     <p>Ромо, бережи себе. Нехай служба дозволяє частіше повертатися до коханої, а попереду на вас чекає мирне життя разом.</p>
     <p>Любі наші куми, бережіть свою ніжність, смійтеся разом і будуйте плани, які обов’язково здійсняться. Ми дуже радіємо за вашу сім’ю! 🤍</p>
   </section>
 
-  <section class="wrap strip" aria-label="Фото">
-    <figure><img src="img/dance.jpg" alt="Танець у білій кімнаті" width="1000" height="1500" loading="lazy"></figure>
-    <figure><img src="img/bouquet.jpg" alt="Рома й Альона з букетом" width="1000" height="1500" loading="lazy"></figure>
-    <figure><img src="img/selfie.jpg" alt="Рома цілує Альону в щоку" width="720" height="1280" loading="lazy"></figure>
+  <section class="wrap step" id="s-gifts" hidden>
+    <p class="eyebrow">Три подарунки-побажання</p>
+    <div class="gifts">
+      <button class="gift" type="button" aria-expanded="false">
+        <svg class="box" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="20" width="36" height="22" rx="3" fill="#f1c9cd"/><rect x="4" y="14" width="40" height="9" rx="3" fill="#d9919b"/><rect x="21" y="14" width="6" height="28" fill="#b4636f"/><path d="M24 14c-6-9-14-4-9 0zM24 14c6-9 14-4 9 0z" fill="none" stroke="#b4636f" stroke-width="2.4" stroke-linejoin="round"/></svg>
+        <span class="title">Для ваших буднів</span>
+        <span class="text">Більше спільних сніданків, лінивих вихідних і розмов до ночі.</span>
+        <span class="tap">Відкрити</span>
+      </button>
+      <button class="gift" type="button" aria-expanded="false">
+        <svg class="box" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="20" width="36" height="22" rx="3" fill="#e3e8de"/><rect x="4" y="14" width="40" height="9" rx="3" fill="#8a9a82"/><rect x="21" y="14" width="6" height="28" fill="#b4636f"/><path d="M24 14c-6-9-14-4-9 0zM24 14c6-9 14-4 9 0z" fill="none" stroke="#b4636f" stroke-width="2.4" stroke-linejoin="round"/></svg>
+        <span class="title">Для ваших мрій</span>
+        <span class="text">Щоб усе задумане на двох поступово ставало реальністю.</span>
+        <span class="tap">Відкрити</span>
+      </button>
+      <button class="gift" type="button" aria-expanded="false">
+        <svg class="box" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="20" width="36" height="22" rx="3" fill="#f3e1d0"/><rect x="4" y="14" width="40" height="9" rx="3" fill="#e0b99a"/><rect x="21" y="14" width="6" height="28" fill="#b4636f"/><path d="M24 14c-6-9-14-4-9 0zM24 14c6-9 14-4 9 0z" fill="none" stroke="#b4636f" stroke-width="2.4" stroke-linejoin="round"/></svg>
+        <span class="title">Для вашого кохання</span>
+        <span class="text">Завжди знаходити привід обійнятися й сказати: «Як добре, що ти є».</span>
+        <span class="tap">Відкрити</span>
+      </button>
+    </div>
   </section>
 
-  <section class="wrap more">
-    <hr class="sage-rule">
-    <button class="btn" id="moreBtn" type="button">І ще одне побажання…</button>
-    <div class="wish" id="wish" hidden>
-      <blockquote>Нехай наступний рік подарує вам більше спільних ранків, ніж повідомлень «сумую».</blockquote>
-      <p class="sign">З любов’ю, ваші куми та похресник Ярославчик 🤍<small>27 листопада</small></p>
+  <section class="wrap step" id="s-baby" hidden>
+    <p class="eyebrow">Сюрприз від похресника</p>
+    <button class="btn" id="babyBtn" type="button">Вам повідомлення від Ярославчика</button>
+    <div class="baby-card" id="babyCard" hidden>
+      <img src="img/yaroslavchyk.jpg" alt="Маленький Ярославчик на руках у тата" width="520" height="580">
+      <blockquote>«Любі хрещені, з річницею! Цілую вас!»</blockquote>
+      <p class="by">ваш Ярославчик</p>
     </div>
+  </section>
+
+  <section class="wrap step final" id="s-final" hidden>
+    <hr class="sage-rule">
+    <blockquote>Нехай наступний рік подарує вам більше спільних ранків, ніж повідомлень «сумую».</blockquote>
+    <p class="sign">З любов’ю, ваші куми та похресник Ярославчик 🤍<small>27 листопада</small></p>
   </section>
 </main>
 
@@ -233,7 +274,27 @@ footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var t = function (ms) { return reduce ? 0 : ms; };
 
-  // split story lines into words so they can appear one by one
+  function show(el, scroll) {
+    el.hidden = false;
+    if (scroll) setTimeout(function () { el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }, 80);
+  }
+  function hearts() {
+    if (reduce) return;
+    for (var k = 0; k < 26; k++) {
+      var h = document.createElement('span');
+      h.className = 'heart'; h.textContent = '♥';
+      h.style.left = (Math.random() * 100) + 'vw';
+      h.style.fontSize = (14 + Math.random() * 20) + 'px';
+      h.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+      h.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+      h.style.animationDuration = (3 + Math.random() * 3) + 's';
+      h.style.animationDelay = (Math.random() * 0.8) + 's';
+      document.body.appendChild(h);
+      (function (el) { setTimeout(function () { el.remove(); }, 7500); })(h);
+    }
+  }
+
+  /* 1. Envelope */
   var i = 0;
   function split(node) {
     Array.prototype.slice.call(node.childNodes).forEach(function (n) {
@@ -253,9 +314,9 @@ footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text
   Array.prototype.forEach.call(document.querySelectorAll('.story .l'), split);
 
   var opened = false;
-  $('openBtn').addEventListener('click', function () {
+  $('seal').addEventListener('click', function () {
     if (opened) return; opened = true;
-    $('openBtn').hidden = true;
+    $('sealHint').hidden = true;
     $('ask').style.transition = 'opacity .6s'; $('ask').style.opacity = '0';
     $('env').classList.add('open');
     setTimeout(function () {
@@ -266,34 +327,92 @@ footer { padding-block: 26px calc(26px + env(safe-area-inset-bottom, 0px)); text
         $('story').classList.add('on');
         requestAnimationFrame(function () { requestAnimationFrame(function () { $('story').classList.add('show'); }); });
         setTimeout(function () {
-          $('rest').hidden = false;
+          show($('s-photo'));
           $('cue').classList.add('on');
         }, t(i * 170 + 1200));
       }, t(700));
     }, t(1700));
   });
 
-  function hearts() {
-    if (reduce) return;
-    for (var k = 0; k < 26; k++) {
-      var h = document.createElement('span');
-      h.className = 'heart'; h.textContent = '♥';
-      h.style.left = (Math.random() * 100) + 'vw';
-      h.style.fontSize = (14 + Math.random() * 20) + 'px';
-      h.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
-      h.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
-      h.style.animationDuration = (3 + Math.random() * 3) + 's';
-      h.style.animationDelay = (Math.random() * 0.8) + 's';
-      document.body.appendChild(h);
-      (function (el) { setTimeout(function () { el.remove(); }, 7500); })(h);
-    }
-  }
+  /* 2. Paper hearts over the christening photo */
+  var papers = Array.prototype.slice.call(document.querySelectorAll('.paper'));
+  var left = papers.length;
+  papers.forEach(function (p) {
+    p.addEventListener('click', function () {
+      if (p.classList.contains('gone')) return;
+      p.classList.add('gone'); left--;
+      if (left > 0) {
+        $('paperCount').textContent = 'Залишилось ' + left;
+      } else {
+        $('paperCount').textContent = '';
+        $('cover').classList.add('clear');
+        $('photoText').hidden = false;
+        hearts();
+        setTimeout(function () { show($('s-puzzle')); }, t(1600));
+      }
+    });
+  });
 
-  $('moreBtn').addEventListener('click', function () {
-    $('moreBtn').hidden = true;
-    $('wish').hidden = false;
+  /* 3. Puzzle: 2x2, tap two tiles to swap */
+  var order, sel = -1, tiles = [];
+  var puzzle = $('puzzle');
+  function isSolved() { return order.every(function (v, k) { return v === k; }); }
+  function paint() {
+    tiles.forEach(function (el, k) {
+      var v = order[k];
+      el.style.backgroundPosition = (v % 2 ? '100%' : '0%') + ' ' + (v > 1 ? '100%' : '0%');
+      el.classList.toggle('sel', k === sel);
+    });
+  }
+  function finish() {
+    puzzle.classList.add('done');
+    $('puzzleHint').hidden = true; $('solveBtn').hidden = true;
+    $('puzzleText').hidden = false;
     hearts();
-    $('wish').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    setTimeout(function () { show($('s-letter')); }, t(1500));
+    setTimeout(function () { show($('s-gifts')); }, t(2200));
+  }
+  do { order = [0, 1, 2, 3].sort(function () { return Math.random() - 0.5; }); } while (isSolved());
+  for (var k = 0; k < 4; k++) {
+    (function (k) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-label', 'Частинка пазла ' + (k + 1));
+      b.addEventListener('click', function () {
+        if (puzzle.classList.contains('done')) return;
+        if (sel < 0) { sel = k; }
+        else if (sel === k) { sel = -1; }
+        else {
+          var tmp = order[sel]; order[sel] = order[k]; order[k] = tmp; sel = -1;
+          paint();
+          if (isSolved()) finish();
+          return;
+        }
+        paint();
+      });
+      tiles.push(b); puzzle.appendChild(b);
+    })(k);
+  }
+  paint();
+  $('solveBtn').addEventListener('click', function () { order = [0, 1, 2, 3]; sel = -1; paint(); finish(); });
+
+  /* 4. Gifts */
+  var gifts = Array.prototype.slice.call(document.querySelectorAll('.gift'));
+  var opened3 = 0;
+  gifts.forEach(function (g) {
+    g.addEventListener('click', function () {
+      if (g.classList.contains('open')) return;
+      g.classList.add('open'); g.setAttribute('aria-expanded', 'true'); opened3++;
+      hearts();
+      if (opened3 === gifts.length) setTimeout(function () { show($('s-baby'), true); }, t(1400));
+    });
+  });
+
+  /* 5. Message from the godson, then the final wish */
+  $('babyBtn').addEventListener('click', function () {
+    $('babyBtn').hidden = true;
+    $('babyCard').hidden = false;
+    hearts();
+    setTimeout(function () { show($('s-final'), true); }, t(2200));
   });
 })();
 </script>
